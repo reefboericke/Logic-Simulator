@@ -51,6 +51,7 @@ class Scanner:
 
     def __init__(self, path, names):
         """Open specified file and initialise reserved words and IDs."""
+        self.path = path
         self.names = names
         self.symbol_type_list = [self.SEMICOLON, self.COLON, self.EQUALS, self.DOT,
         self.KEYWORD, self.NUMBER, self.NAME, self.EOF, self.ARROW] = range(9)
@@ -100,7 +101,7 @@ class Scanner:
             pos_pre_check = self.file.tell() 
             self.skip_spaces()
             next_word = self.get_word()
-            if (next_word in ['devices', 'monitors', 'connections']):  # two name word found
+            if (next_word in ['devices', 'monitors', 'connections']):  # two word name found
                 name = name + next_word
             else:
                 # not a two word name and need to go back
@@ -108,6 +109,7 @@ class Scanner:
         return name
 
     def get_number(self):
+        """Returns next number from opened file, provided pointer currently at start of a number."""
         number = ''
         while(self.current_character.isnum()):
             number += self.current_character
@@ -160,11 +162,17 @@ class Scanner:
 
         return symbol
 
-    def output_error_line(self):
-        """
-        current_file_pos = self.file.tell()
-        self.file.seek(self.last_EOL)
+    def output_error_line(self, error_code, error_index=False):
+        """Outputs current line and arrow to indicate location of file pointer. Called when parser detects a syntax error."""
+        if error_index is False: # no provided index, default to current position
+            error_index = self.file.tell()
+        current_line = linecache.getline(self.path, self.no_EOL)
+        print(current_line)
+        no_spaces = error_index - self.last_EOL
+        for i in range(no_spaces):
+            print(" ", end='')
+        print("^\n")
+
+
         
-        print()"""
-        pass
 
