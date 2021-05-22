@@ -47,7 +47,7 @@ class Scanner:
     -------------
     advance(self): Moves file pointer opened in init function on by one character.
 
-    skip_spaces(self): Moves onwards until current_characer has first non-whitespace.
+    skip_spaces_and_comments(self): Moves onwards until current_character has first non-whitespace, non-comment character.
 
     get_word(self): Returns next combination of alphanumeric characters separated by whitespace.
 
@@ -90,15 +90,27 @@ class Scanner:
         """Moves file pointer on by one character and assigns to current_character variable."""
         self.current_character = self.file.read(1)
     
-    def skip_spaces(self):
-        """Passes the file pointer over white-space characters, whilst tracking where the last EOL is."""
+    def skip_spaces_and_comments(self):
+        """Passes the file pointer over white-space characters and comments, whilst tracking where the last EOL is."""
         self.advance()
-        while( self.current_character.isspace() ):
-            if self.current_character == '\n':
-                self.last_EOL = self.file.tell()
-                self.no_EOL += 1
-            self.advance()
-        # current_character now contains non-whitespace
+        inside_comment = False
+        while( True ):
+            if self.current_character.isspace():
+                if self.current_character == '\n':
+                    self.last_EOL = self.file.tell()
+                    self.no_EOL += 1
+                self.advance()
+            elif self.current_character == '#': # enter / leave comment
+                if inside_comment is False:  # enter comment
+                    inside_comment = True
+                else:  # end of comment
+                    inside_comment = False
+                self.advance()
+            elif inside_comment is True:
+                self.advance()
+            else:
+                break
+        # current_character now contains non-whitespace and non-comment
 
     def get_word(self):
         """Returns next word (alphanumeric characters between whitespace) when called. Assumes current_character is a letter."""
@@ -114,7 +126,7 @@ class Scanner:
         name = self.get_word()
         if (name in ['begin', 'end']):  # could be two word name
             pos_pre_check = self.file.tell() 
-            self.skip_spaces()
+            self.skip_spaces_and_comments()
             next_word = self.get_word()
             if (next_word in ['devices', 'monitors', 'connections']):  # two word name found
                 name = name + next_word
@@ -134,7 +146,7 @@ class Scanner:
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
         symbol = Symbol()
-        self.skip_spaces()
+        self.skip_spaces_and_comments() 
 
         if self.current_character.isalpha():
             name_string = self.get_name()
