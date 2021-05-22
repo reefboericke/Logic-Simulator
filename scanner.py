@@ -47,6 +47,7 @@ class Scanner:
     -------------
     get_symbol(self): Translates the next sequence of characters into a symbol
                       and returns the symbol.
+
     """
 
     def __init__(self, path, names):
@@ -72,6 +73,7 @@ class Scanner:
             sys.exit()
     
     def advance(self):
+        """Moves file pointer on by one character and assigns to current_character variable."""
         self.current_character = self.file.read(1)
     
     def skip_spaces(self):
@@ -82,7 +84,6 @@ class Scanner:
                 self.last_EOL = self.file.tell()
                 self.no_EOL += 1
             self.advance()
-            #self.current_character = self.file.read(1)
         # current_character now contains non-whitespace
 
     def get_word(self):
@@ -103,8 +104,7 @@ class Scanner:
             next_word = self.get_word()
             if (next_word in ['devices', 'monitors', 'connections']):  # two word name found
                 name = name + next_word
-            else:
-                # not a two word name and need to go back
+            else:  # not a two word name and need to go back
                 self.file.seek(pos_pre_check)
         return name
 
