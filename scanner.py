@@ -45,9 +45,23 @@ class Scanner:
 
     Public methods
     -------------
-    get_symbol(self): Translates the next sequence of characters into a symbol
-                      and returns the symbol.
+    advance(self): Moves file pointer opened in init function on by one character.
 
+    skip_spaces(self): Moves onwards until current_characer has first non-whitespace.
+
+    get_word(self): Returns next combination of alphanumeric characters separated by whitespace.
+
+    get_name(self): Returns next name from file, accounting for two-word names that start BNA logic blocks.
+
+    get_number(self): Returns next sequence of numbers from file. Assumes file pointer starts on a number.
+
+    get_symbol(self): Scans through the file to return to the next identifiable symbol,
+                      stored in the Symbol object, including it's index and type.
+
+    output_error_line(self, error_code, error_index=False): Prints out to terminal the current line the scanner is on,
+                                                            and an arrow to the current location of the file pointer. Used
+                                                            for when an error has been detected and grabs correct error message
+                                                            according to error_code.
     """
 
     def __init__(self, path, names):
