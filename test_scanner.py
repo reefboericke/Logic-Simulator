@@ -4,7 +4,7 @@ import pytest
 from scanner import Symbol
 from scanner import Scanner
 
-@pytest.fixture:
+@pytest.fixture
 def new_symbol():
     """ Returns a new symbol. """
     return Symbol()
