@@ -42,6 +42,8 @@ class Names:
         """Initialise names list."""
         self.error_code_count = 0  # how many error codes have been declared
 
+        self.names_list = [] # Declare the names list
+
     def unique_error_codes(self, num_error_codes):
         """Return a list of unique integer error codes."""
         if not isinstance(num_error_codes, int):
@@ -56,14 +58,41 @@ class Names:
         If the name string is not present in the names list, return None.
         """
 
+        if type(name_string) != str: # Check to make sure the name_string is string, raise error if false
+            raise TypeError
+        else:
+            if name_string not in self.names_list: # Check if name_string has ID, return None if false, return ID if true
+                return None
+            else:
+                return self.names_list.index(name_string)
+
     def lookup(self, name_string_list):
         """Return a list of name IDs for each name string in name_string_list.
 
         If the name string is not present in the names list, add it.
         """
 
+        ID_list = [] # Initialise the output
+        for name_string in name_string_list: # Iterate through each name_string
+            if type(name_string) != str: # Check to make sure the name_string is string, raise error if false
+                raise TypeError  # TODO: Maybe add an option to still print the list of valid IDs?
+            else:
+                if name_string not in self.names_list: # Check if name_string has ID, add to names_list if false
+                    self.names_list.append(name_string) 
+                ID_list.append(self.names_list.index(name_string)) # Add ID to output
+        return ID_list
+
     def get_name_string(self, name_id):
         """Return the corresponding name string for name_id.
 
         If the name_id is not an index in the names list, return None.
         """
+        
+        if name_id in range(len(self.names_list)): # If a valid ID and in range, retun name_string
+            return self.names_list[name_id]
+        elif type(name_id) != int: # If not valid, raise error
+            raise TypeError
+        elif name_id < 0:
+            raise ValueError
+        else: # If valid but not in range, return None
+            return None
