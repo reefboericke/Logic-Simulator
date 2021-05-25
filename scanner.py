@@ -92,13 +92,13 @@ class Scanner:
                                  self.DOT, self.KEYWORD, self.NUMBER,
                                  self.NAME, self.EOF, self.ARROW] = range(9)
         self.keywords_list = ["begindevices", "enddevices", "beginconnections",
-                              "endconnections", "beginmonitors", "endmonitors",
+                              "endconnections", "beginmonitors", "endmonitors", "OR",
                               "NAND", "AND", "NOR", "XOR", "CLOCK", "SWITCH",
                               "DTYPE", "DATA", "CLK", "SET", "CLEAR", "inputs",
                               "period", "intial"]
 
         [self.begindevices_ID, self.enddevices_ID, self.beginconnections_ID,
-         self.endconnections_ID, self.beginmonitors_ID, self.endmonitors_ID,
+         self.endconnections_ID, self.beginmonitors_ID, self.endmonitors_ID, self.OR_ID,
          self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID, self.CLOCK_ID,
          self.SWITCH_ID, self.DTYPE_ID, self.DATA_ID, self.CLK_ID,
          self.SET_ID, self.CLEAR_ID, self.inputs_ID, self.period_ID,

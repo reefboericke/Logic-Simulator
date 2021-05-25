@@ -18,3 +18,5 @@ def test_next_symbol(new_scanner):
     next_symbol = new_scanner.get_symbol()
 
     assert(next_symbol == 'begindevices')
+
+def 
