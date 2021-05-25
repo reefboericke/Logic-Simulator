@@ -65,6 +65,9 @@ class Scanner:
                       identifiable symbol, stored in the Symbol object,
                       including it's index and type.
 
+    is_puncutation(self): Returns true if the current char is a single
+                          punctuation piece
+
     output_error_line(self, error_code, error_index=False): Prints out to
                                                             terminal the
                                                             current line
@@ -96,12 +99,13 @@ class Scanner:
 
         [self.begindevices_ID, self.enddevices_ID, self.beginconnections_ID,
          self.endconnections_ID, self.beginmonitors_ID, self.endmonitors_ID,
-         self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID, self.SWITCH_ID,
-         self.DTYPE_ID, self.DATA_ID, self.CLK_ID, self.SET_ID, self.CLEAR_ID,
-         self.period_ID,
+         self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID, self.CLOCK_ID,
+         self.SWITCH_ID, self.DTYPE_ID, self.DATA_ID, self.CLK_ID,
+         self.SET_ID, self.CLEAR_ID, self.inputs_ID, self.period_ID,
          self.initial_ID] = self.names.lookup(self.keywords_list)
         self.current_character = ""
         self.no_EOL = 0
+        self.start_of_file = True
         # open file
         try:
             self.file = open(path, 'r')
@@ -114,9 +118,17 @@ class Scanner:
            assigns to current_character variable."""
         self.current_character = self.file.read(1)
 
+    def is_punctuation(self):
+        """ Checks if current char is puncutation such
+            that it isn't skipped over """
+        if self.current_character in [':', ';', '.']:
+            return True
+
     def skip_spaces_and_comments(self):
         """Passes the file pointer over white-space characters
            and comments, whilst tracking where the last EOL is."""
+        if (self.is_punctuation() is True):
+            return
         self.advance()
         inside_comment = False
         while(True):
@@ -166,7 +178,7 @@ class Scanner:
         """Returns next number from opened file, provided pointer
            currently at start of a number."""
         number = ''
-        while(self.current_character.isnum()):
+        while(self.current_character.isdigit()):
             number += self.current_character
             self.advance()
         # current_character now contains first non-num char
@@ -183,30 +195,39 @@ class Scanner:
                 symbol.type = self.KEYWORD
             else:
                 symbol.type = self.NAME
+            print(name_string)
             [symbol.id] = self.names.lookup([name_string])
 
         elif self.current_character.isdigit():  # number
             symbol.id = self.get_number()
+            print(symbol.id)
             symbol.type = self.NUMBER
 
         elif self.current_character == "=":  # punctuation
             symbol.type = self.EQUALS
+            print('=')
             self.advance()
 
-        elif self.current_character == "->":
-            symbol.type = self.ARROW
+        elif self.current_character == "-":
             self.advance()
+            if self.current_character == ">":  # -> found
+                symbol.type = self.ARROW
+                print('->')
+                self.advance()
 
         elif self.current_character == ":":
             symbol.type = self.COLON
+            print(':')
             self.advance()
 
         elif self.current_character == ";":
             symbol.type = self.SEMICOLON
+            print(';')
             self.advance()
 
         elif self.current_character == ".":
             symbol.type = self.DOT
+            print('.')
             self.advance()
 
         elif self.current_character == "":  # end of file
