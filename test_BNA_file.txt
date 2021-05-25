@@ -2,7 +2,7 @@
 
 begin devices:
 	AND G1: inputs = 2;
-	AND G2; inputs = 2;
+	AND G2: inputs = 2;
 	# implement a NOT gate using a two input NAND #
 	NAND notS: inputs = 2;
 	OR G3: inputs = 2;
