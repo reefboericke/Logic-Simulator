@@ -52,11 +52,8 @@ class Scanner:
                                     has first non-whitespace, non-comment
                                     character.
 
-    get_word(self): Returns next combination of alphanumeric characters
-                    separated by whitespace.
-
-    get_name(self): Returns next name from file, accounting for two-word
-                    names that start BNA logic blocks.
+    get_name(self): Returns next name from file, provided current char
+                    is a letter.
 
     get_number(self): Returns next sequence of numbers from file. Assumes
                       file pointer starts on a number.
@@ -140,16 +137,6 @@ class Scanner:
                 break
         # current_character now contains non-whitespace and non-comment
 
-    def get_word(self):
-        """Returns next word (alphanumeric characters between whitespace)
-           when called. Assumes current_character is a letter."""
-        word = ''
-        while(self.current_character.isalnum() or self.current_character == '_'):
-            word += self.current_character
-            self.advance()
-        # current_character now contains first non-alnum char
-        return word
-
     def get_name(self):
         """Returns the next name from the opened file,
            checking if it's single or two word."""
@@ -218,7 +205,7 @@ class Scanner:
         elif self.current_character == "":  # end of file
             symbol.type = self.EOF
 
-        else:  # not a valid character
+        else:  # not a valid character, pass processing onto parser
             self.type = self.UNEXPECTED
             self.id = self.current_character
             self.advance()
