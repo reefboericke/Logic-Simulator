@@ -65,9 +65,6 @@ class Scanner:
                       identifiable symbol, stored in the Symbol object,
                       including it's index and type.
 
-    is_puncutation(self): Returns true if the current char is a single
-                          punctuation piece
-
     output_error_line(self, error_code, error_index=False): Prints out to
                                                             terminal the
                                                             current line
@@ -92,16 +89,17 @@ class Scanner:
                                  self.DOT, self.KEYWORD, self.NUMBER,
                                  self.NAME, self.EOF, self.ARROW] = range(9)
         self.keywords_list = ["begindevices", "enddevices", "beginconnections",
-                              "endconnections", "beginmonitors", "endmonitors", "OR",
-                              "NAND", "AND", "NOR", "XOR", "CLOCK", "SWITCH",
-                              "DTYPE", "DATA", "CLK", "SET", "CLEAR", "inputs",
-                              "period", "intial"]
+                              "endconnections", "beginmonitors", "endmonitors",
+                              "OR", "NAND", "AND", "NOR", "XOR", "CLOCK",
+                              "SWITCH", "DTYPE", "DATA", "CLK", "SET", "CLEAR",
+                              "inputs", "period", "intial"]
 
         [self.begindevices_ID, self.enddevices_ID, self.beginconnections_ID,
-         self.endconnections_ID, self.beginmonitors_ID, self.endmonitors_ID, self.OR_ID,
-         self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID, self.CLOCK_ID,
-         self.SWITCH_ID, self.DTYPE_ID, self.DATA_ID, self.CLK_ID,
-         self.SET_ID, self.CLEAR_ID, self.inputs_ID, self.period_ID,
+         self.endconnections_ID, self.beginmonitors_ID, self.endmonitors_ID,
+         self.OR_ID, self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID,
+         self.CLOCK_ID, self.SWITCH_ID, self.DTYPE_ID, self.DATA_ID,
+         self.CLK_ID, self.SET_ID, self.CLEAR_ID, self.inputs_ID,
+         self.period_ID,
          self.initial_ID] = self.names.lookup(self.keywords_list)
         self.current_character = ""
         self.no_EOL = 0
@@ -112,24 +110,19 @@ class Scanner:
         except FileNotFoundError:
             print("Incorrect file - check provided path!")
             sys.exit()
+        self.advance()
 
     def advance(self):
         """Moves file pointer on by one character and
            assigns to current_character variable."""
         self.current_character = self.file.read(1)
 
-    def is_punctuation(self):
-        """ Checks if current char is puncutation such
-            that it isn't skipped over """
-        if self.current_character in [':', ';', '.']:
-            return True
-
     def skip_spaces_and_comments(self):
         """Passes the file pointer over white-space characters
            and comments, whilst tracking where the last EOL is."""
-        if (self.is_punctuation() is True):
-            return
-        self.advance()
+        # if (self.is_punctuation() is True):
+        # return
+        # self.advance()
         inside_comment = False
         while(True):
             if self.current_character.isspace():

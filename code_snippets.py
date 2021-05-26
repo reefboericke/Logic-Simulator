@@ -16,3 +16,11 @@ if self.current_character == '#':  # comment found
     self.advance()
     self.get_symbol()
 """
+
+"""
+def is_punctuation(self):
+         #Checks if current char is puncutation such
+          #  that it isn't skipped over
+        if self.current_character in [':', ';', '.']:
+            return True
+"""
