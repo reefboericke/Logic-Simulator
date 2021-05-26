@@ -87,16 +87,14 @@ class Scanner:
         self.names = names
         self.symbol_type_list = [self.SEMICOLON, self.COLON, self.EQUALS,
                                  self.DOT, self.KEYWORD, self.NUMBER,
-                                 self.NAME, self.EOF, self.ARROW] = range(9)
-        self.keywords_list = ["begindevices", "enddevices", "beginconnections",
-                              "endconnections", "beginmonitors", "endmonitors",
+                                 self.NAME, self.EOF, self.ARROW, self.UNEXPECTED] = range(10)
+        self.keywords_list = ["begin", "end", "connections", "monitors",
                               "OR", "NAND", "AND", "NOR", "XOR", "CLOCK",
                               "SWITCH", "DTYPE", "DATA", "CLK", "SET", "CLEAR",
                               "inputs", "period", "intial"]
 
-        [self.begindevices_ID, self.enddevices_ID, self.beginconnections_ID,
-         self.endconnections_ID, self.beginmonitors_ID, self.endmonitors_ID,
-         self.OR_ID, self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID,
+        [self.begin_ID, self.end_ID, self.connections_ID, self.monitors_ID,
+        self.OR_ID, self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID,
          self.CLOCK_ID, self.SWITCH_ID, self.DTYPE_ID, self.DATA_ID,
          self.CLK_ID, self.SET_ID, self.CLEAR_ID, self.inputs_ID,
          self.period_ID,
@@ -146,7 +144,7 @@ class Scanner:
         """Returns next word (alphanumeric characters between whitespace)
            when called. Assumes current_character is a letter."""
         word = ''
-        while(self.current_character.isalnum()):
+        while(self.current_character.isalnum() or self.current_character == '_'):
             word += self.current_character
             self.advance()
         # current_character now contains first non-alnum char
@@ -155,16 +153,10 @@ class Scanner:
     def get_name(self):
         """Returns the next name from the opened file,
            checking if it's single or two word."""
-        name = self.get_word()
-        if (name in ['begin', 'end']):  # could be two word name
-            pos_pre_check = self.file.tell()
-            self.skip_spaces_and_comments()
-            next_word = self.get_word()
-            if (next_word in ['devices', 'monitors',
-                              'connections']):  # two word name found
-                name = name + next_word
-            else:  # not a two word name and need to go back
-                self.file.seek(pos_pre_check)
+        name = ''
+        while(self.current_character.isalnum() or self.current_character == '_'):
+            name = name + self.current_character
+            self.advance()
         return name
 
     def get_number(self):
@@ -227,6 +219,8 @@ class Scanner:
             symbol.type = self.EOF
 
         else:  # not a valid character
+            self.type = self.UNEXPECTED
+            self.id = self.current_character
             self.advance()
 
         return symbol

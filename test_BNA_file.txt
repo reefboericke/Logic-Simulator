@@ -2,7 +2,10 @@
 
 begin devices:
 	AND G1: inputs = 2;
+    _test
+    test_number_3 _ 
 	AND G2: inputs = 2;
+    3anothertest
 	# implement a NOT gate using a two input NAND #
 	NAND notS: inputs = 2;
 	OR G3: inputs = 2;
