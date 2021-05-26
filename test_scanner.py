@@ -8,7 +8,7 @@ from names import Names
 
 @pytest.fixture
 def new_scanner():
-    """ Returns scanner and name objects operating on passed file present in test cases folder. """
+    """Return scanner and name objects operating on passed file present in test cases folder."""
     def _method(file):
         names = Names()
         dirname = os.path.dirname(__file__)
@@ -19,7 +19,7 @@ def new_scanner():
 
 @pytest.fixture
 def return_symbols(new_scanner):
-    """ Returns a list of all found symbols in provided file and the names list built during scan. """
+    """Return a list of all found symbols in provided file and the names list built during scan."""
     def _method(file):
         scanner, names = new_scanner(file)
         current_symbol = scanner.get_symbol()
@@ -32,7 +32,7 @@ def return_symbols(new_scanner):
     return _method
 
 def test_comments_and_whitespace(return_symbols):
-    """ Tests scanner able to pick out symbols amidst comments and whitespace. """
+    """Test scanner able to pick out symbols amidst comments and whitespace."""
     symbols, names = return_symbols('comments.bna')
     symbols_name = [names.get_name_string(symbol.id) for symbol in symbols]
     expected_names = ['test', 'names', 'that', 'should', 'be', 'picked', 'up', 'more', 'symbols']
@@ -40,7 +40,7 @@ def test_comments_and_whitespace(return_symbols):
         assert symbols_name[id] ==  expected_names[id]
 
 def test_punctuation(return_symbols):
-    """ Tests scanner picks out correct punctuation and non-alphanumerics. """
+    """Test scanner picks out correct punctuation and non-alphanumerics."""
     symbols = return_symbols('punctuation.bna')[0]
     expected_punctuation = [3, # dot
                             0, # semicolon
@@ -59,10 +59,8 @@ def test_punctuation(return_symbols):
     for id in range(len([punctuation_only])):
         assert symbols[id].type == expected_punctuation[id]
 
-def test_numbers_and_names(return_symbols):
-    return True
-
 def test_unexpected_characters(return_symbols):
+    """Test scanner able to spot and not crash on unused chars."""
     symbols, names = return_symbols('unexpected_chars.bna')
     expected_words = ['begin', 'devices', 'NAND', 'G1', 'inputs']
     expected_others = [1, # colon
@@ -88,3 +86,21 @@ def test_unexpected_characters(return_symbols):
     assert number_unexpected == 50
     for index in range(len(others)):
         assert others[index].type == expected_others[index]
+
+def test_numbers_and_names(return_symbols):
+    """Test scanner correctly identifies names, keywords and numbers."""
+    symbols, names = return_symbols('numbers_names.bna')
+    expected_data = ['begin', 'end', 'connections', 'monitors',
+                         'OR', 'NAND', 'AND', 'NOR', 'XOR', 'CLOCK',
+                         'SWITCH', 'DTYPE', 'DATA', 'CLK', 'SET', 'CLEAR',
+                         'inputs', 'period', 'initial', 'gate1', 'gate2', '350', '758', '1']
+    for index in range(len(symbols)):
+        if index <= 18:
+            assert symbols[index].type == 4 # should all be keywords
+            assert names.get_name_string(symbols[index].id) == expected_data[index]
+        elif index <= 20:
+            assert symbols[index].type == 6 # should be names
+            assert names.get_name_string(symbols[index].id) == expected_data[index]
+        else:
+            assert symbols[index].type == 5 # should be numbers
+            assert symbols[index].id == expected_data[index]

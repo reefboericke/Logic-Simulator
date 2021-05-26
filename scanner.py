@@ -87,7 +87,7 @@ class Scanner:
         self.keywords_list = ["begin", "end", "connections", "monitors",
                               "OR", "NAND", "AND", "NOR", "XOR", "CLOCK",
                               "SWITCH", "DTYPE", "DATA", "CLK", "SET", "CLEAR",
-                              "inputs", "period", "intial"]
+                              "inputs", "period", "initial"]
 
         [self.begin_ID, self.end_ID, self.connections_ID, self.monitors_ID,
          self.OR_ID, self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID,
