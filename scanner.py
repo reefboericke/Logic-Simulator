@@ -11,7 +11,6 @@ Symbol - encapsulates a symbol and stores its properties.
 
 
 class Symbol:
-
     """Encapsulate a symbol and store its properties.
 
     Parameters
@@ -30,7 +29,6 @@ class Symbol:
 
 
 class Scanner:
-
     """Read circuit definition file and translate the characters into symbols.
 
     Once supplied with the path to a valid definition file, the scanner
@@ -84,14 +82,15 @@ class Scanner:
         self.names = names
         self.symbol_type_list = [self.SEMICOLON, self.COLON, self.EQUALS,
                                  self.DOT, self.KEYWORD, self.NUMBER,
-                                 self.NAME, self.EOF, self.ARROW, self.UNEXPECTED] = range(10)
+                                 self.NAME, self.EOF, self.ARROW,
+                                 self.UNEXPECTED] = range(10)
         self.keywords_list = ["begin", "end", "connections", "monitors",
                               "OR", "NAND", "AND", "NOR", "XOR", "CLOCK",
                               "SWITCH", "DTYPE", "DATA", "CLK", "SET", "CLEAR",
                               "inputs", "period", "intial"]
 
         [self.begin_ID, self.end_ID, self.connections_ID, self.monitors_ID,
-        self.OR_ID, self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID,
+         self.OR_ID, self.NAND_ID, self.AND_ID, self.NOR_ID, self.XOR_ID,
          self.CLOCK_ID, self.SWITCH_ID, self.DTYPE_ID, self.DATA_ID,
          self.CLK_ID, self.SET_ID, self.CLEAR_ID, self.inputs_ID,
          self.period_ID,
@@ -108,16 +107,14 @@ class Scanner:
         self.advance()
 
     def advance(self):
-        """Moves file pointer on by one character and
-           assigns to current_character variable."""
+        """Move file pointer on by one character.
+
+        Reassigns current_character variable.
+        """
         self.current_character = self.file.read(1)
 
     def skip_spaces_and_comments(self):
-        """Passes the file pointer over white-space characters
-           and comments, whilst tracking where the last EOL is."""
-        # if (self.is_punctuation() is True):
-        # return
-        # self.advance()
+        """Pass file pointer over white-space characters and comments."""
         inside_comment = False
         while(True):
             if self.current_character.isspace():
@@ -138,17 +135,22 @@ class Scanner:
         # current_character now contains non-whitespace and non-comment
 
     def get_name(self):
-        """Returns the next name from the opened file,
-           checking if it's single or two word."""
+        """Return next name from opened file.
+
+        Pointer needs to be at start of name.
+        """
         name = ''
-        while(self.current_character.isalnum() or self.current_character == '_'):
+        while(self.current_character.isalnum() or
+              self.current_character == '_'):
             name = name + self.current_character
             self.advance()
         return name
 
     def get_number(self):
-        """Returns next number from opened file, provided pointer
-           currently at start of a number."""
+        """Return next number from opened file.
+
+        Pointer needs to be at start of a number.
+        """
         number = ''
         while(self.current_character.isdigit()):
             number += self.current_character
@@ -157,7 +159,7 @@ class Scanner:
         return number
 
     def get_symbol(self):
-        """Translate the next sequence of characters into a symbol."""
+        """Translate next sequence of characters into a symbol."""
         symbol = Symbol()
         self.skip_spaces_and_comments()
 
@@ -205,16 +207,19 @@ class Scanner:
         elif self.current_character == "":  # end of file
             symbol.type = self.EOF
 
-        else:  # not a valid character, pass processing onto parser
-            self.type = self.UNEXPECTED
-            self.id = self.current_character
+        else:  # not a known character, pass processing onto parser
+            print(self.current_character)
+            symbol.type = self.UNEXPECTED
+            symbol.id = self.current_character
             self.advance()
 
         return symbol
 
     def output_error_line(self, error_code, error_index=False):
-        """Outputs current line and arrow to indicate location of file
-           pointer. Called when parser detects a syntax error."""
+        """Output current line and arrow to indicate location of file pointer.
+
+        Called when parser detects a syntax error.
+        """
         if error_index is False:  # no provided index, default to current pos
             error_index = self.file.tell()
         current_line = linecache.getline(self.path, self.no_EOL)

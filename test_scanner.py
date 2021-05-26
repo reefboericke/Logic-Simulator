@@ -40,7 +40,8 @@ def test_comments_and_whitespace(return_symbols):
         assert symbols_name[id] ==  expected_names[id]
 
 def test_punctuation(return_symbols):
-    symbols, names = return_symbols('punctuation.bna')
+    """ Tests scanner picks out correct punctuation and non-alphanumerics. """
+    symbols = return_symbols('punctuation.bna')[0]
     expected_punctuation = [3, # dot
                             0, # semicolon
                             8, # arrow
@@ -62,5 +63,28 @@ def test_numbers_and_names(return_symbols):
     return True
 
 def test_unexpected_characters(return_symbols):
-    return True
-    
+    symbols, names = return_symbols('unexpected_chars.bna')
+    expected_words = ['begin', 'devices', 'NAND', 'G1', 'inputs']
+    expected_others = [1, # colon
+                       1, # colon
+                       2, # equals
+                       5, # number
+                       0 # semicolon
+    ]
+    found_words = []
+    others = []
+    number_unexpected = 0
+    for index in range(len(symbols)):
+        symbol_type = symbols[index].type
+        if symbol_type == 9:  # if unexpected char
+            number_unexpected += 1
+        elif symbol_type == 4 or symbol_type == 6: # is a name / keyword
+            found_words.append(symbols[index])
+        else: # punctuation etc.
+            others.append(symbols[index])
+    found_words = [names.get_name_string(symbol.id) for symbol in found_words]
+    for index in range(len(found_words)):
+        assert found_words[index] == expected_words[index]
+    assert number_unexpected == 50
+    for index in range(len(others)):
+        assert others[index].type == expected_others[index]
