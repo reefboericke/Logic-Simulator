@@ -1,11 +1,43 @@
-class Error:
+"""Store details of error encountered in BNA file.
 
-    def __init__(self, error_number, location, error_type, error_id, scanner):
+Used by parser in the logic simular project; creates
+error objects to track where encountered and their details.
+
+Classes
+-------
+Error - stores details of an error including its type and location.
+"""
+
+
+class Error:
+    """Store details of an error including type and location.
+
+    Errors are found by the parser as it sequentially recieves symbols from
+    the scanner and checks them against the BNA EBNF and semantic constraints.
+    The error object captures the details of the type of error and where the
+    scanner says it occurred.
+
+    Parameters
+    ----------
+    error_number: unique number identifying this specific error.
+    location: touple containing (line number of error, text of this line,
+              number of spaces to error). These details returned by
+              call to scanner.return_location().
+    error_type: string of either 'syntax' or 'semantic'.
+    error_id: id of semantic error or string of what triggered syntax error.
+
+    Public methods
+    --------------
+    report(self): Prints and returns the relevant error message given
+                  attributes of the error object.
+    """
+
+    def __init__(self, error_number, location, error_type, error_id):
+        """Intialise constants and error table."""
         self.error_number = error_number
         self.location = location
         self.error_type = error_type
         self.error_id = error_id
-        self.scanner = scanner
 
         self.semantic_errors = {
             0: 'Invalid number of inputs to gate.',
@@ -31,7 +63,8 @@ class Error:
     def report(self):
         """Build error message for reporting via terminal or GUI."""
         error_text = ''
-        error_text += self.error_type + ' Error on line ' + self.location[0] + ':'
+        error_text += self.error_type + \
+            ' Error on line ' + self.location[0] + ':'
         if self.error_type == 'semantic':
             error_text += self.semantic_errors[self.error_id]
         elif self.error_type == 'syntax':
@@ -42,9 +75,3 @@ class Error:
         error_text += '^'
         print(error_text)
         return(error_text)
-        
-
-
-    
-    
-
