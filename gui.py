@@ -67,6 +67,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Initialise variables for zooming
         self.zoom = 1
 
+        # Initialise variables for rendering signals
+        self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]]
+        self.length = 10
+
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_SIZE, self.on_size)
@@ -87,7 +91,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glTranslated(self.pan_x, self.pan_y, 0.0)
         GL.glScaled(self.zoom, self.zoom, self.zoom)
 
-    def render(self, text):
+    def render(self, outputs, length):
         """Handle all drawing operations."""
         self.SetCurrent(self.context)
         if not self.init:
@@ -98,19 +102,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Clear everything
         GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-        # Draw specified text at position (10, 10)
-        self.render_text(text, 10, 10)
-
         # Draw a sample signal trace
         GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
         GL.glBegin(GL.GL_LINE_STRIP)
-        for i in range(10):
+        for i in range(length):
             x = (i * 20) + 10
             x_next = (i * 20) + 30
-            if i % 2 == 0:
-                y = 75
-            else:
-                y = 100
+            y = outputs[0][i]
             GL.glVertex2f(x, y)
             GL.glVertex2f(x_next, y)
         GL.glEnd()
@@ -128,10 +126,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.init_gl()
             self.init = True
 
-        size = self.GetClientSize()
-        text = "".join(["Canvas redrawn on paint event, size is ",
-                        str(size.width), ", ", str(size.height)])
-        self.render(text)
+        self.render(self.outputs, self.length)
 
     def on_size(self, event):
         """Handle the canvas resize event."""
@@ -150,23 +145,18 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         if event.ButtonDown():
             self.last_mouse_x = event.GetX()
             self.last_mouse_y = event.GetY()
-            text = "".join(["Mouse button pressed at: ", str(event.GetX()),
-                            ", ", str(event.GetY())])
         if event.ButtonUp():
-            text = "".join(["Mouse button released at: ", str(event.GetX()),
-                            ", ", str(event.GetY())])
+            self.last_mouse_x = event.GetX()
+            self.last_mouse_y = event.GetY()
         if event.Leaving():
-            text = "".join(["Mouse left canvas at: ", str(event.GetX()),
-                            ", ", str(event.GetY())])
+            self.last_mouse_x = event.GetX()
+            self.last_mouse_y = event.GetY()
         if event.Dragging():
             self.pan_x += event.GetX() - self.last_mouse_x
             self.pan_y -= event.GetY() - self.last_mouse_y
             self.last_mouse_x = event.GetX()
             self.last_mouse_y = event.GetY()
             self.init = False
-            text = "".join(["Mouse dragged to: ", str(event.GetX()),
-                            ", ", str(event.GetY()), ". Pan is now: ",
-                            str(self.pan_x), ", ", str(self.pan_y)])
         if event.GetWheelRotation() < 0:
             self.zoom *= (1.0 + (
                 event.GetWheelRotation() / (20 * event.GetWheelDelta())))
@@ -174,8 +164,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.pan_x -= (self.zoom - old_zoom) * ox
             self.pan_y -= (self.zoom - old_zoom) * oy
             self.init = False
-            text = "".join(["Negative mouse wheel rotation. Zoom is now: ",
-                            str(self.zoom)])
         if event.GetWheelRotation() > 0:
             self.zoom /= (1.0 - (
                 event.GetWheelRotation() / (20 * event.GetWheelDelta())))
@@ -183,25 +171,23 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.pan_x -= (self.zoom - old_zoom) * ox
             self.pan_y -= (self.zoom - old_zoom) * oy
             self.init = False
-            text = "".join(["Positive mouse wheel rotation. Zoom is now: ",
-                            str(self.zoom)])
-        if text:
-            self.render(text)
-        else:
-            self.Refresh()  # triggers the paint event
+        #if text:
+        #    self.render([[0, 10, 10, 10, 10, 0, 0, 10, 0, 0]], 10)
+        #else:
+        self.Refresh()  # triggers the paint event
 
-    def render_text(self, text, x_pos, y_pos):
-        """Handle text drawing operations."""
-        GL.glColor3f(0.0, 0.0, 0.0)  # text is black
-        GL.glRasterPos2f(x_pos, y_pos)
-        font = GLUT.GLUT_BITMAP_HELVETICA_12
+    #def render_text(self, text, x_pos, y_pos):
+    #    """Handle text drawing operations."""
+    #    GL.glColor3f(0.0, 0.0, 0.0)  # text is black
+    #    GL.glRasterPos2f(x_pos, y_pos)
+    #    font = GLUT.GLUT_BITMAP_HELVETICA_12
 
-        for character in text:
-            if character == '\n':
-                y_pos = y_pos - 20
-                GL.glRasterPos2f(x_pos, y_pos)
-            else:
-                GLUT.glutBitmapCharacter(font, ord(character))
+    #    for character in text:
+    #        if character == '\n':
+    #            y_pos = y_pos - 20
+    #            GL.glRasterPos2f(x_pos, y_pos)
+    #        else:
+    #            GLUT.glutBitmapCharacter(font, ord(character))
 
 
 class Gui(wx.Frame):
@@ -239,33 +225,54 @@ class Gui(wx.Frame):
         menuBar.Append(fileMenu, "&File")
         self.SetMenuBar(menuBar)
 
+        # Might need to later define the outputs and lengths etc. here first and then pass them to the canvas when the object is defined.
+        # For now these variables are defined in the canvas init function
+
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors)
 
         # Configure the widgets
-        self.text = wx.StaticText(self, wx.ID_ANY, "Cycles")
+        self.text = wx.StaticText(self, wx.ID_ANY, " Number of Cycles")
         self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
         self.run_button = wx.Button(self, wx.ID_ANY, "Run")
-        self.text_box = wx.TextCtrl(self, wx.ID_ANY, "",
-                                    style=wx.TE_PROCESS_ENTER)
+        self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
+        self.remove_monitor = wx.Button(self, wx.ID_ANY, "Zap Monitor")
+        self.add_monitor = wx.Button(self, wx.ID_ANY, "Add Monitor")
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
         self.spin.Bind(wx.EVT_SPINCTRL, self.on_spin)
         self.run_button.Bind(wx.EVT_BUTTON, self.on_run_button)
-        self.text_box.Bind(wx.EVT_TEXT_ENTER, self.on_text_box)
+        self.continue_button.Bind(wx.EVT_BUTTON, self.on_continue_button)
+        self.remove_monitor.Bind(wx.EVT_BUTTON, self.on_remove_monitor)
+        self.add_monitor.Bind(wx.EVT_BUTTON, self.on_add_monitor)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        side_sizer = wx.BoxSizer(wx.VERTICAL)
+        side_sizer = wx.FlexGridSizer(3, 5, 5)
 
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(side_sizer, 1, wx.ALL, 5)
 
-        side_sizer.Add(self.text, 1, wx.TOP, 10)
+        side_sizer.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
         side_sizer.Add(self.spin, 1, wx.ALL, 5)
+        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
         side_sizer.Add(self.run_button, 1, wx.ALL, 5)
-        side_sizer.Add(self.text_box, 1, wx.ALL, 5)
+        side_sizer.Add(self.continue_button, 1, wx.ALL, 5)
+        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        for i in range(3): #Iterate through the switches in the circuit and list them out with on/off
+            side_sizer.Add(wx.StaticText(self, wx.ID_ANY, "Switch " + str(i)))
+            side_sizer.Add(wx.RadioButton(self, wx.ID_ANY, label = "Off", style = wx.RB_GROUP))
+            side_sizer.Add(wx.RadioButton(self, wx.ID_ANY, label = "On"))
+
+        #Add monitor addition/removal controls
+        side_sizer.Add(wx.Choice(self, wx.ID_ANY, choices=["NAND1", "NAND2", "DTYPE1"]))
+        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        side_sizer.Add(self.add_monitor)
+
+        side_sizer.Add(wx.Choice(self, wx.ID_ANY, choices=["NAND3", "NAND4", "DTYPE2"]))
+        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        side_sizer.Add(self.remove_monitor)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
@@ -281,17 +288,20 @@ class Gui(wx.Frame):
 
     def on_spin(self, event):
         """Handle the event when the user changes the spin control value."""
-        spin_value = self.spin.GetValue()
-        text = "".join(["New spin control value: ", str(spin_value)])
-        self.canvas.render(text)
+        self.canvas.length = self.spin.GetValue()
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
-        text = "Run button pressed."
-        self.canvas.render(text)
+        self.canvas.render(self.canvas.outputs, self.canvas.length)
 
-    def on_text_box(self, event):
-        """Handle the event when the user enters text."""
-        text_box_value = self.text_box.GetValue()
-        text = "".join(["New text box value: ", text_box_value])
-        self.canvas.render(text)
+    def on_continue_button(self, event):
+        """Handle the event when the user clicks the continue button."""
+        self.canvas.render(self.canvas.outputs, self.canvas.length)
+
+    def on_remove_monitor(self, event):
+        """Handle removing the selected monitor"""
+        pass
+
+    def on_add_monitor(self, event):
+        """Handle adding the selected monitor"""
+        pass
