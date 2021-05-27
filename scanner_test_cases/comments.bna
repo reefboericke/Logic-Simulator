@@ -1,0 +1,5 @@
+# comment that should be skipped by scanner #
+
+test names that should be picked up#inline comment#more
+
+symbols

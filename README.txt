@@ -1,5 +1,3 @@
-sike made you look
-testing testing 123
-Don't look up the latin name for pig :o :o :o
+GF2: Logic Simulator Project
 
-changes to test unit testing on github v3
+This project develops a novel HDL, known as BNA, for use in a digital logic simulator program. Further details as project develops.

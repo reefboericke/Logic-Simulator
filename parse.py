@@ -10,6 +10,9 @@ Parser - parses the definition file and builds the logic network.
 """
 
 
+from attr import s
+
+
 class Parser:
 
     """Parse the definition file and build the logic network.
@@ -35,6 +38,11 @@ class Parser:
 
     def __init__(self, names, devices, network, monitors, scanner):
         """Initialise constants."""
+        self.names = names
+        self.devices = devices
+        self.network = network
+        self.monitors = monitors
+        self.scanner = scanner
 
     def parse_network(self):
         """Parse the circuit definition file."""

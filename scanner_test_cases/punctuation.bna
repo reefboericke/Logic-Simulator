@@ -1,0 +1,12 @@
+.;->
+
+#test#;
+
+.#test ;:. #
+
+NAND G1: inputs = 3; # standard line #
+G1.I2 # dot in middle of alpha-numeric characters #
+
+
+
+
