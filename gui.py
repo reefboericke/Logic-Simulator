@@ -68,7 +68,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.zoom = 1
 
         # Initialise variables for rendering signals
-        self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]]
+        self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]] # Fake test signal
         self.length = 10
 
         # Bind events to the canvas
@@ -136,7 +136,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
     def on_mouse(self, event):
         """Handle mouse events."""
-        text = ""
         # Calculate object coordinates of the mouse position
         size = self.GetClientSize()
         ox = (event.GetX() - self.pan_x) / self.zoom
@@ -171,9 +170,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.pan_x -= (self.zoom - old_zoom) * ox
             self.pan_y -= (self.zoom - old_zoom) * oy
             self.init = False
-        #if text:
-        #    self.render([[0, 10, 10, 10, 10, 0, 0, 10, 0, 0]], 10)
-        #else:
         self.Refresh()  # triggers the paint event
 
     #def render_text(self, text, x_pos, y_pos):
@@ -260,17 +256,26 @@ class Gui(wx.Frame):
         side_sizer.Add(self.run_button, 1, wx.ALL, 5)
         side_sizer.Add(self.continue_button, 1, wx.ALL, 5)
         side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        for i in range(3): #Iterate through the switches in the circuit and list them out with on/off
+        self.radiobuttons = []
+        for i in range(3): #Iterate through the switches in the circuit and list them out with on/off. (3) to be replaced with a value loaded from the circuit
             side_sizer.Add(wx.StaticText(self, wx.ID_ANY, "Switch " + str(i)))
-            side_sizer.Add(wx.RadioButton(self, wx.ID_ANY, label = "Off", style = wx.RB_GROUP))
-            side_sizer.Add(wx.RadioButton(self, wx.ID_ANY, label = "On"))
+            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+            side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
+            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On"))
+            side_sizer.Add(self.radiobuttons[-1])
 
-        #Add monitor addition/removal controls
-        side_sizer.Add(wx.Choice(self, wx.ID_ANY, choices=["NAND1", "NAND2", "DTYPE1"]))
+        # Define dummy lists of devices
+        self.monitored_devices = ["NAND1", "NAND2", "DTYPE1"]
+        self.unmonitored_devices = ["NAND3", "NAND4", "DTYPE2"]
+
+        # Add monitor addition/removal controls
+        self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+        side_sizer.Add(self.add_monitor_choice)
         side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
         side_sizer.Add(self.add_monitor)
 
-        side_sizer.Add(wx.Choice(self, wx.ID_ANY, choices=["NAND3", "NAND4", "DTYPE2"]))
+        self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+        side_sizer.Add(self.remove_monitor_choice)
         side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
         side_sizer.Add(self.remove_monitor)
 
@@ -292,6 +297,10 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
+        if(self.radiobuttons[0].GetValue()):
+            self.canvas.outputs[0][0] = 50
+        else:
+            self.canvas.outputs[0][0] = 0
         self.canvas.render(self.canvas.outputs, self.canvas.length)
 
     def on_continue_button(self, event):
