@@ -169,46 +169,38 @@ class Scanner:
                 symbol.type = self.KEYWORD
             else:
                 symbol.type = self.NAME
-            print(name_string)
             [symbol.id] = self.names.lookup([name_string])
 
         elif self.current_character.isdigit():  # number
             symbol.id = self.get_number()
-            print(symbol.id)
             symbol.type = self.NUMBER
 
         elif self.current_character == "=":  # punctuation
             symbol.type = self.EQUALS
-            print('=')
             self.advance()
 
         elif self.current_character == "-":
             self.advance()
             if self.current_character == ">":  # -> found
                 symbol.type = self.ARROW
-                print('->')
                 self.advance()
 
         elif self.current_character == ":":
             symbol.type = self.COLON
-            print(':')
             self.advance()
 
         elif self.current_character == ";":
             symbol.type = self.SEMICOLON
-            print(';')
             self.advance()
 
         elif self.current_character == ".":
             symbol.type = self.DOT
-            print('.')
             self.advance()
 
         elif self.current_character == "":  # end of file
             symbol.type = self.EOF
 
         else:  # not a known character, pass processing onto parser
-            print(self.current_character)
             symbol.type = self.UNEXPECTED
             symbol.id = self.current_character
             self.advance()
