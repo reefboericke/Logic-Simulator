@@ -215,11 +215,12 @@ class Scanner:
 
         return symbol
 
+    """
     def output_error_line(self, error_code, error_index=False):
-        """Output current line and arrow to indicate location of file pointer.
+        #Output current line and arrow to indicate location of file pointer.
 
-        Called when parser detects a syntax error.
-        """
+        #Called when parser detects a syntax error.
+        
         if error_index is False:  # no provided index, default to current pos
             error_index = self.file.tell()
         current_line = linecache.getline(self.path, self.no_EOL)
@@ -228,3 +229,13 @@ class Scanner:
         for i in range(no_spaces):
             print(" ", end='')
         print("^\n")
+    """
+
+    def return_location(self):
+        #return linecache.getline(self.path, line)
+        error_index = self.file.tell()
+        no_spaces = error_index - self.last_EOL
+        line = linecache.getline(self.path, self.no_EOL)
+        location = (self.no_EOL, line, no_spaces)
+        return(location)
+
