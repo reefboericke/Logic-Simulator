@@ -44,9 +44,37 @@ class Parser:
         self.monitors = monitors
         self.scanner = scanner
 
+    def error(self):
+        print("error encountered")
+
+    def deviceblockgrammar(self):
+        currsymb = self.scanner.get_symbol()
+        if currsymb.id != self.scanner.begin_ID:
+            self.error()
+        currsymb = self.scanner.get_symbol()
+        if currsymb.id != self.scanner.devices_ID:
+            self.error()
+        currsymb = self.scanner.get_symbol()
+        if currsymb.type != self.scanner.COLON:
+            self.error()
+        currsymb = self.scanner.get_symbol()
+        # self.devicedefintiongrammar()
+        if currsymb.id != self.scanner.end_ID:
+            self.error()
+        currsymb = self.scanner.get_symbol()
+        if currsymb.id != self.scanner.devices_ID:
+            self.error()
+        currsymb = self.scanner.get_symbol()
+        if currsymb.type != self.scanner.SEMICOLON:
+            self.error()
+            
+
+    def BNAcodegrammar(self):
+        self.deviceblockgrammar()
+        # self.connectionblockgrammar()
+        # self.monitorblockgrammar()
+
     def parse_network(self):
         """Parse the circuit definition file."""
-        # For now just return True, so that userint and gui can run in the
-        # skeleton code. When complete, should return False when there are
-        # errors in the circuit definition file.
-        return True
+        self.BNAcodegrammar()
+        
