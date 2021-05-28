@@ -205,6 +205,14 @@ class Scanner:
             symbol.id = self.current_character
             self.advance()
 
+        if symbol.type in [4, 6]:
+            print(self.names.names_list[symbol.id])
+        elif symbol.type == 5:
+            print(symbol.id)
+        else:
+            print([';', ':', '=', '.', None, None, None,'EOF','->','UNEXPECTED SYMBOL'][symbol.type])
+        print()
+        
         return symbol
 
     """
