@@ -217,6 +217,7 @@ class Gui(wx.Frame):
         # Configure the file menu
         fileMenu = wx.Menu()
         menuBar = wx.MenuBar()
+        fileMenu.Append(wx.ID_OPEN, "&Open")
         fileMenu.Append(wx.ID_ABOUT, "&About")
         fileMenu.Append(wx.ID_EXIT, "&Exit")
         menuBar.Append(fileMenu, "&File")
@@ -289,8 +290,15 @@ class Gui(wx.Frame):
         if Id == wx.ID_EXIT:
             self.Close(True)
         if Id == wx.ID_ABOUT:
-            wx.MessageBox("Logic Simulator\nCreated by Mojisola Agboola\n2017",
+            wx.MessageBox("Boernashly Logic Simulator\nCreated by Reef Boericke, Joe Nash, and Finn Ashley\n2021",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
+        if Id == wx.ID_OPEN:
+            with wx.FileDialog(self, "Open XYZ file", wildcard="txt files (*.txt)|*.txt",
+                       style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+                if fileDialog.ShowModal() == wx.ID_CANCEL:
+                    return
+                pathname = fileDialog.GetPath()
+                
 
     def on_spin(self, event):
         """Handle the event when the user changes the spin control value."""
