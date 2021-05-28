@@ -1,11 +1,12 @@
-"""Store details of error encountered in BNA file.
+"""Store details of errors encountered in BNA file.
 
 Used by parser in the logic simular project; creates
-error objects to track where encountered and their details.
+various error objects to track where encountered and their details.
 
 Classes
 -------
 Error - stores details of an error including its type and location.
+Error_Store - maintains database of errors, providing reporting and interfacing.
 """
 
 
@@ -63,7 +64,7 @@ class Error:
     def report(self):
         """Build error message for reporting via terminal or GUI."""
         error_text = ''
-        error_text += self.error_type + \
+        error_text += self.error_type.capitalize() + \
             ' Error on line ' + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
             error_text += self.semantic_errors[self.error_id]
@@ -73,36 +74,49 @@ class Error:
         for i in range(self.location[2]):
             error_text += ' '
         error_text += '^'
-        print(error_text)
         return(error_text)
 
 class Error_Store():
+    """Store all errors encountered by parser.
+
+    As parser finds errors, calls method of this object
+    to add the type of error it has found. Utilises passed
+    scanner to infer the location and tag the error with this.
+
+    Parameters
+    ----------
+    scanner: Instance of scanner class being used by simulator.
+
+    Public methods
+    --------------
+    add_error(self): adds new error to error list, given input
+                     arguements to the method.
+    sort_errors(self): sorts errors in list by their line number.
+    report_errors(self): returns full text of all errors in program
+                         and their details.
+    """
 
     def __init__(self, scanner):
+        """Initialise variables"""
         self.scanner = scanner
-
         self.errors = []
         self.no_errors = 0
 
     def add_error(self, error_type, error_id):
+        """Add new error to error list"""
         loc = self.scanner.return_location()
         self.no_errors += 1
         new_error  = Error(self.no_errors, loc, error_type, error_id)
         self.errors.append(new_error)
 
-        """
-        # move the file pointer onto next semicolon as current line contains error
-        sym = self.scanner.get_symbol()
-        while sym != self.scanner.SEMICOLON:
-            sym = self.scanner.get_symbol()
-        return(self.scanner.get_symbol())
-        """
-
     def sort_errors(self):
+        """Sort errors by line number"""
         self.errors.sort(key=lambda e: e.location[0])
 
     def report_errors(self):
-        total_error_text =''
+        """Build full error text of entire BNA file."""
+        self.sort_errors()
+        total_error_text ='\n'
         for error in self.errors:
             total_error_text += error.report() + '\n\n'
         print(total_error_text)
