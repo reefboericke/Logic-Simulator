@@ -4,9 +4,9 @@ begin devices:
 	# implement a NOT gate using a two input NAND #
 	NAND notS: inputs = 2;
 	OR G3: inputs = 2;
-	SWITCH A: initial = 0;
+	SWITCH 1A: initial = 0;
 	SWITCH B: initial = 0;
-	SWITCH C: initial = 0;
+	SWITCH C: initial is 0;
     DTYPE D;
 end devices;
 
