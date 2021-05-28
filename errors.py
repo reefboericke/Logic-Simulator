@@ -64,12 +64,12 @@ class Error:
         """Build error message for reporting via terminal or GUI."""
         error_text = ''
         error_text += self.error_type + \
-            ' Error on line ' + self.location[0] + ':'
+            ' Error on line ' + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
             error_text += self.semantic_errors[self.error_id]
         elif self.error_type == 'syntax':
             error_text += 'Invalid syntax, expected "' + self.error_id + '"'
-        error_text += '\n' + self.location[1] + '\n'
+        error_text += '\n' + str(self.location[1]) + '\n'
         for i in range(self.location[2]):
             error_text += ' '
         error_text += '^'
