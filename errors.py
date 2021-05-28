@@ -68,8 +68,8 @@ class Error:
         if self.error_type == 'semantic':
             error_text += self.semantic_errors[self.error_id]
         elif self.error_type == 'syntax':
-            error_text += 'Invalid syntax, expected "' + self.error_id + '"'
-        error_text += '\n' + str(self.location[1]) + '\n'
+            error_text += ' invalid syntax, expected "' + self.error_id + '":'
+        error_text += '\n\n' + str(self.location[1])
         for i in range(self.location[2]):
             error_text += ' '
         error_text += '^'
@@ -104,7 +104,7 @@ class Error_Store():
     def report_errors(self):
         total_error_text =''
         for error in self.errors:
-            total_error_text += error.report() + '\n'
+            total_error_text += error.report() + '\n\n'
         print(total_error_text)
         return total_error_text
 

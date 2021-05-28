@@ -99,7 +99,7 @@ class Scanner:
          self.inputs_ID, self.period_ID,
          self.initial_ID] = self.names.lookup(self.keywords_list)
         self.current_character = ""
-        self.no_EOL = 0
+        self.no_EOL = 1
         self.start_of_file = True
         # open file
         try:
