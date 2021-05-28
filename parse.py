@@ -337,10 +337,15 @@ class Parser:
         if self.currsymb.id == self.scanner.begin_ID:
             self.monitorblockgrammar()
 
+
+    def semantic_error_check(self):
+        pass
+
     def parse_network(self):
         """Parse the circuit definition file."""
         self.currsymb = self.scanner.get_symbol()
         self.BNAcodegrammar()
+        self.semantic_error_check()
 
         """ Note that currently, it correctly will allow 
          correct files to be run, but any erros in the file
