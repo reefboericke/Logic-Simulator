@@ -63,7 +63,7 @@ class Error:
     def report(self):
         """Build error message for reporting via terminal or GUI."""
         error_text = ''
-        error_text += self.error_type + \
+        error_text += self.error_type.capitalize() + \
             ' Error on line ' + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
             error_text += self.semantic_errors[self.error_id]
@@ -73,7 +73,6 @@ class Error:
         for i in range(self.location[2]):
             error_text += ' '
         error_text += '^'
-        print(error_text)
         return(error_text)
 
 class Error_Store():
@@ -89,14 +88,6 @@ class Error_Store():
         self.no_errors += 1
         new_error  = Error(self.no_errors, loc, error_type, error_id)
         self.errors.append(new_error)
-
-        """
-        # move the file pointer onto next semicolon as current line contains error
-        sym = self.scanner.get_symbol()
-        while sym != self.scanner.SEMICOLON:
-            sym = self.scanner.get_symbol()
-        return(self.scanner.get_symbol())
-        """
 
     def sort_errors(self):
         self.errors.sort(key=lambda e: e.location[0])
