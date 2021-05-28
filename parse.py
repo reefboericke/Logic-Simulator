@@ -37,13 +37,14 @@ class Parser:
     parse_network(self): Parses the circuit definition file.
     """
 
-    def __init__(self, names, devices, network, monitors, scanner):
+    def __init__(self, names, devices, network, monitors, scanner, error_db):
         """Initialise constants."""
         self.names = names
         self.devices = devices
         self.network = network
         self.monitors = monitors
         self.scanner = scanner
+        self.error_db = error_db
         self.device_ids = [self.scanner.CLOCK_ID, self.scanner.SWITCH_ID, 
          self.scanner.DTYPE_ID, self.scanner.AND_ID, self.scanner.NAND_ID,
          self.scanner.OR_ID, self.scanner.NOR_ID, self.scanner.XOR_ID]
@@ -61,29 +62,34 @@ class Parser:
         if self.currsymb.type == self.scanner.NAME:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a name
+            self.error_db.add_error('syntax', 'name')
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected semicolon
+            self.error_db.add_error('syntax', ';')
 
     def assignoutputgrammar(self):
         if self.currsymb.type == self.scanner.DOT:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected dot
+            self.error_db.add_error('syntax', '.')
 
         if self.currsymb.id in self.output_ids:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected Q / QBAR
+            self.error_db.add_error('syntax', 'Q / QBAR')
 
     def connectiondefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a name
+            self.error_db.add_error('syntax', 'name')
 
         if self.currsymb.type == self.scanner.DOT:
             self.assignoutputgrammar()
@@ -91,60 +97,71 @@ class Parser:
         if self.currsymb.type == self.scanner.ARROW:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected an arrow
+            self.error_db.add_error('syntax', '->')
 
         if self.currsymb.type == self.scanner.NAME:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a name
+            self.error_db.add_error('syntax', 'name')
 
         if self.currsymb.type == self.scanner.DOT:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected dot
+            self.error_db.add_error('syntax', '.')
 
         if self.currsymb.type == self.scanner.NAME: # Can we refine this to only allow inputs?
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a name
+            self.error_db.add_error('syntax', 'name')
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected semicolon
+            self.error_db.add_error('syntax', ';')
 
     def assignvariablegrammar(self):
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a colon
+            self.error_db.add_error('syntax', ':')
 
         if self.currsymb.id in self.variable_ids:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected variable
+            self.error_db.add_error('syntax', 'device variable')
         
         if self.currsymb.type == self.scanner.EQUALS:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected an equals
+            self.error_db.add_error('syntax', '=')
 
         if self.currsymb.type == self.scanner.NUMBER:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a number
+            self.error_db.add_error('syntax', 'number')
 
 
     def devicedefinitiongrammar(self):
         if self.currsymb.id in self.device_ids:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected device keyword
+            self.error_db.add_error('syntax', 'devices')
 
         if self.currsymb.type == self.scanner.NAME:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected a name
+            self.error_db.add_error('syntax', 'name')
 
         if self.currsymb.type == self.scanner.COLON:
             self.assignvariablegrammar()
@@ -152,23 +169,27 @@ class Parser:
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected semicolon
+            self.error_db.add_error('syntax', ';')
 
     def monitorblockgrammar(self): 
         if self.currsymb.id == self.scanner.begin_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected begin keyword
+            self.error_db.add_error('syntax', 'begin')
     
         if self.currsymb.id == self.scanner.monitors_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected monitors keyword
+            self.error_db.add_error('syntax', 'monitors')
 
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected colon 
+            self.error_db.add_error('syntax', ':')
         
         while self.currsymb.type == self.scanner.NAME:
             self.monitordefinitiongrammar()
@@ -176,33 +197,39 @@ class Parser:
         if self.currsymb.id == self.scanner.end_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected monitors keyword
+            self.error_db.add_error('syntax', 'end')
 
         if self.currsymb.id == self.scanner.monitors_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected monitors keyword
+            self.error_db.add_error('syntax', 'monitors')
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected semicolon
+            self.error_db.add_error('syntax', ';')
 
     def connectionblockgrammar(self):
         if self.currsymb.id == self.scanner.begin_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()   
+            # expected being keyword
+            self.error_db.add_error('syntax', 'begin')
 
         if self.currsymb.id == self.scanner.connections_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected connections keyword
+            self.error_db.add_error('syntax', 'connections')
 
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected colon
+            self.error_db.add_error('syntax', ':')
         
         while self.currsymb.type == self.scanner.NAME:
             self.connectiondefinitiongrammar()
@@ -210,33 +237,40 @@ class Parser:
         if self.currsymb.id == self.scanner.end_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected end keyword
+            self.error_db.add_error('syntax', 'end')
 
         if self.currsymb.id == self.scanner.connections_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected connections keyword
+            self.error_db.add_error('syntax', 'connections')
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected semicolon
+            self.error_db.add_error('syntax', ';')
     
     def deviceblockgrammar(self):
         if self.currsymb.id == self.scanner.begin_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()   
+            # expected begin keyword
+            self.error_db.add_error('syntax', 'begin')
+
 
         if self.currsymb.id == self.scanner.devices_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected devices keyword
+            self.error_db.add_error('syntax', 'devices')
 
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected colon
+            self.error_db.add_error('syntax', ':')
         
         while self.currsymb.id in self.device_ids:
             self.devicedefinitiongrammar()
@@ -244,17 +278,20 @@ class Parser:
         if self.currsymb.id == self.scanner.end_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected end keyword
+            self.error_db.add_error('syntax', 'end')
 
         if self.currsymb.id == self.scanner.devices_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected devices keyword
+            self.error_db.add_error('syntax', 'devices')
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error()
+            # expected semicolon
+            self.error_db.add_error('syntax', ';')
 
     def BNAcodegrammar(self):
 

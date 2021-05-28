@@ -78,14 +78,23 @@ class Error:
 
 class Error_Store():
 
-    def __init__(self):
+    def __init__(self, scanner):
+        self.scanner = scanner
+
         self.errors = []
         self.no_errors = 0
 
-    def add_error(self, location, error_type, error_id):
+    def add_error(self, error_type, error_id):
+        loc = self.scanner.return_location()
         self.no_errors += 1
-        new_error  = Error(self.no_errors, location, error_type, error_id)
+        new_error  = Error(self.no_errors, loc, error_type, error_id)
         self.errors.append(new_error)
+
+        # move the file pointer onto next semicolon as current line contains error
+        sym = self.scanner.get_symbol()
+        while sym != self.scanner.SEMICOLON:
+            sym = self.scanner.get_symbol()
+        self.currsymb = self.scanner.get_symbol()
 
     def sort_errors(self):
         self.errors.sort(key=lambda e: e.location[0])

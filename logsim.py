@@ -24,6 +24,7 @@ from scanner import Scanner
 from parse import Parser
 from userint import UserInterface
 from gui import Gui
+from errors import Error_Store
 
 
 def main(arg_list):
@@ -74,7 +75,8 @@ def main(arg_list):
 
         [path] = arguments
         scanner = Scanner(path, names)
-        parser = Parser(names, devices, network, monitors, scanner)
+        error_store = Error_Store(scanner)
+        parser = Parser(names, devices, network, monitors, scanner, error_store)
         if parser.parse_network():
             # Initialise an instance of the gui.Gui() class
             app = wx.App()
