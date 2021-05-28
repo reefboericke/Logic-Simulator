@@ -10,6 +10,7 @@ Parser - parses the definition file and builds the logic network.
 """
 
 
+from names import Names
 from attr import s
 
 
@@ -48,10 +49,10 @@ class Parser:
          self.scanner.OR_ID, self.scanner.NOR_ID, self.scanner.XOR_ID]
         self.variable_ids = [self.scanner.inputs_ID, self.scanner.period_ID, 
          self.scanner.initial_ID]
-        # self.output_ids = [self.scanner.Q, self.scanner.QBAR]
+        self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
 
     def error(self):
-        print("error encountered on symbol type: ", self.currsymb.type, " and ID: ", self.currsymb.id)
+        print("error encountered on symbol:", self.names.names_list[self.currsymb.id])
         while self.currsymb.type != self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         self.currsymb = self.scanner.get_symbol()
@@ -73,7 +74,7 @@ class Parser:
         else:
             self.error()
 
-        if self.currsymb.type == self.scanner.NAME: # Add Q/QBAR IDs to scanner
+        if self.currsymb.id in self.output_ids:
             self.currsymb = self.scanner.get_symbol()
         else:
             self.error()
