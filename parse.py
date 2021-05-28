@@ -54,7 +54,6 @@ class Parser:
     def error(self):
         print("error encountered on symbol:", self.names.names_list[self.currsymb.id])
         while self.currsymb.type != self.scanner.SEMICOLON:
-            print('skip:')
             self.currsymb = self.scanner.get_symbol()
         self.currsymb = self.scanner.get_symbol()
 
