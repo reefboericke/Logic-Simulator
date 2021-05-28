@@ -54,7 +54,6 @@ class Parser:
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
 
     def error_recovery(self):
-        # print("error encountered on symbol:", self.names.names_list[self.currsymb.id])
         while self.currsymb.type != self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         self.currsymb = self.scanner.get_symbol()
