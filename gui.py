@@ -9,6 +9,7 @@ MyGLCanvas - handles all canvas drawing operations.
 Gui - configures the main window and all the widgets.
 """
 import wx
+from wx.core import Position
 import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLUT
 
@@ -245,24 +246,24 @@ class Gui(wx.Frame):
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        side_sizer = wx.FlexGridSizer(3, 5, 5)
+        self.side_sizer = wx.FlexGridSizer(3, 5, 5)
 
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
-        main_sizer.Add(side_sizer, 1, wx.ALL, 5)
+        main_sizer.Add(self.side_sizer, 1, wx.ALL, 5)
 
-        side_sizer.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
-        side_sizer.Add(self.spin, 1, wx.ALL, 5)
-        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        side_sizer.Add(self.run_button, 1, wx.ALL, 5)
-        side_sizer.Add(self.continue_button, 1, wx.ALL, 5)
-        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        self.side_sizer.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
+        self.side_sizer.Add(self.spin, 1, wx.ALL, 5)
+        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        self.side_sizer.Add(self.run_button, 1, wx.ALL, 5)
+        self.side_sizer.Add(self.continue_button, 1, wx.ALL, 5)
+        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
         self.radiobuttons = []
         for i in range(3): #Iterate through the switches in the circuit and list them out with on/off. (3) to be replaced with a value loaded from the circuit
-            side_sizer.Add(wx.StaticText(self, wx.ID_ANY, "Switch " + str(i)))
+            self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, "Switch " + str(i)))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
-            side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
+            self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On"))
-            side_sizer.Add(self.radiobuttons[-1])
+            self.side_sizer.Add(self.radiobuttons[-1])
 
         # Define dummy lists of devices
         self.monitored_devices = ["NAND1", "NAND2", "DTYPE1"]
@@ -270,14 +271,14 @@ class Gui(wx.Frame):
 
         # Add monitor addition/removal controls
         self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-        side_sizer.Add(self.add_monitor_choice)
-        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        side_sizer.Add(self.add_monitor)
+        self.side_sizer.Add(self.add_monitor_choice)
+        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        self.side_sizer.Add(self.add_monitor)
 
         self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-        side_sizer.Add(self.remove_monitor_choice)
-        side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        side_sizer.Add(self.remove_monitor)
+        self.side_sizer.Add(self.remove_monitor_choice)
+        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        self.side_sizer.Add(self.remove_monitor)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
@@ -309,8 +310,24 @@ class Gui(wx.Frame):
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
-        pass
+        self.unmonitored_devices.append(self.monitored_devices[self.remove_monitor_choice.GetSelection()])
+        self.monitored_devices.pop(self.remove_monitor_choice.GetSelection())
+        self.add_monitor_choice.Destroy()
+        self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+        self.side_sizer.Insert(15, self.add_monitor_choice)
+        self.remove_monitor_choice.Destroy()
+        self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+        self.side_sizer.Insert(18, self.remove_monitor_choice)
+        self.side_sizer.Layout()
 
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
-        pass
+        self.monitored_devices.append(self.unmonitored_devices[self.add_monitor_choice.GetSelection()])
+        self.unmonitored_devices.pop(self.add_monitor_choice.GetSelection())
+        self.add_monitor_choice.Destroy()
+        self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+        self.side_sizer.Insert(15, self.add_monitor_choice)
+        self.remove_monitor_choice.Destroy()
+        self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+        self.side_sizer.Insert(18, self.remove_monitor_choice)
+        self.side_sizer.Layout()
