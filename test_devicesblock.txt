@@ -6,7 +6,7 @@ begin devices:
 	OR G3: inputs = 2;
 	SWITCH A: initial = 0;
 	SWITCH B: initial = 0;
-	SWITCH S: initial = 0;
+	SWITCH S: initial is 0;
     DTYPE D;
 end devices;
 
