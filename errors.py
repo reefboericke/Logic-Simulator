@@ -90,11 +90,13 @@ class Error_Store():
         new_error  = Error(self.no_errors, loc, error_type, error_id)
         self.errors.append(new_error)
 
+        """
         # move the file pointer onto next semicolon as current line contains error
         sym = self.scanner.get_symbol()
         while sym != self.scanner.SEMICOLON:
             sym = self.scanner.get_symbol()
         return(self.scanner.get_symbol())
+        """
 
     def sort_errors(self):
         self.errors.sort(key=lambda e: e.location[0])
@@ -103,6 +105,7 @@ class Error_Store():
         total_error_text =''
         for error in self.errors:
             total_error_text += error.report() + '\n'
+        print(total_error_text)
         return total_error_text
 
 
