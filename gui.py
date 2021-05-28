@@ -293,7 +293,7 @@ class Gui(wx.Frame):
             wx.MessageBox("Boernashly Logic Simulator\nCreated by Reef Boericke, Joe Nash, and Finn Ashley\n2021",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
         if Id == wx.ID_OPEN:
-            with wx.FileDialog(self, "Open XYZ file", wildcard="txt files (*.txt)|*.txt",
+            with wx.FileDialog(self, "Open txt file", wildcard="txt files (*.txt)|*.txt",
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
                 if fileDialog.ShowModal() == wx.ID_CANCEL:
                     return
@@ -306,36 +306,38 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
+        self.canvas.render(self.canvas.outputs, self.canvas.length)
+
+    def on_continue_button(self, event):
+        """Handle the event when the user clicks the continue button."""
         if(self.radiobuttons[0].GetValue()):
             self.canvas.outputs[0][0] = 50
         else:
             self.canvas.outputs[0][0] = 0
         self.canvas.render(self.canvas.outputs, self.canvas.length)
 
-    def on_continue_button(self, event):
-        """Handle the event when the user clicks the continue button."""
-        self.canvas.render(self.canvas.outputs, self.canvas.length)
-
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
-        self.unmonitored_devices.append(self.monitored_devices[self.remove_monitor_choice.GetSelection()])
-        self.monitored_devices.pop(self.remove_monitor_choice.GetSelection())
-        self.add_monitor_choice.Destroy()
-        self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-        self.side_sizer.Insert(15, self.add_monitor_choice)
-        self.remove_monitor_choice.Destroy()
-        self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-        self.side_sizer.Insert(18, self.remove_monitor_choice)
-        self.side_sizer.Layout()
+        if(self.remove_monitor_choice.GetSelection() != wx.NOT_FOUND):
+            self.unmonitored_devices.append(self.monitored_devices[self.remove_monitor_choice.GetSelection()])
+            self.monitored_devices.pop(self.remove_monitor_choice.GetSelection())
+            self.add_monitor_choice.Destroy()
+            self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+            self.side_sizer.Insert(15, self.add_monitor_choice)
+            self.remove_monitor_choice.Destroy()
+            self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+            self.side_sizer.Insert(18, self.remove_monitor_choice)
+            self.side_sizer.Layout()
 
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
-        self.monitored_devices.append(self.unmonitored_devices[self.add_monitor_choice.GetSelection()])
-        self.unmonitored_devices.pop(self.add_monitor_choice.GetSelection())
-        self.add_monitor_choice.Destroy()
-        self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-        self.side_sizer.Insert(15, self.add_monitor_choice)
-        self.remove_monitor_choice.Destroy()
-        self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-        self.side_sizer.Insert(18, self.remove_monitor_choice)
-        self.side_sizer.Layout()
+        if(self.add_monitor_choice.GetSelection() != wx.NOT_FOUND):
+            self.monitored_devices.append(self.unmonitored_devices[self.add_monitor_choice.GetSelection()])
+            self.unmonitored_devices.pop(self.add_monitor_choice.GetSelection())
+            self.add_monitor_choice.Destroy()
+            self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+            self.side_sizer.Insert(15, self.add_monitor_choice)
+            self.remove_monitor_choice.Destroy()
+            self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+            self.side_sizer.Insert(18, self.remove_monitor_choice)
+            self.side_sizer.Layout()
