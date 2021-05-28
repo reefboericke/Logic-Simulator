@@ -75,3 +75,25 @@ class Error:
         error_text += '^'
         print(error_text)
         return(error_text)
+
+class Error_Store():
+
+    def __init__(self):
+        self.errors = []
+        self.no_errors = 0
+
+    def add_error(self, location, error_type, error_id):
+        self.no_errors += 1
+        new_error  = Error(self.no_errors, location, error_type, error_id)
+        self.errors.append(new_error)
+
+    def sort_errors(self):
+        self.errors.sort(key=lambda e: e.location[0])
+
+    def report_errors(self):
+        total_error_text =''
+        for error in self.errors:
+            total_error_text += error.report() + '\n'
+        return total_error_text
+
+
