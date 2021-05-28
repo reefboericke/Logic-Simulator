@@ -6,11 +6,11 @@ begin devices:
 	OR G3: inputs = 2;
 	SWITCH A: initial = 0;
 	SWITCH B: initial = 0;
-	SWITCH S: initial - 0;
+	SWITCH C: initial = 0;
     DTYPE D;
 end devices;
 
-begin connections:
+begine connections:
 	A -> G1.I1;
 	S -> notS.I1;
 	S -> notS.I2;
