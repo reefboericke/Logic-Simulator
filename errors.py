@@ -94,7 +94,7 @@ class Error_Store():
         sym = self.scanner.get_symbol()
         while sym != self.scanner.SEMICOLON:
             sym = self.scanner.get_symbol()
-        self.currsymb = self.scanner.get_symbol()
+        return(self.scanner.get_symbol())
 
     def sort_errors(self):
         self.errors.sort(key=lambda e: e.location[0])
