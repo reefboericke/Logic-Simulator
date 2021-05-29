@@ -51,6 +51,8 @@ class Parser:
          self.scanner.OR_ID, self.scanner.NOR_ID, self.scanner.XOR_ID]
         self.variable_ids = [self.scanner.inputs_ID, self.scanner.period_ID, 
          self.scanner.initial_ID]
+        self.gates_with_inputs = [self.scanner.AND_ID, self.scanner.NOR_ID,
+         self.scanner.NAND_ID]
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
 
     def error_recovery(self):
@@ -158,6 +160,14 @@ class Parser:
             return
 
         if self.currsymb.id in self.variable_ids:
+            # check variable matches device
+            if self.parsing_device.id == self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
+                self.error_db.add_error('semantic', 4)
+            elif self.parsing_device.id == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
+                self.error_db.add_error('semantic', 5)
+            elif self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.intial_ID:
+                self.error_db.add_error('semantic', 6)
+                
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected variable
@@ -174,6 +184,17 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NUMBER:
+            if (self.parsing_device.id == self.scanner.CLOCK_ID and self.currsymb.id < 1):
+                # clock has non-positive frequency
+                self.error_db.add_error('semantic', 1)
+            elif (self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id not in [0,1]):
+                # switch has invalid initial state
+                self.error_db.add_error('semantic', 2)
+            elif (self.parsing_device.id in self.gates_with_inputs and self.currsymb.id not in range(1, 17, 1)):
+                # incorrect number of inputs to gate
+                self.error_db.add_error('semantic', 0)
+
+            # checking for semantic errors therefore don't need to skip after error detection
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a number
@@ -184,14 +205,20 @@ class Parser:
 
     def devicedefinitiongrammar(self):
         if self.currsymb.id in self.device_ids:
+            self.parsing_device = self.currsymb
             self.currsymb = self.scanner.get_symbol()
         else:
-            # expected device keyword
-            self.error_db.add_error('syntax', 'devices')
+            # expected a device keyword
+            self.error_db.add_error('syntax', 'a device')
             self.error_recovery()
             return
 
         if self.currsymb.type == self.scanner.NAME:
+            if self.currsymb.id == self.parsing_device.id:
+                # name is same as device type
+                self.error_db.add_error('semantic', 7)
+            if self.names.query(self.currsymb.id): # check to see if name is unique - how??
+                self.error_db.add_error('semantic', 8)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
