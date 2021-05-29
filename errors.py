@@ -72,13 +72,13 @@ class Error:
             error_text += ' invalid syntax, expected '
             if type(self.error_id) == str:
                 error_text += '"' + self.error_id + '":'
-            else: # expect a list now
+            else: # expect a list now
                 for i in range(len(self.error_id)):
                     if i == (len(self.error_id) - 1):
-                        error_text += self.error_id[i]
+                        error_text += '"' + self.error_id[i] + '"'
                     else:
-                        error_text += self.error_id[i] + ' or '
-                    error_text += ' :'
+                        error_text += '"' + self.error_id[i] + '"' + ' or '
+                error_text += ' :'
 
         error_text += '\n\n' + str(self.location[1])
         for i in range(self.location[2]):
