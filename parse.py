@@ -98,7 +98,6 @@ class Parser:
 
     def connectiondefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
-            if self.currsymb.id.
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -167,7 +166,7 @@ class Parser:
                 self.error_db.add_error('semantic', 4)
             elif self.parsing_device.id == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
                 self.error_db.add_error('semantic', 5)
-            elif self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.intial_ID:
+            elif self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.initial_ID:
                 self.error_db.add_error('semantic', 6)
                 
             self.currsymb = self.scanner.get_symbol()
@@ -219,8 +218,8 @@ class Parser:
             if self.currsymb.id == self.parsing_device.id:
                 # name is same as device type
                 self.error_db.add_error('semantic', 7)
-            if self.names.query(self.currsymb.id): # check to see if name is unique - how??
-                self.error_db.add_error('semantic', 8)
+            #if self.names.query(self.currsymb.id): # check to see if name is unique - how??
+                #self.error_db.add_error('semantic', 8)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
