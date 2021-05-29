@@ -69,7 +69,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.zoom = 1
 
         # Initialise variables for rendering signals
-        self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]] # Fake test signal
+        self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0], [0, 0, 0, 0, 10, 0, 0, 10, 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10], [0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]] # Fake test signal
         self.length = 10
 
         # Bind events to the canvas
@@ -104,15 +104,19 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
         # Draw a sample signal trace
-        GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
-        GL.glBegin(GL.GL_LINE_STRIP)
-        for i in range(length):
-            x = (i * 20) + 10
-            x_next = (i * 20) + 30
-            y = outputs[0][i]
-            GL.glVertex2f(x, y)
-            GL.glVertex2f(x_next, y)
-        GL.glEnd()
+        x_step = (self.GetClientSize().width - 20)/length
+        y_step = (self.GetClientSize().height)/(2*len(outputs))
+
+        for j in range(len(outputs)):
+            GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
+            GL.glBegin(GL.GL_LINE_STRIP)
+            for i in range(length):
+                x = (i * x_step) + 10
+                x_next = (i * x_step) + x_step + 10
+                y = y_step*(2*j + 1) + outputs[j][i]
+                GL.glVertex2f(x, y)
+                GL.glVertex2f(x_next, y)
+            GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
         # and swap the back buffer to the front
@@ -252,6 +256,11 @@ class Gui(wx.Frame):
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.side_sizer, 1, wx.ALL, 5)
 
+        # If (there are errors):
+        #       for error in errors:
+        #           main_sizer.add(staticText('error'))
+        # Then somehow stop the rest of the code from running, because the circuit cant be loaded. How to do this TBC
+
         self.side_sizer.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
         self.side_sizer.Add(self.spin, 1, wx.ALL, 5)
         self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
@@ -261,9 +270,9 @@ class Gui(wx.Frame):
         self.radiobuttons = []
         for i in range(3): #Iterate through the switches in the circuit and list them out with on/off. (3) to be replaced with a value loaded from the circuit
             self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, "Switch " + str(i)))
-            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
-            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On"))
+            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
             self.side_sizer.Add(self.radiobuttons[-1])
 
         # Define dummy lists of devices
@@ -306,15 +315,15 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
-        self.canvas.render(self.canvas.outputs, self.canvas.length)
+        self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
-        if(self.radiobuttons[0].GetValue()):
-            self.canvas.outputs[0][0] = 50
-        else:
-            self.canvas.outputs[0][0] = 0
-        self.canvas.render(self.canvas.outputs, self.canvas.length)
+        switch_values = []
+        for i in range(len(self.radiobuttons)): #Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
+            if(i%2 == 0):
+                switch_values.append(self.radiobuttons[i].GetValue())
+        self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
