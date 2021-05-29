@@ -54,6 +54,7 @@ class Parser:
         self.gates_with_inputs = [self.scanner.AND_ID, self.scanner.NOR_ID,
          self.scanner.NAND_ID]
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
+        self.unique_names = []
 
     def error_recovery(self):
         while self.currsymb.type != self.scanner.SEMICOLON:
@@ -185,13 +186,13 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NUMBER:
-            if (self.parsing_device.id == self.scanner.CLOCK_ID and self.currsymb.id < 1):
+            if (self.parsing_device.id == self.scanner.CLOCK_ID and int(self.currsymb.id) < 1):
                 # clock has non-positive frequency
                 self.error_db.add_error('semantic', 1)
-            elif (self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id not in [0,1]):
+            elif (self.parsing_device.id == self.scanner.SWITCH_ID and int(self.currsymb.id) not in [0,1]):
                 # switch has invalid initial state
                 self.error_db.add_error('semantic', 2)
-            elif (self.parsing_device.id in self.gates_with_inputs and self.currsymb.id not in range(1, 17, 1)):
+            elif (self.parsing_device.id in self.gates_with_inputs and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
                 self.error_db.add_error('semantic', 0)
 
@@ -215,11 +216,13 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NAME:
-            if self.currsymb.id == self.parsing_device.id:
+            if self.currsymb.id in self.device_ids:
                 # name is same as device type
                 self.error_db.add_error('semantic', 7)
-            #if self.names.query(self.currsymb.id): # check to see if name is unique - how??
-                #self.error_db.add_error('semantic', 8)
+            if self.currsymb.id in self.unique_names: 
+                # check to see if name is unique
+                self.error_db.add_error('semantic', 8)
+            self.unique_names.append(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
