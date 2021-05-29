@@ -92,7 +92,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected Q / QBAR
-            self.error_db.add_error('syntax', 'Q / QBAR')
+            self.error_db.add_error('syntax', ['Q', 'QBAR'])
             self.error_recovery()
             return
 
@@ -114,7 +114,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected an arrow
-            self.error_db.add_error('syntax', '->')
+            self.error_db.add_error('syntax', ['.', '->'])
             self.error_recovery()
             return
 
@@ -236,7 +236,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', ';')
+            self.error_db.add_error('syntax', [':', ';'])
             self.error_recovery()
             return
 
@@ -273,7 +273,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected monitors keyword
-            self.error_db.add_error('syntax', 'end')
+            self.error_db.add_error('syntax', ['a name', 'end'])
             self.error_recovery()
             return
 
@@ -326,7 +326,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected end keyword
-            self.error_db.add_error('syntax', 'end')
+            self.error_db.add_error('syntax', ['a name', 'end'])
             self.error_recovery()
             return
 
@@ -379,7 +379,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected end keyword
-            self.error_db.add_error('syntax', 'end')
+            self.error_db.add_error('syntax', ['a device', 'end'])
             self.error_recovery()
             return
 
