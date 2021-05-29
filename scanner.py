@@ -102,6 +102,7 @@ class Scanner:
         self.no_EOL = 1
         self.start_of_file = True
         self.current_char_num = 0
+        self.char_num_last_EOL = 0
         # open file
         try:
             self.file = open(path, 'r')

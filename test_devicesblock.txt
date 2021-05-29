@@ -1,4 +1,4 @@
-begin devices:
+begi devices:
 	AND G1: inputs = 2;
 	AND G2: inputs = 2;
 	# implement a NOT gate using a two input NAND #
