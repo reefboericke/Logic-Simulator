@@ -98,6 +98,7 @@ class Parser:
 
     def connectiondefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
+            if self.currsymb.id.
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -120,6 +121,7 @@ class Parser:
 
         if self.currsymb.type == self.scanner.NAME:
             self.currsymb = self.scanner.get_symbol()
+            # CHECK HERE IS AN INPUT
         else:
             # expected a name
             self.error_db.add_error('syntax', 'name')
