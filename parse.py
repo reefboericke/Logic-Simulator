@@ -219,7 +219,7 @@ class Parser:
             if self.currsymb.id == self.parsing_device.id:
                 # name is same as device type
                 self.error_db.add_error('semantic', 7)
-            if self.names.query(self.currsymb.id): # check to see if name is unique - how??
+            if (self.names.query(self.currsymb.id) != len(self.names.names_list) - 1): # check to see if name is unique - how??
                 self.error_db.add_error('semantic', 8)
             self.currsymb = self.scanner.get_symbol()
         else:
