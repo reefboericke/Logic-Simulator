@@ -65,6 +65,9 @@ class Parser:
 
     def monitordefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
+            if self.names.get_name_string(self.currsymb.id) == None: 
+                # check to see if monitor exists
+                self.error_db.add_error('semantic', 16)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
