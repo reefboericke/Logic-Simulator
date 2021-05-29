@@ -10,6 +10,9 @@ Symbol - encapsulates a symbol and stores its properties.
 """
 
 
+import linecache
+
+
 class Symbol:
     """Encapsulate a symbol and store its properties.
 
@@ -96,8 +99,10 @@ class Scanner:
          self.inputs_ID, self.period_ID,
          self.initial_ID] = self.names.lookup(self.keywords_list)
         self.current_character = ""
-        self.no_EOL = 0
+        self.no_EOL = 1
         self.start_of_file = True
+        self.current_char_num = 0
+        self.char_num_last_EOL = 0
         # open file
         try:
             self.file = open(path, 'r')
@@ -112,6 +117,7 @@ class Scanner:
         Reassigns current_character variable.
         """
         self.current_character = self.file.read(1)
+        self.current_char_num += 1
 
     def skip_spaces_and_comments(self):
         """Pass file pointer over white-space characters and comments."""
@@ -120,6 +126,7 @@ class Scanner:
             if self.current_character.isspace():
                 if self.current_character == '\n':
                     self.last_EOL = self.file.tell()
+                    self.char_num_last_EOL = self.current_char_num
                     self.no_EOL += 1
                 self.advance()
             elif self.current_character == '#':  # enter / leave comment
@@ -205,6 +212,16 @@ class Scanner:
             symbol.id = self.current_character
             self.advance()
 
+        """
+        if symbol.type in [4, 6]:
+            print(self.names.names_list[symbol.id])
+        elif symbol.type == 5:
+            print(symbol.id)
+        else:
+            print([';', ':', '=', '.', None, None, None,'EOF','->','UNEXPECTED SYMBOL'][symbol.type])
+        print()
+        """
+        
         return symbol
 
     """
@@ -226,8 +243,14 @@ class Scanner:
     def return_location(self):
         #return linecache.getline(self.path, line)
         error_index = self.file.tell()
-        no_spaces = error_index - self.last_EOL
+        #no_spaces = error_index - self.last_EOL
+        no_spaces = self.current_char_num - self.char_num_last_EOL
         line = linecache.getline(self.path, self.no_EOL)
         location = (self.no_EOL, line, no_spaces)
         return(location)
+
+    def skip_error(self):
+        while self.current_character.type != self.scanner.SEMICOLON:
+            self.advance
+        self.currsymb = self.scanner.get_symbol()
 

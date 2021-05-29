@@ -8,7 +8,8 @@ from parse import Parser
 from network import Network
 from devices import Devices
 from monitors import Monitors
-
+from errors import Error_Store
+import linecache
 
 
 def run():
@@ -16,11 +17,15 @@ def run():
     devices = Devices(names)
     network = Network(names, devices)
     monitors = Monitors(names, devices, network)
+    
     scanner = Scanner('test_devicesblock.txt', names)
+    error_db = Error_Store(scanner)
 
-    parser = Parser(names,devices,network,monitors,scanner)
+    parser = Parser(names,devices,network,monitors,scanner, error_db)
 
     parser.parse_network()
+
+    error_db.report_errors()
 
 if __name__ == "__main__":
     run()
