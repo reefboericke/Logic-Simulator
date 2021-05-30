@@ -67,7 +67,7 @@ class Error:
         error_text += self.error_type.capitalize() + \
             ' Error on line ' + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
-            error_text += self.semantic_errors[self.error_id]
+            error_text += ' ' + self.semantic_errors[self.error_id]
         elif self.error_type == 'syntax':
             error_text += ' invalid syntax, expected '
             if type(self.error_id) == str:
@@ -120,7 +120,7 @@ class Error_Store():
         self.errors.append(new_error)
 
     def sort_errors(self):
-        """Sort errors by line number"""
+        """Sort errors by line number."""
         self.errors.sort(key=lambda e: e.location[0])
 
     def report_errors(self):

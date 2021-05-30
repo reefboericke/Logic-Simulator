@@ -12,6 +12,7 @@ Parser - parses the definition file and builds the logic network.
 
 from names import Names
 from attr import s
+import re
 
 
 class Parser:
@@ -55,6 +56,7 @@ class Parser:
          self.scanner.NAND_ID]
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
         self.unique_names = []
+        self.monitored_devices = []
 
     def error_recovery(self):
         while self.currsymb.type != self.scanner.SEMICOLON:
@@ -68,6 +70,10 @@ class Parser:
             if self.names.get_name_string(self.currsymb.id) == None: 
                 # check to see if monitor exists
                 self.error_db.add_error('semantic', 16)
+            if self.names.get_name_string(self.currsymb.id) in self.monitored_devices:
+                # device already monitored
+                self.error_db.add_error('semantic', 17)
+            parsing_device = self.names.get_name_string(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -77,6 +83,8 @@ class Parser:
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
+            # monitor correctly parsed, add it to list
+            self.monitored_devices.append(parsing_device)
         else:
             # expected semicolon
             self.error_db.add_error('syntax', ';')
@@ -139,7 +147,13 @@ class Parser:
             self.error_recovery()
             return
 
-        if self.currsymb.type == self.scanner.NAME: # Can we refine this to only allow inputs?
+        if self.currsymb.type == self.scanner.NAME:
+            if (re.search('I\d+' , self.names.get_name_string(self.currsymb.id)) == None):
+                # check name of required format
+                self.error_db.add_error('syntax', 'a valid gate input')
+                self.error_recovery()
+                return
+
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
