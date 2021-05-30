@@ -58,6 +58,10 @@ class Parser:
         self.unique_names = []
         self.monitored_devices = []
 
+        [self.NO_ERROR, self.INVALID_QUALIFIER, self.NO_QUALIFIER,
+         self.BAD_DEVICE, self.QUALIFIER_PRESENT,
+         self.DEVICE_PRESENT] = self.names.unique_error_codes(6) # DO WE NEED THIS HERE?????
+
     def error_recovery(self):
         while self.currsymb.type != self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
@@ -110,6 +114,9 @@ class Parser:
 
     def connectiondefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
+            if self.currsymb.id not in self.unique_names:
+                # device doesn't exist
+                self.error_db.add_error('semantic', 18)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -131,8 +138,10 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NAME:
+            if self.currsymb.id not in self.unique_names:
+                # device doesn't exist
+                self.error_db.add_error('semantic', 18)
             self.currsymb = self.scanner.get_symbol()
-            # CHECK HERE IS AN INPUT
         else:
             # expected a name
             self.error_db.add_error('syntax', 'name')
@@ -148,11 +157,22 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NAME:
+            inp = self.names.get_name_string(self.currsymb.id)
             if (re.search('I\d+' , self.names.get_name_string(self.currsymb.id)) == None):
                 # check name of required format
                 self.error_db.add_error('syntax', 'a valid gate input')
                 self.error_recovery()
                 return
+            if (not( (inp[0] == 'I') and (inp[1:].isdigit()))):
+                self.error_db.add_error('syntax', 'a valid gate input')
+                self.error_recovery()
+                return
+            #if ()
+            # case 1: isn't dtype and suffix isnt format of Inum or (clk/set/clr etc.) = syntax
+            # case 2: isn't dtype and I(1->16) = semantic
+            # case 3: is dtype and suffix is format of Inum = semantic
+            # case 4: is dtype and suffix isn't in (clk/set/clr etc.) 0r Inum = syntax
+
 
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -212,7 +232,8 @@ class Parser:
             elif (self.parsing_device.id in self.gates_with_inputs and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
                 self.error_db.add_error('semantic', 0)
-
+            else:
+                self.variable_value = self.currsymb.id
             # checking for semantic errors therefore don't need to skip after error detection
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -240,6 +261,7 @@ class Parser:
                 # check to see if name is unique
                 self.error_db.add_error('semantic', 8)
             self.unique_names.append(self.currsymb.id)
+            creating_name = self.currsymb
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -253,6 +275,13 @@ class Parser:
             return
         
         if self.currsymb.type == self.scanner.SEMICOLON:
+            # device definition correct therefore create with id from names
+            err = self.devices.make_device(creating_name.id, 
+                                           self.parsing_device.id,
+                                           self.variable_value)
+            if (err == self.DEVICE_PRESENT):
+                self.error_db.add_error('semantic', 8)
+
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
