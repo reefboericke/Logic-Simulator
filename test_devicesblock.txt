@@ -13,7 +13,7 @@ end devices;
 
 begin connections:
 	A -> G1.I1;
-	S -> notS.I1;
+	S -> notS.I3;
 	S -> notS.I1;
 	notS -> G1.I1;
 	S -> G2.I1;

@@ -161,11 +161,17 @@ class Parser:
             return
 
         inp = self.names.get_name_string(self.currsymb.id)
+        # print(inp)
+        # print(len(self.devices.get_device(currdeviceid).inputs))
         # Check that input name is within those allowed by EBNF:
         if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
             # Fail semantic if DTYPE takes non-DTYPE inputs or vice versa
-            if (currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) == (self.currsymb.id not in self.input_ids):
+            if (((currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) == 
+             (self.currsymb.id not in self.input_ids))
+             or ((currdeviceid not in self.devices.find_devices(self.devices.D_TYPE))
+             and int(inp[1:]) > len(self.devices.get_device(currdeviceid).inputs))):
                 self.error_db.add_error('semantic', 13)
+
             self.currsymb = self.scanner.get_symbol()
         else:
             self.error_db.add_error('syntax', 'a valid gate input')

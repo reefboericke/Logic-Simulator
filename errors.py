@@ -54,7 +54,7 @@ class Error:
             10: 'Right side of a connection must be an input.',
             11: 'Output not specified DTYPE device.',
             12: 'Unexpected output specified for non-DTYPE device.',
-            13: 'Invalid input name for device type.',
+            13: 'Invalid input name for device.',
             14: 'Multiple outputs connected to input.',
             15: 'All gate inputs must be connected.',
             16: 'No device with specified name.',
