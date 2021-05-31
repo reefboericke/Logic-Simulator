@@ -1,31 +1,27 @@
 begin devices:
-	AND G1: inputs = 3;
-	NAND G2: inputs = 2;
-	XOR X1;
+	AND G1: inputs = 2;
+	AND G2: inputs = 2;
 	# implement a NOT gate using a two input NAND #
 	NAND notS: inputs = 2;
 	OR G3: inputs = 2;
 	SWITCH A: initial = 0;
 	SWITCH B: initial = 0;
-	SWITCH S: initial = 1;
-    DTYPE D;
-	DTYPE D1;
+	SWITCH S: initial = 0;
 end devices;
 
 begin connections:
 	A -> G1.I1;
-	S -> notS.I3;
 	S -> notS.I1;
-	notS -> G1.I1;
+	S -> notS.I2;
+	notS -> G1.I2;
 	S -> G2.I1;
-	G1.Q -> D.I1;
-	G1 -> G3.SET;
-    D.Q -> D1.SET;
+	B -> G2.I2;
+	G1 -> G3.I1;
+	G2 -> G3.I2;
 end connections;
 
 begin monitors:
 	G1; 
-	G4;
-	G3; 
+	G2; 
 	G3;
 end monitors;
