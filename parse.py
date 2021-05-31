@@ -70,21 +70,25 @@ class Parser:
         self.currsymb = self.scanner.get_symbol()
         self.error_recovery_mode = True
 
+    def encounter_error(self, type, id, recover):
+        self.error_db.add_error(type, id)
+        if recover:
+            self.error_recovery()
+
 
     def monitordefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
             if self.names.get_name_string(self.currsymb.id) == None: 
                 # check to see if monitor exists
-                self.error_db.add_error('semantic', 16)
+                self.encounter_error('semantic', 16, recover=False)
             if self.names.get_name_string(self.currsymb.id) in self.monitored_devices:
                 # device already monitored
-                self.error_db.add_error('semantic', 17)
+                self.encounter_error('semantic', 17, recover=False)
             parsing_device = self.names.get_name_string(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
-            self.error_db.add_error('syntax', 'name')
-            self.error_recovery()
+            self.encounter_error('syntax', 'name', recover=True)
             return
 
         if self.currsymb.type == self.scanner.SEMICOLON:
@@ -94,8 +98,7 @@ class Parser:
             # Need to add way of changing None to Q for DTYPE
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', ';')
-            self.error_recovery()
+            self.encounter_error('syntax', ';', recover=True)
             return
 
     def assignoutputgrammar(self):
@@ -103,28 +106,25 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected dot
-            self.error_db.add_error('syntax', '.')
-            self.error_recovery()
+            self.encounter_error('syntax', '.', recover=True)
             return
 
         if self.currsymb.id in self.output_ids:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected Q / QBAR
-            self.error_db.add_error('syntax', ['Q', 'QBAR'])
-            self.error_recovery()
+            self.encounter_error('syntax', ['Q', 'QBAR'], recover=True)
             return
 
     def connectiondefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
             if self.currsymb.id not in self.unique_names:
                 # device doesn't exist
-                self.error_db.add_error('semantic', 18)
+                self.encounter_error('semantic', 18, recover=False)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
-            self.error_db.add_error('syntax', 'name')
-            self.error_recovery()
+            self.encounter_error('syntax', 'name', recover=True)
             return
 
         if self.currsymb.type == self.scanner.DOT:
@@ -136,28 +136,25 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected an arrow
-            self.error_db.add_error('syntax', ['.', '->'])
-            self.error_recovery()
+            self.encounter_error('syntax', ['.', '->'], recover=True)
             return
 
         if self.currsymb.type == self.scanner.NAME:
             if self.currsymb.id not in self.unique_names:
                 # device doesn't exist
-                self.error_db.add_error('semantic', 18)
+                self.encounter_error('semantic', 18, recover=False)
             currdeviceid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
-            self.error_db.add_error('syntax', 'name')
-            self.error_recovery()
+            self.encounter_error('syntax', 'name', recover=True)
             return
 
         if self.currsymb.type == self.scanner.DOT:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected dot
-            self.error_db.add_error('syntax', '.')
-            self.error_recovery()
+            self.encounter_error('syntax', '.', recover=True)
             return
 
         inp = self.names.get_name_string(self.currsymb.id)
@@ -169,20 +166,18 @@ class Parser:
              # or fail semantic if input number too high
              or ((currdeviceid not in self.devices.find_devices(self.devices.D_TYPE))
              and int(inp[1:]) > len(self.devices.get_device(currdeviceid).inputs))):
-                self.error_db.add_error('semantic', 13)
+                self.encounter_error('semantic', 13, recover=False)
 
             self.currsymb = self.scanner.get_symbol()
         else:
-            self.error_db.add_error('syntax', 'a valid gate input')
-            self.error_recovery()
+            self.encounter_error('syntax', 'a valid input', recover=True)
             return
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', ';')
-            self.error_recovery()
+            self.encounter_error('syntax', ';', recover=True)
             return
 
     def assignvariablegrammar(self):
@@ -190,52 +185,48 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a colon
-            self.error_db.add_error('syntax', ':')
-            self.error_recovery()
+            self.encounter_error('syntax', ':', recover=True)
             return
 
         if self.currsymb.id in self.variable_ids:
             # check variable matches device
             if self.parsing_device.id == self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
-                self.error_db.add_error('semantic', 4)
+                self.encounter_error('semantic', 4, recover=False)
             elif self.parsing_device.id == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
-                self.error_db.add_error('semantic', 5)
+                self.encounter_error('semantic', 5, recover=False)
             elif self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.initial_ID:
-                self.error_db.add_error('semantic', 6)
+                self.encounter_error('semantic', 6, recover=False)
                 
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected variable
-            self.error_db.add_error('syntax', 'device variable')
-            self.error_recovery()
+            self.encounter_error('syntax', 'device variable', recover=True)
             return
         
         if self.currsymb.type == self.scanner.EQUALS:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected an equals
-            self.error_db.add_error('syntax', '=')
-            self.error_recovery()
+            self.encounter_error('syntax', '=', recover=True)
             return
 
         if self.currsymb.type == self.scanner.NUMBER:
             if (self.parsing_device.id == self.scanner.CLOCK_ID and int(self.currsymb.id) < 1):
                 # clock has non-positive frequency
-                self.error_db.add_error('semantic', 1)
+                self.encounter_error('semantic', 1, recover=False)
             elif (self.parsing_device.id == self.scanner.SWITCH_ID and int(self.currsymb.id) not in [0,1]):
                 # switch has invalid initial state
-                self.error_db.add_error('semantic', 2)
+                self.encounter_error('semantic', 2, recover=False)
             elif (self.parsing_device.id in self.gates_with_inputs and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
-                self.error_db.add_error('semantic', 0)
+                self.encounter_error('semantic', 0, recover=False)
             else:
                 self.variable_value = int(self.currsymb.id)
             # checking for semantic errors therefore don't need to skip after error detection
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a number
-            self.error_db.add_error('syntax', 'number')
-            self.error_recovery()
+            self.encounter_error('syntax', 'number', recover=True)
             return
 
 
@@ -245,24 +236,22 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a device keyword
-            self.error_db.add_error('syntax', 'a device')
-            self.error_recovery()
+            self.encounter_error('syntax', 'a device', recover=True)
             return
 
         if self.currsymb.type == self.scanner.NAME:
             if self.currsymb.id in self.device_ids:
                 # name is same as device type
-                self.error_db.add_error('semantic', 7)
+                self.encounter_error('semantic', 7, recover=False)
             if self.currsymb.id in self.unique_names: 
                 # check to see if name is unique
-                self.error_db.add_error('semantic', 8)
+                self.encounter_error('semantic', 8, recover=False)
             self.unique_names.append(self.currsymb.id)
             creating_name = self.currsymb
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
-            self.error_db.add_error('syntax', 'name')
-            self.error_recovery()
+            self.encounter_error('syntax', 'name', recover=True)
             return
 
         if self.currsymb.type == self.scanner.COLON:
@@ -277,13 +266,12 @@ class Parser:
                                            self.variable_value)
             self.variable_value = None
             if (err == self.DEVICE_PRESENT):
-                self.error_db.add_error('semantic', 8)
+                self.encounter_error('semantic', 8, recover=False)
 
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', [':', ';'])
-            self.error_recovery()
+            self.encounter_error('syntax', [':', ';'], recover=True)
             return
 
     def monitorblockgrammar(self): 
@@ -291,24 +279,21 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected begin keyword
-            self.error_db.add_error('syntax', 'begin')
-            self.error_recovery()
+            self.encounter_error('syntax', 'begin', recover=True)
             return
     
         if self.currsymb.id == self.scanner.monitors_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected monitors keyword
-            self.error_db.add_error('syntax', 'monitors')
-            self.error_recovery()
+            self.encounter_error('syntax', 'monitors', recover=True)
             return
 
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected colon 
-            self.error_db.add_error('syntax', ':')
-            self.error_recovery()
+            self.encounter_error('syntax', ':', recover=True)
             return
         
         while self.currsymb.type == self.scanner.NAME:
@@ -319,24 +304,21 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected monitors keyword
-            self.error_db.add_error('syntax', ['a name', 'end'])
-            self.error_recovery()
+            self.encounter_error('syntax', ['a name', 'end'], recover=True)
             return
 
         if self.currsymb.id == self.scanner.monitors_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected monitors keyword
-            self.error_db.add_error('syntax', 'monitors')
-            self.error_recovery()
+            self.encounter_error('syntax', 'monitors', recover=True)
             return
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', ';')
-            self.error_recovery()
+            self.encounter_error('syntax', ';', recover=True)
             return
 
     def connectionblockgrammar(self):
@@ -344,24 +326,21 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected being keyword
-            self.error_db.add_error('syntax', 'begin')
-            self.error_recovery()
+            self.encounter_error('syntax', 'begin', recover=True)
             return
 
         if self.currsymb.id == self.scanner.connections_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected connections keyword
-            self.error_db.add_error('syntax', 'connections')
-            self.error_recovery()
+            self.encounter_error('syntax', 'connections', recover=True)
             return
 
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected colon
-            self.error_db.add_error('syntax', ':')
-            self.error_recovery()
+            self.encounter_error('syntax', ':', recover=True)
             return
         
         while self.currsymb.type == self.scanner.NAME:
@@ -372,24 +351,21 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected end keyword
-            self.error_db.add_error('syntax', ['a name', 'end'])
-            self.error_recovery()
+            self.encounter_error('syntax', ['a name', 'end'], recover=True)
             return
 
         if self.currsymb.id == self.scanner.connections_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected connections keyword
-            self.error_db.add_error('syntax', 'connections')
-            self.error_recovery()
+            self.encounter_error('syntax', 'connections', recover=True)
             return
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', ';')
-            self.error_recovery()
+            self.encounter_error('syntax', ';', recover=True)
             return
     
     def deviceblockgrammar(self):
@@ -397,24 +373,21 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected begin keyword
-            self.error_db.add_error('syntax', 'begin')
-            self.error_recovery()
+            self.encounter_error('syntax', 'begin', recover=True)
             return
 
         if self.currsymb.id == self.scanner.devices_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected devices keyword
-            self.error_db.add_error('syntax', 'devices')
-            self.error_recovery()
+            self.encounter_error('syntax', 'devices', recover=True)
             return
 
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected colon
-            self.error_db.add_error('syntax', ':')
-            self.error_recovery()
+            self.encounter_error('syntax', ':', recover=True)
             return
         
         while self.currsymb.id in self.device_ids:
@@ -425,24 +398,21 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected end keyword
-            self.error_db.add_error('syntax', ['a device', 'end'])
-            self.error_recovery()
+            self.encounter_error('syntax', ['a device', 'end'], recover=True)
             return
 
         if self.currsymb.id == self.scanner.devices_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected devices keyword
-            self.error_db.add_error('syntax', 'devices')
-            self.error_recovery()
+            self.encounter_error('syntax', 'devices', recover=True)
             return
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.error_db.add_error('syntax', ';')
-            self.error_recovery()
+            self.encounter_error('syntax', ';', recover=True)
             return
 
     def BNAcodegrammar(self):
