@@ -13,12 +13,12 @@ end devices;
 
 begin connections:
 	A -> G1.I1;
-	S -> notS.CLK;
-	S -> notS.CLEAR;
-	notS -> G1.DATA;
-	S -> G2.SET;
-	B -> D.I1;
-	G1 -> G3.SYNTAX;
+	S -> notS.I1;
+	S -> notS.I1;
+	notS -> G1.I1;
+	S -> G2.I1;
+	B -> D.SET;
+	G1 -> G3.I1;
     D.QBAR -> D1.SET;
 end connections;
 

@@ -161,7 +161,9 @@ class Parser:
             return
 
         inp = self.names.get_name_string(self.currsymb.id)
+        # Check that input name is within those allowed by EBNF:
         if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
+            # Fail semantic if DTYPE takes non-DTYPE inputs or vice versa
             if (currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) == (self.currsymb.id not in self.input_ids):
                 self.error_db.add_error('semantic', 13)
             self.currsymb = self.scanner.get_symbol()
@@ -222,7 +224,7 @@ class Parser:
                 # incorrect number of inputs to gate
                 self.error_db.add_error('semantic', 0)
             else:
-                self.variable_value = self.currsymb.id
+                self.variable_value = int(self.currsymb.id)
             # checking for semantic errors therefore don't need to skip after error detection
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -463,4 +465,8 @@ class Parser:
         """ Note that currently, it correctly will allow 
          correct files to be run, but any erros in the file
          will be flagged as several unique errors """
+
+        """ Current known issues:
+
+        """
         
