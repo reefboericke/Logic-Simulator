@@ -186,7 +186,7 @@ class Parser:
             # connection correctly parsed, if semantically correct, add to network:
             if self.network_construction:
                 self.network.make_connection(self.currdevicenameid1, self.curroutputid, 
-                                            currdevicenameid2, currinputid)
+                                             currdevicenameid2, currinputid)
                 self.curroutputid = None
         else:
             # expected semicolon
@@ -203,9 +203,7 @@ class Parser:
 
         if self.currsymb.id in self.variable_ids:
             # check variable matches device
-            if self.currdevicetypeid in [self.scanner.DTYPE_ID, self.scanner.XOR_ID]:
-                self.encounter_error('semantic', 3, recover=False)
-            elif self.currdevicetypeid in self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
+            if self.currdevicetypeid in self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
                 self.encounter_error('semantic', 4, recover=False)
             elif self.currdevicetypeid == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
                 self.encounter_error('semantic', 5, recover=False)
@@ -444,21 +442,14 @@ class Parser:
             self.monitorblockgrammar()
             self.error_recovery_mode = False
 
-
-    def semantic_error_check(self):
-        pass
-
     def parse_network(self):
         """Parse the circuit definition file."""
         self.currsymb = self.scanner.get_symbol()
         self.BNAcodegrammar()
-        self.semantic_error_check()
 
         if not self.error_db.report_errors():
             return True
         return False
-
-       # print(self.monitors.get_signal_names())
 
         """ Note that currently, it correctly will allow 
          correct files to be run, but any erros in the file
