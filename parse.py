@@ -47,6 +47,7 @@ class Parser:
         self.scanner = scanner
         self.error_db = error_db
         self.error_recovery_mode = False
+        self.network_construction = True
         self.device_ids = [self.scanner.CLOCK_ID, self.scanner.SWITCH_ID, 
          self.scanner.DTYPE_ID, self.scanner.AND_ID, self.scanner.NAND_ID,
          self.scanner.OR_ID, self.scanner.NOR_ID, self.scanner.XOR_ID]
@@ -74,6 +75,7 @@ class Parser:
         self.error_db.add_error(type, id)
         if recover:
             self.error_recovery()
+        self.network_construction = False
 
 
     def monitordefinitiongrammar(self):
@@ -143,7 +145,7 @@ class Parser:
             if self.currsymb.id not in self.unique_names:
                 # device doesn't exist
                 self.encounter_error('semantic', 18, recover=False)
-            currdeviceid = self.currsymb.id
+            currdevicenameid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -161,11 +163,11 @@ class Parser:
         # Check that input name is within those allowed by EBNF:
         if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
             # Fail semantic if DTYPE takes non-DTYPE inputs or vice versa
-            if (((currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) == 
+            if (((currdevicenameid in self.devices.find_devices(self.devices.D_TYPE)) == 
              (self.currsymb.id not in self.input_ids))
              # or fail semantic if input number too high
-             or ((currdeviceid not in self.devices.find_devices(self.devices.D_TYPE))
-             and int(inp[1:]) > len(self.devices.get_device(currdeviceid).inputs))):
+             or ((currdevicenameid not in self.devices.find_devices(self.devices.D_TYPE))
+             and int(inp[1:]) > len(self.devices.get_device(currdevicenameid).inputs))):
                 self.encounter_error('semantic', 13, recover=False)
 
             self.currsymb = self.scanner.get_symbol()
@@ -190,11 +192,11 @@ class Parser:
 
         if self.currsymb.id in self.variable_ids:
             # check variable matches device
-            if self.parsing_device.id == self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
+            if self.currdevicetypeid in self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
                 self.encounter_error('semantic', 4, recover=False)
-            elif self.parsing_device.id == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
+            elif self.currdevicetypeid == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
                 self.encounter_error('semantic', 5, recover=False)
-            elif self.parsing_device.id == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.initial_ID:
+            elif self.currdevicetypeid == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.initial_ID:
                 self.encounter_error('semantic', 6, recover=False)
                 
             self.currsymb = self.scanner.get_symbol()
@@ -211,17 +213,17 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NUMBER:
-            if (self.parsing_device.id == self.scanner.CLOCK_ID and int(self.currsymb.id) < 1):
+            if (self.currdevicetypeid == self.scanner.CLOCK_ID and int(self.currsymb.id) < 1):
                 # clock has non-positive frequency
                 self.encounter_error('semantic', 1, recover=False)
-            elif (self.parsing_device.id == self.scanner.SWITCH_ID and int(self.currsymb.id) not in [0,1]):
+            elif (self.currdevicetypeid == self.scanner.SWITCH_ID and int(self.currsymb.id) not in [0,1]):
                 # switch has invalid initial state
                 self.encounter_error('semantic', 2, recover=False)
-            elif (self.parsing_device.id in self.gates_with_inputs and int(self.currsymb.id) not in range(1, 17, 1)):
+            elif (self.currdevicetypeid in self.gates_with_inputs and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
                 self.encounter_error('semantic', 0, recover=False)
             else:
-                self.variable_value = int(self.currsymb.id)
+                self.currvariablevalue = int(self.currsymb.id)
             # checking for semantic errors therefore don't need to skip after error detection
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -232,7 +234,7 @@ class Parser:
 
     def devicedefinitiongrammar(self):
         if self.currsymb.id in self.device_ids:
-            self.parsing_device = self.currsymb
+            self.currdevicetypeid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a device keyword
@@ -247,7 +249,7 @@ class Parser:
                 # check to see if name is unique
                 self.encounter_error('semantic', 8, recover=False)
             self.unique_names.append(self.currsymb.id)
-            creating_name = self.currsymb
+            currdevicenameid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -261,10 +263,10 @@ class Parser:
         
         if self.currsymb.type == self.scanner.SEMICOLON:
             # device definition correct therefore create with id from names
-            err = self.devices.make_device(creating_name.id, 
-                                           self.parsing_device.id,
-                                           self.variable_value)
-            self.variable_value = None
+            err = self.devices.make_device(currdevicenameid, 
+                                           self.currdevicetypeid,
+                                           self.currvariablevalue)
+            self.currvariablevalue = None
             if (err == self.DEVICE_PRESENT):
                 self.encounter_error('semantic', 8, recover=False)
 
