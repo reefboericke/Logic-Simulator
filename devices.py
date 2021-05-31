@@ -98,11 +98,11 @@ class Devices:
                        the specified device and returns errors if unsuccessful.
     """
 
-    def __init__(self, names, errors):
+    def __init__(self, names, error_db):
         """Initialise devices, list and constants."""
 
         self.names = names
-        self.errors = errors
+        self.error_db = error_db
 
         self.devices_list = []
 
@@ -294,10 +294,10 @@ class Devices:
             # Device property is the switch initial state: 0(LOW) or 1(HIGH)
             if device_property is None:
                 error_type = self.NO_QUALIFIER
-                self.errors.add_error('semantic', 3)
+                self.error_db.add_error('semantic', 3)
             elif device_property not in [self.LOW, self.HIGH]:
                 error_type = self.INVALID_QUALIFIER
-                self.errors.add_error('semantic', 6)
+                self.error_db.add_error('semantic', 6)
             else:
                 self.make_switch(device_id, device_property)
                 error_type = self.NO_ERROR
@@ -306,10 +306,10 @@ class Devices:
             # Device property is the clock half period > 0
             if device_property is None:
                 error_type = self.NO_QUALIFIER
-                self.errors.add_error('semantic', 3)
+                self.error_db.add_error('semantic', 3)
             elif device_property <= 0:
                 error_type = self.INVALID_QUALIFIER
-                self.errors.add_error('semantic', 5)
+                self.error_db.add_error('semantic', 5)
             else:
                 self.make_clock(device_id, device_property)
                 error_type = self.NO_ERROR
@@ -319,17 +319,17 @@ class Devices:
             if device_kind == self.XOR:
                 if device_property is not None:
                     error_type = self.QUALIFIER_PRESENT
-                    self.errors.add_error('semantic', 3)
+                    self.error_db.add_error('semantic', 3)
                 else:
                     self.make_gate(device_id, device_kind, 2)
                     error_type = self.NO_ERROR
             else:  # other gates
                 if device_property is None:
                     error_type = self.NO_QUALIFIER
-                    self.errors.add_error('semantic', 3)
+                    self.error_db.add_error('semantic', 3)
                 elif device_property not in range(1, 17):  # between 1 and 16
                     error_type = self.INVALID_QUALIFIER
-                    self.errors.add_error('semantic', 0)
+                    self.error_db.add_error('semantic', 0)
                 else:
                     self.make_gate(device_id, device_kind, device_property)
                     error_type = self.NO_ERROR
@@ -337,7 +337,7 @@ class Devices:
         elif device_kind == self.D_TYPE:
             if device_property is not None:
                 error_type = self.QUALIFIER_PRESENT
-                self.errors.add_error('semantic', 3)
+                self.error_db.add_error('semantic', 3)
             else:
                 self.make_d_type(device_id)
                 error_type = self.NO_ERROR
