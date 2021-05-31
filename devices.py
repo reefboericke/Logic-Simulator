@@ -288,7 +288,6 @@ class Devices:
         # Device has already been added to the devices_list
         if self.get_device(device_id) is not None:
             error_type = self.DEVICE_PRESENT
-            self.errors.add_error('semantic', 8)
 
         elif device_kind == self.SWITCH:
             # Device property is the switch initial state: 0(LOW) or 1(HIGH)
