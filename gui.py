@@ -226,7 +226,11 @@ class Gui(wx.Frame):
         self.network = network
         self.devices = devices
         self.names = names
-        self.monitors = monitor
+        self.monitors = monitors
+
+        # Store original values of switches
+        switches = self.devices.find_devices(self.devices.SWITCH)
+        initial_switch_values = [switches[i].switch_state for i in range(len(switches))]
 
         self.cycles = 0
 
@@ -330,8 +334,14 @@ class Gui(wx.Frame):
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
         #for specified number of iterations run the simulation and fetch the state of the devices to be monitored
+        self.cycles = 0
+        self.monitors.reset_monitors()
+
+        self.devices.cold_startup()
+
         for i in range(self.canvas.length):
-            self.network.execute_network()
+            if self.network.execute_network():
+                self.monitors.record_signals()
 
         self.cycles += self.canvas.length
 
@@ -346,9 +356,26 @@ class Gui(wx.Frame):
             if(i%2 == 0):
                 switch_values.append(self.radiobuttons[i].GetValue())
 
+        switch_signals = [] #Convert True/False to 1/0
+        for value in switch_values:
+            if(switch_values == True):
+                switch_signals.append(1)
+            else:
+                switch_signals.append(0)
+
+        switches = self.devices.find_devices(self.devices.SWITCH) #Set all switches to the value specified in GUI
+        for i in range(len(switches)):
+            self.devices.set_switch(switches[i].device_id, switch_signals[i])
+
+        for i in range(self.canvas.length):
+            if self.network.execute_network():
+                self.monitors.record_signals()
+
         self.cycles += self.canvas.length
-        #set the switch values via network and then run the code in on_run_button
-        self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
+
+        self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
+        
+        self.canvas.render(self.canvas.outputs, self.canvas.length)
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
