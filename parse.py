@@ -48,6 +48,8 @@ class Parser:
         self.error_db = error_db
         self.error_recovery_mode = False
         self.network_construction = True
+        self.curroutputid = None
+        self.currvariablevalue = None
         self.device_ids = [self.scanner.CLOCK_ID, self.scanner.SWITCH_ID, 
          self.scanner.DTYPE_ID, self.scanner.AND_ID, self.scanner.NAND_ID,
          self.scanner.OR_ID, self.scanner.NOR_ID, self.scanner.XOR_ID]
@@ -59,7 +61,6 @@ class Parser:
         self.input_ids = [self.scanner.DATA_ID, self.scanner.CLK_ID,
          self.scanner.SET_ID, self.scanner.CLEAR_ID]
         self.unique_names = []
-        self.monitored_devices = []
 
         [self.NO_ERROR, self.INVALID_QUALIFIER, self.NO_QUALIFIER,
          self.BAD_DEVICE, self.QUALIFIER_PRESENT,
@@ -80,13 +81,12 @@ class Parser:
 
     def monitordefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
-            if self.names.get_name_string(self.currsymb.id) == None: 
-                # check to see if monitor exists
+            currdevicenameid = self.currsymb.id
+            if self.devices.get_device( currdevicenameid) == None:
                 self.encounter_error('semantic', 16, recover=False)
-            if self.names.get_name_string(self.currsymb.id) in self.monitored_devices:
+            if self.names.get_name_string(currdevicenameid) in self.monitors.get_signal_names()[0]:
                 # device already monitored
                 self.encounter_error('semantic', 17, recover=False)
-            parsing_device = self.names.get_name_string(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -96,8 +96,11 @@ class Parser:
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
             # monitor correctly parsed, add it to list
-            self.monitors.get_monitor_signal(parsing_device, None)
-            # Need to add way of changing None to Q for DTYPE
+            if self.devices.get_device(currdevicenameid) != None:
+                if self.devices.get_device(currdevicenameid).device_kind == self.devices.D_TYPE:
+                    self.monitors.make_monitor(currdevicenameid, self.scanner.Q_ID)
+                else:
+                    self.monitors.make_monitor(currdevicenameid, None)
         else:
             # expected semicolon
             self.encounter_error('syntax', ';', recover=True)
@@ -112,6 +115,10 @@ class Parser:
             return
 
         if self.currsymb.id in self.output_ids:
+            self.curroutputid = self.currsymb.id
+            if (self.devices.get_device(self.currdevicenameid1) != None 
+             and self.devices.get_device(self.currdevicenameid1).device_kind != self.devices.D_TYPE):
+                self.encounter_error('semantic', 12, recover=False)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected Q / QBAR
@@ -120,9 +127,9 @@ class Parser:
 
     def connectiondefinitiongrammar(self):
         if self.currsymb.type == self.scanner.NAME:
-            if self.currsymb.id not in self.unique_names:
-                # device doesn't exist
-                self.encounter_error('semantic', 18, recover=False)
+            self.currdevicenameid1 = self.currsymb.id
+            if self.devices.get_device(self.currdevicenameid1) == None:
+                self.encounter_error('semantic', 16, recover=False)
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -131,6 +138,9 @@ class Parser:
 
         if self.currsymb.type == self.scanner.DOT:
             self.assignoutputgrammar()
+        elif (self.devices.get_device(self.currdevicenameid1) != None 
+             and self.devices.get_device(self.currdevicenameid1).device_kind == self.devices.D_TYPE):
+            self.encounter_error('semantic', 11, recover=False)
         if self.error_recovery_mode:
             return
 
@@ -142,10 +152,10 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NAME:
-            if self.currsymb.id not in self.unique_names:
-                # device doesn't exist
-                self.encounter_error('semantic', 18, recover=False)
-            currdevicenameid = self.currsymb.id
+            currdevicenameid2 = self.currsymb.id
+            if self.devices.get_device(currdevicenameid2) == None:
+                self.encounter_error('semantic', 16, recover=False)
+
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -162,14 +172,10 @@ class Parser:
         inp = self.names.get_name_string(self.currsymb.id)
         # Check that input name is within those allowed by EBNF:
         if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
-            # Fail semantic if DTYPE takes non-DTYPE inputs or vice versa
-            if (((currdevicenameid in self.devices.find_devices(self.devices.D_TYPE)) == 
-             (self.currsymb.id not in self.input_ids))
-             # or fail semantic if input number too high
-             or ((currdevicenameid not in self.devices.find_devices(self.devices.D_TYPE))
-             and int(inp[1:]) > len(self.devices.get_device(currdevicenameid).inputs))):
+            if (self.devices.get_device(self.currsymb.id) != None 
+             and self.currsymb.id not in self.devices.get_device(currdevicenameid2).inputs):
                 self.encounter_error('semantic', 13, recover=False)
-
+            currinputid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             self.encounter_error('syntax', 'a valid input', recover=True)
@@ -177,6 +183,11 @@ class Parser:
 
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
+            # connection correctly parsed, if semantically correct, add to network:
+            if self.network_construction:
+                self.network.make_connection(self.currdevicenameid1, self.curroutputid, 
+                                            currdevicenameid2, currinputid)
+                self.curroutputid = None
         else:
             # expected semicolon
             self.encounter_error('syntax', ';', recover=True)
@@ -192,13 +203,15 @@ class Parser:
 
         if self.currsymb.id in self.variable_ids:
             # check variable matches device
-            if self.currdevicetypeid in self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
+            if self.currdevicetypeid in [self.scanner.DTYPE_ID, self.scanner.XOR_ID]:
+                self.encounter_error('semantic', 3, recover=False)
+            elif self.currdevicetypeid in self.gates_with_inputs and self.currsymb.id != self.scanner.inputs_ID:
                 self.encounter_error('semantic', 4, recover=False)
             elif self.currdevicetypeid == self.scanner.CLOCK_ID and self.currsymb.id != self.scanner.period_ID:
                 self.encounter_error('semantic', 5, recover=False)
             elif self.currdevicetypeid == self.scanner.SWITCH_ID and self.currsymb.id != self.scanner.initial_ID:
                 self.encounter_error('semantic', 6, recover=False)
-                
+
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected variable
@@ -234,6 +247,7 @@ class Parser:
 
     def devicedefinitiongrammar(self):
         if self.currsymb.id in self.device_ids:
+            self.network_construction = True
             self.currdevicetypeid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -257,19 +271,20 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.COLON:
+            if self.currdevicetypeid in [self.scanner.DTYPE_ID, self.scanner.XOR_ID]:
+                self.encounter_error('semantic', 3, recover=False)
             self.assignvariablegrammar()
+        elif self.currdevicetypeid not in [self.scanner.DTYPE_ID, self.scanner.XOR_ID]:
+            self.encounter_error('semantic', 3, recover=False)
         if self.error_recovery_mode:
             return
         
         if self.currsymb.type == self.scanner.SEMICOLON:
             # device definition correct therefore create with id from names
-            err = self.devices.make_device(currdevicenameid, 
-                                           self.currdevicetypeid,
-                                           self.currvariablevalue)
+            if self.network_construction == True:
+                self.devices.make_device(currdevicenameid, self.currdevicetypeid,
+                                     self.currvariablevalue)
             self.currvariablevalue = None
-            if (err == self.DEVICE_PRESENT):
-                self.encounter_error('semantic', 8, recover=False)
-
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
@@ -439,11 +454,17 @@ class Parser:
         self.BNAcodegrammar()
         self.semantic_error_check()
 
+        if not self.error_db.report_errors():
+            return True
+        return False
+
+       # print(self.monitors.get_signal_names())
+
         """ Note that currently, it correctly will allow 
          correct files to be run, but any erros in the file
          will be flagged as several unique errors """
 
         """ Current known issues:
-
+        1: If a device isn't initialised, we don't want to come up in semantic checks later
         """
         
