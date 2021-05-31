@@ -230,7 +230,7 @@ class Gui(wx.Frame):
 
         # Store original values of switches
         switches = self.devices.find_devices(self.devices.SWITCH)
-        initial_switch_values = [switches[i].switch_state for i in range(len(switches))]
+        initial_switch_values = [self.devices.get_device(switches[i]).switch_state for i in range(len(switches))]
 
         self.cycles = 0
 
@@ -287,7 +287,7 @@ class Gui(wx.Frame):
 
         switches = self.devices.find_devices(self.devices.SWITCH)
         for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
-            switch_name = self.names.query(switches[i].device_id)
+            switch_name = self.names.query(switches[i])
             self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
