@@ -218,6 +218,11 @@ class Gui(wx.Frame):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
 
+        # Set up network for running
+        self.network = network
+        self.devices = devices
+        self.names = names
+
         # Configure the file menu
         fileMenu = wx.Menu()
         menuBar = wx.MenuBar()
@@ -315,6 +320,14 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
+        #for specified number of iterations run the simulation and fetch the state of the devices to be monitored
+        monitored_ids = [self.names.query(device_name) for device_name in self.monitored_devices]
+        for i in range(self.canvas.length):
+            self.network.execute_network()
+        for device in self.devices.devices_list:
+            if device.device_id in monitored_ids:
+                self.outputs.append([device.ouputs[output_id] for output_id in device.outputs]) # might be wrong - if device stores one output at a time then need to move this inside the previous loop and store output per step of the network
+
         self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
 
     def on_continue_button(self, event):
