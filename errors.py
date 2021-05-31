@@ -124,13 +124,25 @@ class Error_Store():
         """Sort errors by line number."""
         self.errors.sort(key=lambda e: e.location[0])
 
+    def query_semantics(self, desired_type):
+        """Return number of semantic errors of certain type."""
+        count = 0
+        for error in self.errors:
+            if error.error_type == 'semantic':
+                if error.error_id == desired_type:
+                    count += 1
+        return count
+
     def report_errors(self):
         """Build full error text of entire BNA file."""
-        self.sort_errors()
-        total_error_text ='\n'
-        for error in self.errors:
-            total_error_text += error.report() + '\n\n'
-        print(total_error_text)
-        return total_error_text
+        if self.no_errors == 0:
+            return(None)
+        else:
+            self.sort_errors()
+            total_error_text ='\n'
+            for error in self.errors:
+                total_error_text += error.report() + '\n\n'
+            print(total_error_text)
+            return total_error_text
 
 
