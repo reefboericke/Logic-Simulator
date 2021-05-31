@@ -120,7 +120,6 @@ class Parser:
             if self.currsymb.id not in self.unique_names:
                 # device doesn't exist
                 self.error_db.add_error('semantic', 18)
-            currdeviceid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -145,6 +144,7 @@ class Parser:
             if self.currsymb.id not in self.unique_names:
                 # device doesn't exist
                 self.error_db.add_error('semantic', 18)
+            currdeviceid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -162,7 +162,7 @@ class Parser:
 
         inp = self.names.get_name_string(self.currsymb.id)
         if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
-            if not ((currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) ^ self.currsymb.id not in self.input_ids):
+            if (currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) == (self.currsymb.id not in self.input_ids):
                 self.error_db.add_error('semantic', 13)
             self.currsymb = self.scanner.get_symbol()
         else:
