@@ -107,7 +107,7 @@ class Error:
         error_text += '\n\n' + str(self.location[1])
         for i in range(self.location[2]):
             error_text += ' '
-        error_text += '^'
+        error_text += '  ^'
         return(error_text)
 
 class Error_Store():
@@ -168,7 +168,7 @@ class Error_Store():
     def report_errors(self):
         """Build full error text of entire BNA file."""
         if self.no_errors == 0:
-            return(None)
+            return False
         else:
             self.sort_errors()
             total_error_text ='\n'

@@ -11,6 +11,7 @@ Command line user interface: logsim.py -c <file path>
 Graphical user interface: logsim.py <file path>
 """
 import getopt
+from os import error
 import sys
 import linecache
 
@@ -45,14 +46,14 @@ def main(arg_list):
         sys.exit()
 
     # Initialise instances of the four inner simulator classes
-    # names = Names()
-    # devices = Devices(names)
-    # network = Network(names, devices)
-    # monitors = Monitors(names, devices, network)
-    names = None
-    devices = None
-    network = None
-    monitors = None
+    names = Names()
+    devices = Devices(names)
+    network = Network(names, devices)
+    monitors = Monitors(names, devices, network)
+    # names = None
+    # devices = None
+    # network = None
+    # monitors = None
 
     for option, path in options:
         if option == "-h":  # print the usage message
@@ -60,7 +61,8 @@ def main(arg_list):
             sys.exit()
         elif option == "-c":  # use the command line user interface
             scanner = Scanner(path, names)
-            parser = Parser(names, devices, network, monitors, scanner)
+            error_db = Error_Store(scanner)
+            parser = Parser(names, devices, network, monitors, scanner, error_db)
             if parser.parse_network():
                 # Initialise an instance of the userint.UserInterface() class
                 userint = UserInterface(names, devices, network, monitors)
@@ -75,8 +77,8 @@ def main(arg_list):
 
         [path] = arguments
         scanner = Scanner(path, names)
-        error_store = Error_Store(scanner)
-        parser = Parser(names, devices, network, monitors, scanner, error_store)
+        error_db = Error_Store(scanner)
+        parser = Parser(names, devices, network, monitors, scanner, error_db)
         if parser.parse_network():
             # Initialise an instance of the gui.Gui() class
             app = wx.App()
