@@ -226,7 +226,9 @@ class Gui(wx.Frame):
         self.network = network
         self.devices = devices
         self.names = names
-        self.monitors = monitors
+        self.monitors = monitor
+
+        self.cycles = 0
 
         # Configure the file menu
         fileMenu = wx.Menu()
@@ -331,6 +333,8 @@ class Gui(wx.Frame):
         for i in range(self.canvas.length):
             self.network.execute_network()
 
+        self.cycles += self.canvas.length
+
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
         
         self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
@@ -342,14 +346,20 @@ class Gui(wx.Frame):
             if(i%2 == 0):
                 switch_values.append(self.radiobuttons[i].GetValue())
 
+        self.cycles += self.canvas.length
         #set the switch values via network and then run the code in on_run_button
         self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
-        if(self.remove_monitor_choice.GetSelection() != wx.NOT_FOUND):
-            self.unmonitored_devices.append(self.monitored_devices[self.remove_monitor_choice.GetSelection()])
-            self.monitored_devices.pop(self.remove_monitor_choice.GetSelection())
+        device_id = self.add_monitor_choice.GetSelection()
+        if(device_id != wx.NOT_FOUND):
+            if(self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
+                self.monitors.remove(device_id, None)
+            else:
+                self.monitors.remove(device_id, self.devices.Q_ID)
+            self.unmonitored_devices.append(self.monitored_devices[device_id])
+            self.monitored_devices.pop(device_id)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
             self.side_sizer.Insert(15, self.add_monitor_choice)
@@ -360,9 +370,14 @@ class Gui(wx.Frame):
 
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
-        if(self.add_monitor_choice.GetSelection() != wx.NOT_FOUND):
-            self.monitored_devices.append(self.unmonitored_devices[self.add_monitor_choice.GetSelection()])
-            self.unmonitored_devices.pop(self.add_monitor_choice.GetSelection())
+        device_id = self.add_monitor_choice.GetSelection()
+        if(device_id != wx.NOT_FOUND):
+            if (self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
+                self.monitors.make_monitor(device_id, None, self.cycles)
+            else:
+                self.monitors.make_monitor(device_id, self.devices.Q_ID, self.cycles)
+            self.monitored_devices.append(self.unmonitored_devices[device_id])
+            self.unmonitored_devices.pop(device_id)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
             self.side_sizer.Insert(15, self.add_monitor_choice)
