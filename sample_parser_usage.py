@@ -27,7 +27,7 @@ def run():
 
     parser.parse_network()
 
-    error_db.report_errors()
+    # error_db.report_errors()
 
 if __name__ == "__main__":
     run()
