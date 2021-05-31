@@ -62,6 +62,28 @@ class Error:
             18: 'Specified device doesn\'t exist.'
         }
 
+        self.syntax_errors = {
+            0: 'name',
+            1: ';',
+            2: '.',
+            3: ['Q', 'QBAR'],
+            4: ['.', '->'],
+            5: 'a valid input',
+            6: ':',
+            7: 'device variable',
+            8: '=',
+            9: 'number',
+            10: 'a device',
+            11: [':', ';'],
+            12: 'begin',
+            13: 'monitors',
+            14: ['a name', 'end'],
+            15: 'monitors',
+            16: 'connections',
+            17: 'devices',
+            18: ['a device', 'end']
+        }
+
     def report(self):
         """Build error message for reporting via terminal or GUI."""
         error_text = ''
@@ -70,6 +92,7 @@ class Error:
         if self.error_type == 'semantic':
             error_text += ' ' + self.semantic_errors[self.error_id]
         elif self.error_type == 'syntax':
+            self.error_id = self.syntax_errors[self.error_id]
             error_text += ' invalid syntax, expected '
             if type(self.error_id) == str:
                 error_text += '"' + self.error_id + '":'
@@ -129,6 +152,15 @@ class Error_Store():
         count = 0
         for error in self.errors:
             if error.error_type == 'semantic':
+                if error.error_id == desired_type:
+                    count += 1
+        return count
+
+    def query_syntax(self, desired_type):
+        """Return number of syntax errors of certain type."""
+        count = 0
+        for error in self.errors:
+            if error.error_type == 'syntax':
                 if error.error_id == desired_type:
                     count += 1
         return count

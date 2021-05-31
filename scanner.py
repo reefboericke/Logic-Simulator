@@ -253,8 +253,3 @@ class Scanner:
         location = (self.no_EOL, line, no_spaces)
         return(location)
 
-    def skip_error(self):
-        while self.current_character.type != self.scanner.SEMICOLON:
-            self.advance
-        self.currsymb = self.scanner.get_symbol()
-

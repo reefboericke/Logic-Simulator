@@ -1,6 +1,7 @@
 """Test the errors module"""
 
 import pytest
+import os
 from scanner import Symbol
 from scanner import Scanner
 from names import Names
@@ -40,9 +41,9 @@ def test_error_counting(new_error_store):
     ("semantic", 0, " "),
     ("semantic", 1, " "),
     ("semantic", 2, " "),
-    ("semantic", 3, " ")
-    ("syntax", 'begin', " ")
-    ("syntax", ['a name', 'end'], "")
+    ("semantic", 3, " "),
+    ("syntax", 'begin', " "),
+    ("syntax", ['a name', 'end'], " ")
 ])
 
 def test_error_reporting(new_error_store, error_type, error_id, expected_text):
@@ -60,9 +61,9 @@ def test_error_sorting(new_error_store):
     """
     error_db = new_error_store('blank.bna')
     locations = [
-        (12, '', 0)
-        (2, '', 0)
-        (5, '', 0)
+        (12, '', 0),
+        (2, '', 0),
+        (5, '', 0),
         (31, '', 0)
     ]
     i = 1
@@ -76,10 +77,10 @@ def test_error_sorting(new_error_store):
     assert(error_db.errors[0].error_id == 2)
 
     assert(error_db.errors[1].location == locations[2])
-    assert(error_db.errors[1].error_id = 3)
+    assert(error_db.errors[1].error_id == 3)
 
     assert(error_db.errors[2].location == locations[0])
-    assert(errpr_db.errors[2].error_id == 1)
+    assert(error_db.errors[2].error_id == 1)
 
     assert(error_db.errors[3].location == locations[3])
     assert(error_db.errors[3].error_id == 4)
