@@ -287,7 +287,7 @@ class Gui(wx.Frame):
 
         switches = self.devices.find_devices(self.devices.SWITCH)
         for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
-            switch_name = self.names.query(switches[i])
+            switch_name = self.names.get_name_string(switches[i])
             self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
@@ -365,7 +365,7 @@ class Gui(wx.Frame):
 
         switches = self.devices.find_devices(self.devices.SWITCH) #Set all switches to the value specified in GUI
         for i in range(len(switches)):
-            self.devices.set_switch(switches[i].device_id, switch_signals[i])
+            self.devices.set_switch(switches[i], switch_signals[i])
 
         for i in range(self.canvas.length):
             if self.network.execute_network():
@@ -379,7 +379,7 @@ class Gui(wx.Frame):
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
-        device_id = self.add_monitor_choice.GetSelection()
+        device_id = self.names.query(self.add_monitor_choice.GetSelection())
         if(device_id != wx.NOT_FOUND):
             if(self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
                 self.monitors.remove(device_id, None)
@@ -397,7 +397,7 @@ class Gui(wx.Frame):
 
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
-        device_id = self.add_monitor_choice.GetSelection()
+        device_id = self.names.query(self.add_monitor_choice.GetSelection())
         if(device_id != wx.NOT_FOUND):
             if (self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
                 self.monitors.make_monitor(device_id, None, self.cycles)
