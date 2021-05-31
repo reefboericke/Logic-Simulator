@@ -55,6 +55,8 @@ class Parser:
         self.gates_with_inputs = [self.scanner.AND_ID, self.scanner.NOR_ID,
          self.scanner.NAND_ID]
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
+        self.input_ids = [self.scanner.DATA_ID, self.scanner.CLK_ID,
+         self.scanner.SET_ID, self.scanner.CLEAR_ID]
         self.unique_names = []
         self.monitored_devices = []
 
@@ -118,6 +120,7 @@ class Parser:
             if self.currsymb.id not in self.unique_names:
                 # device doesn't exist
                 self.error_db.add_error('semantic', 18)
+            currdeviceid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected a name
@@ -157,28 +160,13 @@ class Parser:
             self.error_recovery()
             return
 
-        if self.currsymb.type == self.scanner.NAME:
-            inp = self.names.get_name_string(self.currsymb.id)
-            if (re.search('I\d+' , self.names.get_name_string(self.currsymb.id)) == None):
-                # check name of required format
-                self.error_db.add_error('syntax', 'a valid gate input')
-                self.error_recovery()
-                return
-            if (not( (inp[0] == 'I') and (inp[1:].isdigit()))):
-                self.error_db.add_error('syntax', 'a valid gate input')
-                self.error_recovery()
-                return
-            #if ()
-            # case 1: isn't dtype and suffix isnt format of Inum or (clk/set/clr etc.) = syntax
-            # case 2: isn't dtype and I(1->16) = semantic
-            # case 3: is dtype and suffix is format of Inum = semantic
-            # case 4: is dtype and suffix isn't in (clk/set/clr etc.) 0r Inum = syntax
-
-
+        inp = self.names.get_name_string(self.currsymb.id)
+        if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
+            if not ((currdeviceid in self.devices.find_devices(self.devices.D_TYPE)) ^ self.currsymb.id not in self.input_ids):
+                self.error_db.add_error('semantic', 13)
             self.currsymb = self.scanner.get_symbol()
         else:
-            # expected a name
-            self.error_db.add_error('syntax', 'name')
+            self.error_db.add_error('syntax', 'a valid gate input')
             self.error_recovery()
             return
 
@@ -280,6 +268,7 @@ class Parser:
             err = self.devices.make_device(creating_name.id, 
                                            self.parsing_device.id,
                                            self.variable_value)
+            self.variable_value = None
             if (err == self.DEVICE_PRESENT):
                 self.error_db.add_error('semantic', 8)
 
