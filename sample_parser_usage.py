@@ -14,11 +14,13 @@ import linecache
 
 def run():
     names = Names()
-    devices = Devices(names)
+    scanner = Scanner('test_devicesblock.txt', names)
+    error_store = Error_Store(scanner)
+    devices = Devices(names, error_store)
     network = Network(names, devices)
     monitors = Monitors(names, devices, network)
     
-    scanner = Scanner('test_devicesblock.txt', names)
+    
     error_db = Error_Store(scanner)
 
     parser = Parser(names,devices,network,monitors,scanner, error_db)
