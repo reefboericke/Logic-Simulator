@@ -65,7 +65,7 @@ class Network:
         """Initialise network errors and the steady_state variable."""
         self.names = names
         self.devices = devices
-        self.errors = self.devices.errors
+        self.error_store = self.devices.error_store
 
         [self.NO_ERROR, self.INPUT_TO_INPUT, self.OUTPUT_TO_OUTPUT,
          self.INPUT_CONNECTED, self.PORT_ABSENT,
@@ -120,18 +120,18 @@ class Network:
 
         if first_device is None or second_device is None:
             error_type = self.DEVICE_ABSENT
-            self.errors.add_error('semantic', 18)
+            self.error_store.add_error('semantic', 18)
 
         elif first_port_id in first_device.inputs:
             if first_device.inputs[first_port_id] is not None:
                 # Input is already in a connection
                 error_type = self.INPUT_CONNECTED
-                self.errors.add_error('semantic', 14)
+                self.error_store.add_error('semantic', 14)
 
             elif second_port_id in second_device.inputs:
                 # Both ports are inputs
                 error_type = self.INPUT_TO_INPUT
-                self.errors.add_error('semantic', 9)
+                self.error_store.add_error('semantic', 9)
             elif second_port_id in second_device.outputs:
                 # Make connection
                 first_device.inputs[first_port_id] = (second_device_id,
@@ -144,12 +144,12 @@ class Network:
             if second_port_id in second_device.outputs:
                 # Both ports are outputs
                 error_type = self.OUTPUT_TO_OUTPUT
-                self.errors.add_error('semantic', 10)
+                self.error_store.add_error('semantic', 10)
             elif second_port_id in second_device.inputs:
                 if second_device.inputs[second_port_id] is not None:
                     # Input is already in a connection
                     error_type = self.INPUT_CONNECTED
-                    self.errors.add_error('semantic', 18)
+                    self.error_store.add_error('semantic', 18)
                 else:
                     second_device.inputs[second_port_id] = (first_device_id,
                                                             first_port_id)
