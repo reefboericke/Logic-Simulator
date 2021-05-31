@@ -88,7 +88,8 @@ class Parser:
         if self.currsymb.type == self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
             # monitor correctly parsed, add it to list
-            self.monitored_devices.append(parsing_device)
+            self.monitors.get_monitor_signal(parsing_device, None)
+            # Need to add way of changing None to Q for DTYPE
         else:
             # expected semicolon
             self.error_db.add_error('syntax', ';')
