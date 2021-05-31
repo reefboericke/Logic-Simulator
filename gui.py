@@ -105,7 +105,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Draw a sample signal trace
         x_step = (self.GetClientSize().width - 20)/length
-        y_step = (self.GetClientSize().height)/(2*len(outputs))
+        y_spacing = (self.GetClientSize().height)/(2*len(outputs))
+        y_step = 20 #if the screen is very crowded or empty could adjust this for readability
 
         for j in range(len(outputs)):
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
@@ -113,7 +114,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             for i in range(length):
                 x = (i * x_step) + 10
                 x_next = (i * x_step) + x_step + 10
-                y = y_step*(2*j + 1) + outputs[j][i]
+                y = y_spacing*(2*j + 1) + y_step*outputs[j][i]
                 GL.glVertex2f(x, y)
                 GL.glVertex2f(x_next, y)
             GL.glEnd()
