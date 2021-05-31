@@ -172,8 +172,8 @@ class Parser:
         inp = self.names.get_name_string(self.currsymb.id)
         # Check that input name is within those allowed by EBNF:
         if (self.currsymb.id  in self.input_ids) or ( (inp[0] == 'I') and (inp[1:].isdigit())):
-            if (self.devices.get_device(self.currsymb.id) != None 
-             and self.currsymb.id not in self.devices.get_device(currdevicenameid2).inputs):
+            if ((self.devices.get_device(currdevicenameid2) != None )
+             and (self.currsymb.id not in self.devices.get_device(currdevicenameid2).inputs)):
                 self.encounter_error('semantic', 13, recover=False)
             currinputid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
