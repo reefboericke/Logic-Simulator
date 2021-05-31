@@ -68,9 +68,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Initialise variables for zooming
         self.zoom = 1
 
-        # Initialise variables for rendering signals
-        self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0], [0, 0, 0, 0, 10, 0, 0, 10, 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10], [0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]] # Fake test signal
+        # Previously used dummy variables
+        #self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0], [0, 0, 0, 0, 10, 0, 0, 10, 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10], [0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]] # Fake test signal
+        #self.length = 10
+
         self.length = 10
+        self.outputs = [0 for i in range(10)]
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -223,6 +226,7 @@ class Gui(wx.Frame):
         self.network = network
         self.devices = devices
         self.names = names
+        self.monitors = monitors
 
         # Configure the file menu
         fileMenu = wx.Menu()
@@ -274,16 +278,18 @@ class Gui(wx.Frame):
         self.side_sizer.Add(self.continue_button, 1, wx.ALL, 5)
         self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
         self.radiobuttons = []
-        for i in range(3): #Iterate through the switches in the circuit and list them out with on/off. (3) to be replaced with a value loaded from the circuit
-            self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, "Switch " + str(i)))
+
+        switches = self.devices.find_devices(self.devices.SWITCH)
+        for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
+            switch_name = self.names.query(switches[i].device_id)
+            self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
             self.side_sizer.Add(self.radiobuttons[-1])
 
-        # Define dummy lists of devices
-        self.monitored_devices = ["NAND1", "NAND2", "DTYPE1"]
-        self.unmonitored_devices = ["NAND3", "NAND4", "DTYPE2"]
+        # Retrieve initial list of monitored and unmonitored devices
+        self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
 
         # Add monitor addition/removal controls
         self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
@@ -322,13 +328,11 @@ class Gui(wx.Frame):
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
         #for specified number of iterations run the simulation and fetch the state of the devices to be monitored
-        monitored_ids = [self.names.query(device_name) for device_name in self.monitored_devices]
         for i in range(self.canvas.length):
             self.network.execute_network()
-        for device in self.devices.devices_list:
-            if device.device_id in monitored_ids:
-                self.outputs.append([device.ouputs[output_id] for output_id in device.outputs]) # might be wrong - if device stores one output at a time then need to move this inside the previous loop and store output per step of the network
 
+        self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
+        
         self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
 
     def on_continue_button(self, event):
@@ -337,6 +341,8 @@ class Gui(wx.Frame):
         for i in range(len(self.radiobuttons)): #Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
             if(i%2 == 0):
                 switch_values.append(self.radiobuttons[i].GetValue())
+
+        #set the switch values via network and then run the code in on_run_button
         self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
 
     def on_remove_monitor(self, event):
