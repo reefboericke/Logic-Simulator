@@ -62,7 +62,8 @@ def main(arg_list):
         elif option == "-c":  # use the command line user interface
             scanner = Scanner(path, names)
             error_db = Error_Store(scanner)
-            parser = Parser(names, devices, network, monitors, scanner, error_db)
+            parser = Parser(names, devices, network,
+                            monitors, scanner, error_db)
             if parser.parse_network():
                 # Initialise an instance of the userint.UserInterface() class
                 userint = UserInterface(names, devices, network, monitors)
