@@ -73,6 +73,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         #self.length = 10
 
         self.length = 10
+        self.render_length = 10
         self.outputs = [[0 for i in range(10)]]
         self.output_labels = ['Label']
         self.labels = []
@@ -131,6 +132,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             GL.glBegin(GL.GL_LINE_STRIP)
             self.labels.append(wx.StaticText(self, wx.ID_ANY, self.output_labels[j], pos=wx.Point(10, y_spacing*(2*j + 1) + 10)))
             for i in range(length):
+                print(i)
                 x = (i * x_step) + 50
                 x_next = (i * x_step) + x_step + 10
                 y = y_spacing*(2*j + 1) + y_step*outputs[j][i]
@@ -151,7 +153,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.init_gl()
             self.init = True
 
-        self.render(self.outputs, self.length)
+        self.render(self.outputs, self.render_length)
 
     def on_size(self, event):
         """Handle the canvas resize event."""
@@ -359,8 +361,10 @@ class Gui(wx.Frame):
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
-                self.cycles += self.canvas.length
 
+        
+        self.cycles += self.canvas.length
+        self.canvas.render_length = self.cycles
 
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
 
@@ -370,7 +374,7 @@ class Gui(wx.Frame):
             for label in self.canvas.labels:
                 label.Destroy()
         except:
-            pass
+            print("Couldn't destroy labels")
         
         self.canvas.render(self.canvas.outputs, self.canvas.length)
 
@@ -398,10 +402,13 @@ class Gui(wx.Frame):
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
-                self.cycles += self.canvas.length
 
+        self.cycles += self.canvas.length
+        self.canvas.render_length = self.cycles
 
         self.canvas.outputs = [previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(previous_outputs))]
+
+        print(self.canvas.outputs[0], self.cycles)
 
         self.canvas.output_labels = self.monitored_devices[::-1]
 
@@ -409,7 +416,8 @@ class Gui(wx.Frame):
             for label in self.canvas.labels:
                 label.Destroy()
         except:
-            pass
+            print("Couldn't destroy labels")
+
         self.canvas.render(self.canvas.outputs, self.cycles)
 
     def on_remove_monitor(self, event):
