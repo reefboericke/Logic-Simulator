@@ -67,18 +67,21 @@ class Parser:
         # DO WE NEED THIS HERE?????
 
     def error_recovery(self):
+        """Skip scanner to next semicolon for error recovery."""
         while self.currsymb.type != self.scanner.SEMICOLON:
             self.currsymb = self.scanner.get_symbol()
         self.currsymb = self.scanner.get_symbol()
         self.error_recovery_mode = True
 
     def encounter_error(self, type, id, recover):
+        """Log and recover from errors and halt network construction."""
         self.error_db.add_error(type, id)
         if recover:
             self.error_recovery()
         self.network_construction = False
 
     def monitordefinitiongrammar(self):
+        """Parse the monitoring of a device output."""
         if self.currsymb.type == self.scanner.NAME:
             currdevicenameid = self.currsymb.id
             if self.devices.get_device(currdevicenameid) is None:
@@ -109,6 +112,7 @@ class Parser:
             return
 
     def assignoutputgrammar(self):
+        """Parse the output to be used in connection."""
         if self.currsymb.type == self.scanner.DOT:
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -130,6 +134,7 @@ class Parser:
             return
 
     def connectiondefinitiongrammar(self):
+        """Parse the connection between an output and input."""
         if self.currsymb.type == self.scanner.NAME:
             self.currdevicenameid1 = self.currsymb.id
             if self.devices.get_device(self.currdevicenameid1) is None:
@@ -202,6 +207,7 @@ class Parser:
             return
 
     def assignvariablegrammar(self):
+        """Parse the assignment of a variable to a device."""
         if self.currsymb.type == self.scanner.COLON:
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -256,6 +262,7 @@ class Parser:
             return
 
     def devicedefinitiongrammar(self):
+        """Parse the creation of a device."""
         if self.currsymb.id in self.device_ids:
             self.network_construction = True
             self.currdevicetypeid = self.currsymb.id
@@ -305,6 +312,7 @@ class Parser:
             return
 
     def monitorblockgrammar(self):
+        """Parse the creation of monitors."""
         if self.currsymb.id == self.scanner.begin_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -352,6 +360,7 @@ class Parser:
             return
 
     def connectionblockgrammar(self):
+        """Parse the creation of connections."""
         if self.currsymb.id == self.scanner.begin_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -399,6 +408,7 @@ class Parser:
             return
 
     def deviceblockgrammar(self):
+        """Parse the creation of devices."""
         if self.currsymb.id == self.scanner.begin_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -446,7 +456,7 @@ class Parser:
             return
 
     def BNAcodegrammar(self):
-
+        """Parse the whole EBNF."""
         self.deviceblockgrammar()
         self.error_recovery_mode = False
 
