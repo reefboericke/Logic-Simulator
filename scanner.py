@@ -117,7 +117,11 @@ class Scanner:
         Reassigns current_character variable.
         """
         self.current_character = self.file.read(1)
-        self.current_char_num += 1
+        if self.current_character == '	':
+            # is a tab = four chars
+            self.current_char_num += 4
+        else:
+            self.current_char_num += 1
 
     def skip_spaces_and_comments(self):
         """Pass file pointer over white-space characters and comments."""
@@ -248,9 +252,4 @@ class Scanner:
         line = linecache.getline(self.path, self.no_EOL)
         location = (self.no_EOL, line, no_spaces)
         return(location)
-
-    def skip_error(self):
-        while self.current_character.type != self.scanner.SEMICOLON:
-            self.advance
-        self.currsymb = self.scanner.get_symbol()
 

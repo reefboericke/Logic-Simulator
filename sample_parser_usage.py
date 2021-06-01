@@ -13,6 +13,7 @@ import linecache
 
 
 def run():
+    
     names = Names()
     devices = Devices(names)
     network = Network(names, devices)
@@ -20,12 +21,9 @@ def run():
     
     scanner = Scanner('test_devicesblock.txt', names)
     error_db = Error_Store(scanner)
-
     parser = Parser(names,devices,network,monitors,scanner, error_db)
 
     parser.parse_network()
-
-    error_db.report_errors()
 
 if __name__ == "__main__":
     run()

@@ -53,6 +53,7 @@ class Devices:
     Parameters
     ----------
     names: instance of the names.Names() class.
+    errors: instance of errors.Error_Store() class.
 
     Public methods
     --------------
@@ -98,7 +99,7 @@ class Devices:
     """
 
     def __init__(self, names):
-        """Initialise devices list and constants."""
+        """Initialise devices, list and constants."""
 
         self.names = names
 

@@ -53,12 +53,35 @@ class Error:
             9: 'Left side of a connection must be an output.',
             10: 'Right side of a connection must be an input.',
             11: 'Output not specified DTYPE device.',
-            12: 'Unexpected output specified for DTYPE device.',
-            13: 'Invalid input name.',
+            12: 'Unexpected output specified for non-DTYPE device.',
+            13: 'Invalid input name for device.',
             14: 'Multiple outputs connected to input.',
             15: 'All gate inputs must be connected.',
             16: 'No device with specified name.',
-            17: 'Monitor already connected to specified device.'
+            17: 'Monitor already connected to specified device.',
+            18: 'Specified device doesn\'t exist.'
+        }
+
+        self.syntax_errors = {
+            0: 'name',
+            1: ';',
+            2: '.',
+            3: ['Q', 'QBAR'],
+            4: ['.', '->'],
+            5: 'a valid input',
+            6: ':',
+            7: 'device variable',
+            8: '=',
+            9: 'number',
+            10: 'a device',
+            11: [':', ';'],
+            12: 'begin',
+            13: 'monitors',
+            14: ['a name', 'end'],
+            15: 'monitors',
+            16: 'connections',
+            17: 'devices',
+            18: ['a device', 'end']
         }
 
     def report(self):
@@ -67,13 +90,24 @@ class Error:
         error_text += self.error_type.capitalize() + \
             ' Error on line ' + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
-            error_text += self.semantic_errors[self.error_id]
+            error_text += ' ' + self.semantic_errors[self.error_id]
         elif self.error_type == 'syntax':
-            error_text += ' invalid syntax, expected "' + self.error_id + '":'
+            self.error_id = self.syntax_errors[self.error_id]
+            error_text += ' invalid syntax, expected '
+            if type(self.error_id) == str:
+                error_text += '"' + self.error_id + '":'
+            else: # expect a list now
+                for i in range(len(self.error_id)):
+                    if i == (len(self.error_id) - 1):
+                        error_text += '"' + self.error_id[i] + '"'
+                    else:
+                        error_text += '"' + self.error_id[i] + '"' + ' or '
+                error_text += ' :'
+
         error_text += '\n\n' + str(self.location[1])
         for i in range(self.location[2]):
             error_text += ' '
-        error_text += '^'
+        error_text += '  ^'
         return(error_text)
 
 class Error_Store():
@@ -110,16 +144,37 @@ class Error_Store():
         self.errors.append(new_error)
 
     def sort_errors(self):
-        """Sort errors by line number"""
+        """Sort errors by line number."""
         self.errors.sort(key=lambda e: e.location[0])
+
+    def query_semantics(self, desired_type):
+        """Return number of semantic errors of certain type."""
+        count = 0
+        for error in self.errors:
+            if error.error_type == 'semantic':
+                if error.error_id == desired_type:
+                    count += 1
+        return count
+
+    def query_syntax(self, desired_type):
+        """Return number of syntax errors of certain type."""
+        count = 0
+        for error in self.errors:
+            if error.error_type == 'syntax':
+                if error.error_id == desired_type:
+                    count += 1
+        return count
 
     def report_errors(self):
         """Build full error text of entire BNA file."""
-        self.sort_errors()
-        total_error_text ='\n'
-        for error in self.errors:
-            total_error_text += error.report() + '\n\n'
-        print(total_error_text)
-        return total_error_text
+        if self.no_errors == 0:
+            return False
+        else:
+            self.sort_errors()
+            total_error_text ='\n'
+            for error in self.errors:
+                total_error_text += error.report() + '\n\n'
+            print(total_error_text)
+            return total_error_text
 
 
