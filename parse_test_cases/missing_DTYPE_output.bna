@@ -1,0 +1,12 @@
+begin devices:
+	DTYPE D1;
+    NAND not: inputs = 1;
+end devices;
+
+begin connections:
+    D1 -> not.I1;
+end connections;
+
+begin monitors:
+    not;
+end monitors;

@@ -43,7 +43,7 @@ class Error:
         self.semantic_errors = {
             0: 'Invalid number of inputs to gate.',
             1: 'Invalid clock period.',
-            2: 'Invalid intial switch value.',
+            2: 'Invalid initial switch value.',
             3: 'Incorrect number of arguments supplied for device.',
             4: 'Incorrect argument provided for gate.',
             5: 'Incorrect argument provided for clock.',
@@ -64,7 +64,7 @@ class Error:
 
         self.syntax_errors = {
             0: 'name',
-            1: ';',
+            1: ';', # for monitors and connections
             2: '.',
             3: ['Q', 'QBAR'],
             4: ['.', '->'],
@@ -74,7 +74,7 @@ class Error:
             8: '=',
             9: 'number',
             10: 'a device',
-            11: [':', ';'],
+            11: [':', ';'], # for devices
             12: 'begin',
             13: 'monitors',
             14: ['a name', 'end'],
@@ -109,6 +109,7 @@ class Error:
             error_text += ' '
         error_text += '  ^'
         return(error_text)
+
 
 class Error_Store():
     """Store all errors encountered by parser.
@@ -175,6 +176,8 @@ class Error_Store():
             for error in self.errors:
                 total_error_text += error.report() + '\n\n'
             print(total_error_text)
+            output_file = open('error_report.txt', 'w')
+            output_file.write(total_error_text)
             return total_error_text
 
 

@@ -12,7 +12,6 @@ Symbol - encapsulates a symbol and stores its properties.
 
 import linecache
 
-
 class Symbol:
     """Encapsulate a symbol and store its properties.
 
@@ -108,7 +107,6 @@ class Scanner:
             self.file = open(path, 'r')
         except FileNotFoundError:
             print("Incorrect file - check provided path!")
-            sys.exit()
         self.advance()
 
     def advance(self):

@@ -8,10 +8,10 @@ begin devices:
     SWITCH S1: initial = 3;
 
     DTYPE D1: inputs = 3;
-    DTYPE D2: intial = 0;
+    DTYPE D2: initial = 0;
     DTYPE D3: period = 50;
     XOR X1: inputs = 3;
-    XOR X2: intial = 0;
+    XOR X2: initial = 0;
     XOR X3: period = 50;
 
     AND G2;
@@ -21,23 +21,23 @@ begin devices:
     SWITCH S2;
 
     NAND G5: period = 100;
-    NAND G6: intial = 0;
+    NAND G6: initial = 0;
     CLOCK C5: inputs = 5;
-    CLOCK C6: intial = 1;
+    CLOCK C6: initial = 1;
     SWITCH S3: inputs = 4;
     SWITCH S4: period = 50;
 
     NAND NAND: inputs = 4;
     CLOCK CLOCK: period = 30;
-    SWITCH SWITCH: intial = 1;
+    SWITCH SWITCH: initial = 1;
 
     NAND test_gate: inputs = 5;
     NAND test_gate: inputs = 3;
 
 end devices;
 
-begin connections;
+begin connections:
 end connections;
 
-begin monitors;
+begin monitors:
 end monitors;
