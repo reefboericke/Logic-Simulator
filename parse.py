@@ -219,13 +219,16 @@ class Parser:
             # check variable matches device
             if ((self.currdevicetypeid in self.gates_with_inputs
                  and self.currsymb.id != self.scanner.inputs_ID)):
-                self.encounter_error('semantic', 4, recover=False)
+                self.encounter_error('semantic', 4, recover=True)
+                return
             elif (self.currdevicetypeid == self.scanner.CLOCK_ID
                   and self.currsymb.id != self.scanner.period_ID):
-                self.encounter_error('semantic', 5, recover=False)
+                self.encounter_error('semantic', 5, recover=True)
+                return
             elif (self.currdevicetypeid == self.scanner.SWITCH_ID
                   and self.currsymb.id != self.scanner.initial_ID):
-                self.encounter_error('semantic', 6, recover=False)
+                self.encounter_error('semantic', 6, recover=True)
+                return
 
             self.currsymb = self.scanner.get_symbol()
         else:
