@@ -333,7 +333,6 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
-        #for specified number of iterations run the simulation and fetch the state of the devices to be monitored
         self.cycles = 0
         self.monitors.reset_monitors()
 
@@ -367,6 +366,9 @@ class Gui(wx.Frame):
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
+        previous_outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
+        self.monitors.reset_monitors()
+
         switch_values = []
         for i in range(len(self.radiobuttons)): #Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
             if(i%2 == 0):
@@ -389,9 +391,9 @@ class Gui(wx.Frame):
 
         self.cycles += self.canvas.length
 
-        self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
+        self.canvas.outputs = [previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(previous_outputs))]
         
-        self.canvas.render(self.canvas.outputs, self.canvas.length)
+        self.canvas.render(self.canvas.outputs, self.cycles)
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
