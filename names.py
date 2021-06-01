@@ -10,7 +10,6 @@ Names - maps variable names and string names to unique integers.
 
 
 class Names:
-
     """Map variable names and string names to unique integers.
 
     This class deals with storing grammatical keywords and user-defined words,
@@ -40,7 +39,6 @@ class Names:
 
     def __init__(self):
         """Initialise names list."""
-
         # how many error codes have been declared
         self.error_code_count = 0
         # Declare the names list
@@ -59,7 +57,6 @@ class Names:
 
         If the name string is not present in the names list, return None.
         """
-
         # Check to make sure the name_string is string, raise error if false
         if type(name_string) != str:
             raise TypeError
@@ -75,7 +72,6 @@ class Names:
 
         If the name string is not present in the names list, add it.
         """
-
         # Initialise the output
         ID_list = []
         # Iterate through each name_string
@@ -97,7 +93,6 @@ class Names:
 
         If the name_id is not an index in the names list, return None.
         """
-
         # If a valid ID and in range, retun name_string
         if name_id in range(len(self.names_list)):
             return self.names_list[name_id]
