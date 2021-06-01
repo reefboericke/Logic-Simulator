@@ -73,7 +73,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         #self.length = 10
 
         self.length = 10
-        self.outputs = [0 for i in range(10)]
+        self.outputs = [[0 for i in range(10)]]
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -109,7 +109,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Draw a sample signal trace
         x_step = (self.GetClientSize().width - 20)/length
         y_spacing = (self.GetClientSize().height)/(2*len(outputs))
-        y_step = 20 #if the screen is very crowded or empty could adjust this for readability
+        y_step = 50 #if the screen is very crowded or empty could adjust this for readability
 
         for j in range(len(outputs)):
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
@@ -339,6 +339,22 @@ class Gui(wx.Frame):
 
         self.devices.cold_startup()
 
+        switch_values = []
+        for i in range(len(self.radiobuttons)): #Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
+            if(i%2 == 0):
+                switch_values.append(self.radiobuttons[i].GetValue())
+
+        switch_signals = [] #Convert True/False to 1/0
+        for value in switch_values:
+            if(value == True):
+                switch_signals.append(1)
+            else:
+                switch_signals.append(0)
+
+        switches = self.devices.find_devices(self.devices.SWITCH) #Set all switches to the value specified in GUI
+        for i in range(len(switches)):
+            self.devices.set_switch(switches[i], switch_signals[i])
+
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
@@ -347,7 +363,7 @@ class Gui(wx.Frame):
 
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
         
-        self.canvas.render(self.canvas.outputs, self.canvas.length) #probably superfluous
+        self.canvas.render(self.canvas.outputs, self.canvas.length)
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
@@ -358,7 +374,7 @@ class Gui(wx.Frame):
 
         switch_signals = [] #Convert True/False to 1/0
         for value in switch_values:
-            if(switch_values == True):
+            if(value == True):
                 switch_signals.append(1)
             else:
                 switch_signals.append(0)
@@ -379,36 +395,42 @@ class Gui(wx.Frame):
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
-        device_id = self.names.query(self.add_monitor_choice.GetSelection())
+        
+        device_index = self.remove_monitor_choice.GetSelection()
+        device_id = self.names.query(self.monitored_devices[device_index])
+        
         if(device_id != wx.NOT_FOUND):
             if(self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
-                self.monitors.remove(device_id, None)
+                self.monitors.remove_monitor(device_id, None)
             else:
-                self.monitors.remove(device_id, self.devices.Q_ID)
-            self.unmonitored_devices.append(self.monitored_devices[device_id])
-            self.monitored_devices.pop(device_id)
+                self.monitors.remove_monitor(device_id, self.devices.Q_ID)
+            self.unmonitored_devices.append(self.monitored_devices[device_index])
+            self.monitored_devices.pop(device_index)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-            self.side_sizer.Insert(15, self.add_monitor_choice)
+            self.side_sizer.Insert(12, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-            self.side_sizer.Insert(18, self.remove_monitor_choice)
+            self.side_sizer.Insert(15, self.remove_monitor_choice)
             self.side_sizer.Layout()
 
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
-        device_id = self.names.query(self.add_monitor_choice.GetSelection())
+
+        device_index = self.add_monitor_choice.GetSelection()
+        device_id = self.names.query(self.unmonitored_devices[device_index])
+
         if(device_id != wx.NOT_FOUND):
             if (self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
                 self.monitors.make_monitor(device_id, None, self.cycles)
             else:
                 self.monitors.make_monitor(device_id, self.devices.Q_ID, self.cycles)
-            self.monitored_devices.append(self.unmonitored_devices[device_id])
-            self.unmonitored_devices.pop(device_id)
+            self.monitored_devices.append(self.unmonitored_devices[device_index])
+            self.unmonitored_devices.pop(device_index)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-            self.side_sizer.Insert(15, self.add_monitor_choice)
+            self.side_sizer.Insert(12, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-            self.side_sizer.Insert(18, self.remove_monitor_choice)
+            self.side_sizer.Insert(15, self.remove_monitor_choice)
             self.side_sizer.Layout()
