@@ -74,6 +74,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         self.length = 10
         self.outputs = [[0 for i in range(10)]]
+        self.output_labels = ['Label']
+        self.labels = []
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -95,6 +97,19 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glTranslated(self.pan_x, self.pan_y, 0.0)
         GL.glScaled(self.zoom, self.zoom, self.zoom)
 
+    def render_text(self, text, x_pos, y_pos):
+        """Handle text drawing operations."""
+        GL.glColor3f(0.0, 0.0, 0.0)  # text is black
+        GL.glRasterPos2f(x_pos, y_pos)
+        font = GLUT.GLUT_BITMAP_HELVETICA_12
+
+        for character in text:
+            if character == '\n':
+                y_pos = y_pos - 20
+                GL.glRasterPos2f(x_pos, y_pos)
+            else:
+                GLUT.glutBitmapCharacter(font, ord(character))
+
     def render(self, outputs, length):
         """Handle all drawing operations."""
         self.SetCurrent(self.context)
@@ -107,15 +122,16 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
         # Draw a sample signal trace
-        x_step = (self.GetClientSize().width - 20)/length
+        x_step = (self.GetClientSize().width - 60)/length
         y_spacing = (self.GetClientSize().height)/(2*len(outputs))
         y_step = 50 #if the screen is very crowded or empty could adjust this for readability
 
         for j in range(len(outputs)):
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
             GL.glBegin(GL.GL_LINE_STRIP)
+            self.labels.append(wx.StaticText(self, wx.ID_ANY, self.output_labels[j], pos=wx.Point(10, y_spacing*(2*j + 1) + 10)))
             for i in range(length):
-                x = (i * x_step) + 10
+                x = (i * x_step) + 50
                 x_next = (i * x_step) + x_step + 10
                 y = y_spacing*(2*j + 1) + y_step*outputs[j][i]
                 GL.glVertex2f(x, y)
@@ -180,20 +196,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.pan_y -= (self.zoom - old_zoom) * oy
             self.init = False
         self.Refresh()  # triggers the paint event
-
-    #def render_text(self, text, x_pos, y_pos):
-    #    """Handle text drawing operations."""
-    #    GL.glColor3f(0.0, 0.0, 0.0)  # text is black
-    #    GL.glRasterPos2f(x_pos, y_pos)
-    #    font = GLUT.GLUT_BITMAP_HELVETICA_12
-
-    #    for character in text:
-    #        if character == '\n':
-    #            y_pos = y_pos - 20
-    #            GL.glRasterPos2f(x_pos, y_pos)
-    #        else:
-    #            GLUT.glutBitmapCharacter(font, ord(character))
-
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
@@ -357,10 +359,18 @@ class Gui(wx.Frame):
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
+                self.cycles += self.canvas.length
 
-        self.cycles += self.canvas.length
 
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
+
+        self.canvas.output_labels = self.monitored_devices[::-1]
+
+        try:    
+            for label in self.canvas.labels:
+                label.Destroy()
+        except:
+            pass
         
         self.canvas.render(self.canvas.outputs, self.canvas.length)
 
@@ -388,11 +398,18 @@ class Gui(wx.Frame):
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
+                self.cycles += self.canvas.length
 
-        self.cycles += self.canvas.length
 
         self.canvas.outputs = [previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(previous_outputs))]
-        
+
+        self.canvas.output_labels = self.monitored_devices[::-1]
+
+        try:    
+            for label in self.canvas.labels:
+                label.Destroy()
+        except:
+            pass
         self.canvas.render(self.canvas.outputs, self.cycles)
 
     def on_remove_monitor(self, event):
@@ -410,10 +427,10 @@ class Gui(wx.Frame):
             self.monitored_devices.pop(device_index)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-            self.side_sizer.Insert(12, self.add_monitor_choice)
+            self.side_sizer.Insert(9, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-            self.side_sizer.Insert(15, self.remove_monitor_choice)
+            self.side_sizer.Insert(12, self.remove_monitor_choice)
             self.side_sizer.Layout()
 
     def on_add_monitor(self, event):
@@ -431,8 +448,8 @@ class Gui(wx.Frame):
             self.unmonitored_devices.pop(device_index)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-            self.side_sizer.Insert(12, self.add_monitor_choice)
+            self.side_sizer.Insert(9, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-            self.side_sizer.Insert(15, self.remove_monitor_choice)
+            self.side_sizer.Insert(12, self.remove_monitor_choice)
             self.side_sizer.Layout()
