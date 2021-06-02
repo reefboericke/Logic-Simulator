@@ -276,6 +276,8 @@ class Gui(wx.Frame):
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.side_sizer, 1, wx.ALL, 5)
 
+        self.previous_outputs = [[]]
+
         # If (there are errors):
         #       for error in errors:
         #           main_sizer.add(staticText('error'))
@@ -380,7 +382,7 @@ class Gui(wx.Frame):
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
-        previous_outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
+        self.previous_outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
         self.monitors.reset_monitors()
 
         switch_values = []
@@ -406,9 +408,7 @@ class Gui(wx.Frame):
         self.cycles += self.canvas.length
         self.canvas.render_length = self.cycles
 
-        self.canvas.outputs = [previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(previous_outputs))]
-
-        print(self.canvas.outputs[0], self.cycles)
+        self.canvas.outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
 
         self.canvas.output_labels = self.monitored_devices[::-1]
 
