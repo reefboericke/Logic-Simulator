@@ -279,6 +279,7 @@ class Gui(wx.Frame):
         self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
         self.remove_monitor = wx.Button(self, wx.ID_ANY, "Zap Monitor")
         self.add_monitor = wx.Button(self, wx.ID_ANY, "Add Monitor")
+        self.open_file = wx.Button(self, wx.ID_ANY, "Open file")
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -287,6 +288,7 @@ class Gui(wx.Frame):
         self.continue_button.Bind(wx.EVT_BUTTON, self.on_continue_button)
         self.remove_monitor.Bind(wx.EVT_BUTTON, self.on_remove_monitor)
         self.add_monitor.Bind(wx.EVT_BUTTON, self.on_add_monitor)
+        self.open_file.Bind(wx.EVT_BUTTON, self.open_file_button)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -328,8 +330,8 @@ class Gui(wx.Frame):
             switch_name = self.names.get_name_string(switches[i])
             self.switch_items.append(wx.StaticText(self, wx.ID_ANY, switch_name))
             self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
-            for item in self.switch_items:
-                (self.single_switch_box.Add(item))
+            self.single_switch_box.Add(self.switch_items[-2])
+            self.single_switch_box.Add(self.switch_items[-1])
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             if(initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
@@ -360,6 +362,8 @@ class Gui(wx.Frame):
         self.zap_monitor_box.Add(wx.StaticText(self, wx.ID_ANY, "            "))
         self.zap_monitor_box.Add(self.remove_monitor)
 
+        self.side_sizer.Add(self.open_file)
+
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
 
@@ -372,82 +376,7 @@ class Gui(wx.Frame):
             wx.MessageBox("Boernashly Logic Simulator\nCreated by Reef Boericke, Joe Nash, and Finn Ashley\n2021",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
         if Id == wx.ID_OPEN:
-            with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", # Code for opening new file from the GUI
-                       style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
-                if fileDialog.ShowModal() == wx.ID_CANCEL:
-                    return
-                pathname = fileDialog.GetPath()
-
-                names1 = Names()
-                devices1 = Devices(names1)
-                network1 = Network(names1, devices1)
-                monitors1 = Monitors(names1, devices1, network1)
-
-                scanner = Scanner(pathname, names1)
-                error_db = Error_Store(scanner)
-                parser = Parser(names1, devices1, network1, monitors1, scanner, error_db)
-                parser.parse_network()
-
-                self.network = network1
-                self.devices = devices1
-                self.names = names1
-                self.monitors = monitors1
-
-                self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
-
-                self.add_monitor_choice.Destroy()
-                self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-                self.add_monitor_box.Insert(0, self.add_monitor_choice)
-                self.remove_monitor_choice.Destroy()
-                self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-                self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
-                self.add_monitor_box.Layout()
-                self.zap_monitor_box.Layout()
-
-                switches = self.devices.find_devices(self.devices.SWITCH)
-                initial_switch_values = [self.devices.get_device(switches[i]).switch_state for i in range(len(switches))]
-                print(initial_switch_values)
-                
-                for item in self.switch_items:
-                    try:
-                        item.Destroy()
-                    except:
-                        continue
-
-                for item in self.radiobuttons:
-                    item.Destroy()
-
-                self.radiobuttons = []
-
-                for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
-                    
-                    self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
-                    self.switch_box.Add(self.single_switch_box)
-                    switch_name = self.names.get_name_string(switches[i])
-                    self.switch_items.append(wx.StaticText(self, wx.ID_ANY, switch_name))
-                    self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
-                    self.single_switch_box.Add(self.switch_items[-2])
-                    self.single_switch_box.Add(self.switch_items[-1])
-                    self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
-                    if(initial_switch_values[i]):
-                        self.radiobuttons[-1].SetValue(True)
-                    self.single_switch_box.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
-                    self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
-                    if(not initial_switch_values[i]):
-                        self.radiobuttons[-1].SetValue(True)
-                    self.single_switch_box.Add(self.radiobuttons[-1])
-                    self.single_switch_box.Layout()
-                    self.switch_box.Layout()
-                    self.side_sizer.Layout()
-
-                self.previous_outputs = []
-                for i in range(len(self.monitored_devices)):
-                    self.previous_outputs.append([])
-
-                
-
-
-                
+            self.open_file_dialog()
 
     def on_spin(self, event):
         """Handle the event when the user changes the spin control value."""
@@ -575,3 +504,77 @@ class Gui(wx.Frame):
             self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
             self.add_monitor_box.Layout()
             self.zap_monitor_box.Layout()
+
+    def open_file_button(self, event):
+        self.open_file_dialog()
+
+    def open_file_dialog(self):
+        with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", # Code for opening new file from the GUI
+                   style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+            pathname = fileDialog.GetPath()
+
+            names1 = Names()
+            devices1 = Devices(names1)
+            network1 = Network(names1, devices1)
+            monitors1 = Monitors(names1, devices1, network1)
+
+            scanner = Scanner(pathname, names1)
+            error_db = Error_Store(scanner)
+            parser = Parser(names1, devices1, network1, monitors1, scanner, error_db)
+            parser.parse_network()
+
+            self.network = network1
+            self.devices = devices1
+            self.names = names1
+            self.monitors = monitors1
+
+            self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
+
+            self.add_monitor_choice.Destroy()
+            self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+            self.add_monitor_box.Insert(0, self.add_monitor_choice)
+            self.remove_monitor_choice.Destroy()
+            self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+            self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
+            self.add_monitor_box.Layout()
+            self.zap_monitor_box.Layout()
+
+            switches = self.devices.find_devices(self.devices.SWITCH)
+            initial_switch_values = [self.devices.get_device(switches[i]).switch_state for i in range(len(switches))]
+                
+            for item in self.switch_items:
+                try:
+                    item.Destroy()
+                except:
+                    continue
+
+            for item in self.radiobuttons:
+                item.Destroy()
+
+            self.radiobuttons = []
+            for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
+                    
+                self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
+                self.switch_box.Add(self.single_switch_box)
+                switch_name = self.names.get_name_string(switches[i])
+                self.switch_items.append(wx.StaticText(self, wx.ID_ANY, switch_name))
+                self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
+                self.single_switch_box.Add(self.switch_items[-2])
+                self.single_switch_box.Add(self.switch_items[-1])
+                self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+                if(initial_switch_values[i]):
+                    self.radiobuttons[-1].SetValue(True)
+                self.single_switch_box.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
+                self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
+                if(not initial_switch_values[i]):
+                    self.radiobuttons[-1].SetValue(True)
+                self.single_switch_box.Add(self.radiobuttons[-1])
+                self.single_switch_box.Layout()
+                self.switch_box.Layout()
+                self.side_sizer.Layout()
+
+            self.previous_outputs = []
+            for i in range(len(self.monitored_devices)):
+                self.previous_outputs.append([])        
