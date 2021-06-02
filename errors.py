@@ -6,7 +6,8 @@ various error objects to track where encountered and their details.
 Classes
 -------
 Error - stores details of an error including its type and location.
-Error_Store - maintains database of errors, providing reporting and interfacing.
+Error_Store - maintains database of errors, providing reporting and
+              interfacing.
 """
 
 
@@ -25,7 +26,7 @@ class Error:
               number of spaces to error). These details returned by
               call to scanner.return_location().
     error_type: string of either 'syntax' or 'semantic'.
-    error_id: id of semantic error or string of what triggered syntax error.
+    error_id: id of error according to dictionaries in __init__ .
 
     Public methods
     --------------
@@ -64,7 +65,7 @@ class Error:
 
         self.syntax_errors = {
             0: 'name',
-            1: ';', # for monitors and connections
+            1: ';',  # for monitors and connections
             2: '.',
             3: ['Q', 'QBAR'],
             4: ['.', '->'],
@@ -74,7 +75,7 @@ class Error:
             8: '=',
             9: 'number',
             10: 'a device',
-            11: [':', ';'], # for devices
+            11: [':', ';'],  # for devices
             12: 'begin',
             13: 'monitors',
             14: ['a name', 'end'],
@@ -97,12 +98,13 @@ class Error:
             error_text += ' Invalid syntax, expected '
             if type(specific_error_text) == str:
                 error_text += '"' + specific_error_text + '":'
-            else: # expect a list now
+            else:  # expect a list now
                 for i in range(len(specific_error_text)):
                     if i == (len(specific_error_text) - 1):
                         error_text += '"' + specific_error_text[i] + '"'
                     else:
-                        error_text += '"' + specific_error_text[i] + '"' + ' or '
+                        error_text += '"' + \
+                            specific_error_text[i] + '"' + ' or '
                 error_text += ' :'
 
         error_text += '\n\n' + str(self.location[1])
@@ -125,24 +127,31 @@ class Error_Store():
 
     Public methods
     --------------
-    add_error(self): adds new error to error list, given input
-                     arguements to the method.
+    add_error(self, error_type, error_id): adds new error to error
+                                           list, given input
+                                           arguments to the method.
     sort_errors(self): sorts errors in list by their line number.
+    query_semantics(self, desired_type): returns number of semantic
+                                         errors of id equal to
+                                         desired_type.
+    query_syntax(self, desired_type): returns number of syntax
+                                      errors of id equal to
+                                      desired_type.
     report_errors(self): returns full text of all errors in program
                          and their details.
     """
 
     def __init__(self, scanner):
-        """Initialise variables"""
+        """Initialise variables."""
         self.scanner = scanner
         self.errors = []
         self.no_errors = 0
 
     def add_error(self, error_type, error_id):
-        """Add new error to error list"""
+        """Add new error to error list."""
         loc = self.scanner.return_location()
         self.no_errors += 1
-        new_error  = Error(self.no_errors, loc, error_type, error_id)
+        new_error = Error(self.no_errors, loc, error_type, error_id)
         self.errors.append(new_error)
 
     def sort_errors(self):
@@ -173,12 +182,10 @@ class Error_Store():
             return False
         else:
             self.sort_errors()
-            total_error_text ='\n'
+            total_error_text = '\n'
             for error in self.errors:
                 total_error_text += error.report() + '\n\n'
             print(total_error_text)
             output_file = open('error_report.txt', 'w')
             output_file.write(total_error_text)
             return total_error_text
-
-

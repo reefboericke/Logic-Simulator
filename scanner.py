@@ -246,7 +246,7 @@ class Scanner:
     def return_location(self):
         #return linecache.getline(self.path, line)
         #no_spaces = error_index - self.last_EOL
-        no_spaces = self.current_char_num - self.char_num_last_EOL
+        no_spaces = self.current_char_num - self.char_num_last_EOL + 2
         line = linecache.getline(self.path, self.no_EOL)
         location = (self.no_EOL, line, no_spaces)
         return(location)
