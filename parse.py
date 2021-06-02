@@ -34,7 +34,19 @@ class Parser:
 
     Public methods
     --------------
+    error_recover(self):
+    encounter_error(self, type, id, recover):
+    monitordefinitiongrammar(self):
+    assignoutputgrammar(self):
+    connectiondefinitiongrammar(self):
+    assignvariablegrammar(self):
+    devicedefinitiongrammar(self):
+    monitorblockgrammar(self):
+    connectionblockgrammar(self):
+    deviceblockgrammar(self):
+    BNAcodegrammar(self):
     parse_network(self): Parses the circuit definition file.
+
     """
 
     def __init__(self, names, devices, network, monitors, scanner, error_db):
