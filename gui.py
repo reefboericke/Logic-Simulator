@@ -76,7 +76,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.render_length = 10
         self.outputs = [[0 for i in range(10)]]
         self.output_labels = ['Label']
-        self.labels = []
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -118,13 +117,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.render_text(self.output_labels[j], 10, y_spacing*(2*j + 1) + 20)
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
             GL.glBegin(GL.GL_LINE_STRIP)
-            #self.labels.append(wx.StaticText(self, wx.ID_ANY, self.output_labels[j], pos=wx.Point(10, y_spacing*(2*j + 1) + 10)))
             for i in range(length):
                 x = (i * x_step) + 50
                 x_next = (i * x_step) + x_step + 50
                 y = y_spacing*(2*j + 1) + y_step*outputs[j][i]
-                GL.glVertex2f(x, y)
-                GL.glVertex2f(x_next, y)
+                if(outputs[j][i] != 4):
+                    GL.glVertex2f(x, y)
+                    GL.glVertex2f(x_next, y)
             GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
@@ -371,19 +370,13 @@ class Gui(wx.Frame):
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
 
         self.canvas.output_labels = self.monitored_devices
-
-        try:    
-            for label in self.canvas.labels:
-                label.Destroy()
-        except:
-            print("Couldn't destroy labels")
         
         self.canvas.render(self.canvas.outputs, self.canvas.length)
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
         self.previous_outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
-        print(self.previous_outputs)
+        
         self.monitors.reset_monitors()
 
         switch_values = []
@@ -410,17 +403,7 @@ class Gui(wx.Frame):
         self.canvas.render_length = self.cycles
 
         self.canvas.outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
-        print([self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary])
-        print(self.previous_outputs)
-        print(self.canvas.outputs)
-
         self.canvas.output_labels = self.monitored_devices
-
-        try:    
-            for label in self.canvas.labels:
-                label.Destroy()
-        except:
-            print("Couldn't destroy labels")
 
         self.canvas.render(self.canvas.outputs, len(self.canvas.outputs[0]))
 
