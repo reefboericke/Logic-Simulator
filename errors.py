@@ -94,7 +94,7 @@ class Error:
             error_text += ' ' + specific_error_text
         elif self.error_type == 'syntax':
             specific_error_text = self.syntax_errors[self.error_id]
-            error_text += ' invalid syntax, expected '
+            error_text += ' Invalid syntax, expected '
             if type(specific_error_text) == str:
                 error_text += '"' + specific_error_text + '":'
             else: # expect a list now

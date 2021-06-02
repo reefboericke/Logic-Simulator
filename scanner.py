@@ -11,6 +11,7 @@ Symbol - encapsulates a symbol and stores its properties.
 
 
 import linecache
+import os
 
 class Symbol:
     """Encapsulate a symbol and store its properties.
@@ -105,8 +106,17 @@ class Scanner:
         # open file
         try:
             self.file = open(path, 'r')
+            if (path[-4:] != '.bna'):
+                print("Please provide a file with the .bna extension.")
+                quit()
+            if os.stat(path).st_size == 0:
+                print("Please provide a non-empty file.")
+                quit()
         except FileNotFoundError:
-            print("Incorrect file - check provided path!")
+            print("Cannot find file - please check provided path.")
+            quit()
+        
+            
         self.advance()
 
     def advance(self):
@@ -230,38 +240,11 @@ class Scanner:
             symbol.type = self.UNEXPECTED
             symbol.id = self.current_character
             self.advance()
-
-        """
-        if symbol.type in [4, 6]:
-            print(self.names.names_list[symbol.id])
-        elif symbol.type == 5:
-            print(symbol.id)
-        else:
-            print([';', ':', '=', '.', None, None, None,'EOF','->','UNEXPECTED SYMBOL'][symbol.type])
-        print()
-        """
         
         return symbol
 
-    """
-    def output_error_line(self, error_code, error_index=False):
-        #Output current line and arrow to indicate location of file pointer.
-
-        #Called when parser detects a syntax error.
-        
-        if error_index is False:  # no provided index, default to current pos
-            error_index = self.file.tell()
-        current_line = linecache.getline(self.path, self.no_EOL)
-        print(current_line)
-        no_spaces = error_index - self.last_EOL
-        for i in range(no_spaces):
-            print(" ", end='')
-        print("^\n")
-    """
-
     def return_location(self):
         #return linecache.getline(self.path, line)
-        error_index = self.file.tell()
         #no_spaces = error_index - self.last_EOL
         no_spaces = self.current_char_num - self.char_num_last_EOL
         line = linecache.getline(self.path, self.no_EOL)

@@ -1,16 +1,26 @@
 
-Syntax Error on line 4: invalid syntax, expected "name":
+Semantic Error on line 4: Incorrect argument provided for gate.
 
-	SWITCH: initial = 0;
-            ^
+    NAND G3: initial = 1;
+                     ^
 
-Semantic Error on line 9: No device with specified name.
+Semantic Error on line 6: Invalid device name.
 
-	S1 -> G1.I1;
-       ^
+	SWITCH SWITCH: initial = 0;
+                  ^
 
-Semantic Error on line 13: All gate inputs must be connected.
+Syntax Error on line 13: Invalid syntax, expected ".":
+
+	G1 -> G2;
+              ^
+
+Semantic Error on line 15: All gate inputs must be connected.
 
 end connections;
     ^
+
+Syntax Error on line 17: Invalid syntax, expected "monitors":
+
+begin:
+       ^
 
