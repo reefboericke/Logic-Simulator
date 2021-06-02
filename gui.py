@@ -110,7 +110,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         y_step = 50 #if the screen is very crowded or empty could adjust this for readability
 
         for j in range(len(outputs)):
-            self.render_text(self.output_labels[j], 50, y_spacing*(2*j + 1) + y_step*3/2)
+            if(len(outputs) > 6):
+                self.render_text(self.output_labels[j], 5, y_spacing*(2*j + 1) + y_step/2)
+            else:
+                self.render_text(self.output_labels[j], 50, y_spacing*(2*j + 1) + y_step*3/2)
             self.render_text('0', 25, y_spacing*(2*j + 1))
             self.render_text('1', 25, y_spacing*(2*j + 1) + y_step)
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
