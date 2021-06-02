@@ -270,10 +270,12 @@ class Gui(wx.Frame):
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.side_sizer = wx.FlexGridSizer(3, 5, 5)
+        self.side_sizer = wx.FlexGridSizer(1, 5, 10)
+        self.run_box = wx.StaticBoxSizer(wx.VERTICAL, self, label='Run/Continue')
 
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.side_sizer, 1, wx.ALL, 5)
+        self.side_sizer.Add(self.run_box, 1, wx.ALL, 5)
 
         self.previous_outputs = [[]]
 
@@ -281,41 +283,58 @@ class Gui(wx.Frame):
         #       for error in errors:
         #           main_sizer.add(staticText('error'))
         # Then somehow stop the rest of the code from running, because the circuit cant be loaded. How to do this TBC
+        
+        self.spinner_box = wx.BoxSizer(wx.HORIZONTAL)
+        self.run_button_box = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.side_sizer.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
-        self.side_sizer.Add(self.spin, 1, wx.ALL, 5)
-        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        self.side_sizer.Add(self.run_button, 1, wx.ALL, 5)
-        self.side_sizer.Add(self.continue_button, 1, wx.ALL, 5)
-        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+        self.spinner_box.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
+        self.spinner_box.Add(self.spin, 1, wx.ALL, 5)
+        self.run_button_box.Add(self.run_button, 1, wx.ALL, 5)
+        self.run_button_box.Add(self.continue_button, 1, wx.ALL, 5)
+
+        self.run_box.Add(self.spinner_box)
+        self.run_box.Add(self.run_button_box)
+
         self.radiobuttons = []
+
+        self.switch_box = wx.StaticBoxSizer(wx.VERTICAL, self, label='Switches')
+        self.side_sizer.Add(self.switch_box, 1, wx.ALL, 5)
 
         switches = self.devices.find_devices(self.devices.SWITCH)
         for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
+            self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
+            self.switch_box.Add(self.single_switch_box)
             switch_name = self.names.get_name_string(switches[i])
-            self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
+            self.single_switch_box.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
+            self.single_switch_box.Add(wx.StaticText(self, wx.ID_ANY, "                        "))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             if(initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
-            self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
+            self.single_switch_box.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
             if(not initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
-            self.side_sizer.Add(self.radiobuttons[-1])
+            self.single_switch_box.Add(self.radiobuttons[-1])
 
         # Retrieve initial list of monitored and unmonitored devices
         self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
 
+        self.add_monitor_box = wx.StaticBoxSizer(wx.HORIZONTAL, self, label="Add Monitor")
+        self.side_sizer.Add(self.add_monitor_box)
+
         # Add monitor addition/removal controls
         self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-        self.side_sizer.Add(self.add_monitor_choice)
-        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        self.side_sizer.Add(self.add_monitor)
+        self.add_monitor_box.Add(self.add_monitor_choice)
+        self.add_monitor_box.Add(wx.StaticText(self, wx.ID_ANY, "            "))
+        self.add_monitor_box.Add(self.add_monitor)
+
+        self.zap_monitor_box = wx.StaticBoxSizer(wx.HORIZONTAL, self, label="Zap Monitor")
+        self.side_sizer.Add(self.zap_monitor_box)
 
         self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-        self.side_sizer.Add(self.remove_monitor_choice)
-        self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-        self.side_sizer.Add(self.remove_monitor)
+        self.zap_monitor_box.Add(self.remove_monitor_choice)
+        self.zap_monitor_box.Add(wx.StaticText(self, wx.ID_ANY, "            "))
+        self.zap_monitor_box.Add(self.remove_monitor)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
@@ -416,6 +435,11 @@ class Gui(wx.Frame):
         
         device_index = self.remove_monitor_choice.GetSelection()
         device_id = self.names.query(self.monitored_devices[device_index])
+
+        if(len(self.monitored_devices) == 1):
+            window = wx.MessageDialog(self, "You must have at least 1 monitor", style=wx.OK)
+            window.ShowWindowModal()
+            return None
         
         if(device_id != wx.NOT_FOUND):
             self.previous_outputs.pop(device_index)
@@ -427,11 +451,12 @@ class Gui(wx.Frame):
             self.monitored_devices.pop(device_index)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-            self.side_sizer.Insert(9, self.add_monitor_choice)
+            self.add_monitor_box.Insert(0, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-            self.side_sizer.Insert(12, self.remove_monitor_choice)
-            self.side_sizer.Layout()
+            self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
+            self.add_monitor_box.Layout()
+            self.zap_monitor_box.Layout()
 
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
@@ -449,8 +474,9 @@ class Gui(wx.Frame):
             self.unmonitored_devices.pop(device_index)
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
-            self.side_sizer.Insert(9, self.add_monitor_choice)
+            self.add_monitor_box.Insert(0, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
-            self.side_sizer.Insert(12, self.remove_monitor_choice)
-            self.side_sizer.Layout()
+            self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
+            self.add_monitor_box.Layout()
+            self.zap_monitor_box.Layout()
