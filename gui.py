@@ -361,6 +361,9 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
+        for i in range(len(self.previous_outputs)):
+            self.previous_outputs[i] = []
+
         self.cycles = 0
         self.monitors.reset_monitors()
 
