@@ -406,24 +406,28 @@ class Gui(wx.Frame):
 
                 switches = self.devices.find_devices(self.devices.SWITCH)
                 initial_switch_values = [self.devices.get_device(switches[i]).switch_state for i in range(len(switches))]
+                print(initial_switch_values)
                 
                 for item in self.switch_items:
-                    self.switch_box.Detach(item)
+                    try:
+                        item.Destroy()
+                    except:
+                        continue
 
                 for item in self.radiobuttons:
-                    self.switch_box.Detach(item)
+                    item.Destroy()
 
-                self.switch_items = []
                 self.radiobuttons = []
 
                 for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
+                    
                     self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
                     self.switch_box.Add(self.single_switch_box)
                     switch_name = self.names.get_name_string(switches[i])
                     self.switch_items.append(wx.StaticText(self, wx.ID_ANY, switch_name))
                     self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
-                    for item in self.switch_items:
-                        (self.single_switch_box.Add(item))
+                    self.single_switch_box.Add(self.switch_items[-2])
+                    self.single_switch_box.Add(self.switch_items[-1])
                     self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
                     if(initial_switch_values[i]):
                         self.radiobuttons[-1].SetValue(True)
