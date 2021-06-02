@@ -90,18 +90,19 @@ class Error:
         error_text += self.error_type.capitalize() + \
             ' Error on line ' + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
-            error_text += ' ' + self.semantic_errors[self.error_id]
+            specific_error_text = self.semantic_errors[self.error_id]
+            error_text += ' ' + specific_error_text
         elif self.error_type == 'syntax':
-            self.error_id = self.syntax_errors[self.error_id]
+            specific_error_text = self.syntax_errors[self.error_id]
             error_text += ' invalid syntax, expected '
-            if type(self.error_id) == str:
-                error_text += '"' + self.error_id + '":'
+            if type(specific_error_text) == str:
+                error_text += '"' + specific_error_text + '":'
             else: # expect a list now
-                for i in range(len(self.error_id)):
-                    if i == (len(self.error_id) - 1):
-                        error_text += '"' + self.error_id[i] + '"'
+                for i in range(len(specific_error_text)):
+                    if i == (len(specific_error_text) - 1):
+                        error_text += '"' + specific_error_text[i] + '"'
                     else:
-                        error_text += '"' + self.error_id[i] + '"' + ' or '
+                        error_text += '"' + specific_error_text[i] + '"' + ' or '
                 error_text += ' :'
 
         error_text += '\n\n' + str(self.location[1])

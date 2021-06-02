@@ -4,7 +4,7 @@ begin devices:
 end devices;
 
 begin connections:
-    D1 -> not.I1;
+    D1.SET -> not.I1;
 end connections;
 
 begin monitors:

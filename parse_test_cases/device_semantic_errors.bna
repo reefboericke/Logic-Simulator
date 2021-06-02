@@ -1,8 +1,8 @@
 begin devices:
     NAND G1: inputs = 17;
 
-    CLOCK C1: period = -1;
-    CLOCK C2: period = 3.5;
+    # CLOCK C1: period = -1; is actually a syntax #
+    # CLOCK C2: period = 3.5; is actually a syntax # 
     CLOCK C3: period = 0;
 
     SWITCH S1: initial = 3;

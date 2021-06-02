@@ -42,7 +42,7 @@ def test_device_semantic_errors(parsed_network):
     error_db = parsed_network('device_semantic_errors.bna')
     expected_semantic_error_counts = [
         1,  # error type 0
-        3,  # type 1
+        1,  # type 1
         1,  # type 2
         11, # type 3
         2,  # type 4
@@ -56,29 +56,24 @@ def test_device_semantic_errors(parsed_network):
 
 def test_connection_semantic_errors(parsed_network):
     error_db = parsed_network('connection_semantic_errors.bna')
-    expected_semantic_error_counts = [
-        1, # type 11
-        1, # type 12
-        1, # type 13
-        1, # type 14
-        1  # type 15
-    ]
-    for i in range(11, 16):
-        assert(error_db.query_semantics(i) == expected_semantic_error_counts[i-11])
+    expected_error_types = [11, 12, 13, 15]
+    for i in expected_error_types:
+        assert(error_db.query_semantics(i) == 1)
+
+def test_connection_double_connection_error(parsed_network):
+    error_db = parsed_network('double_connection.bna')
+    assert(error_db.query_semantics(14) == 1) # error 14
+    assert(error_db.query_semantics(15) == 1) # error 15
 
 def test_monitor_semantic_errors(parsed_network):
     error_db = parsed_network('monitor_semantic_errors.bna')
-    expected_semantic_error_counts = [
-        1, # type 16
-        1  # type 17
-    ]
-    for i in range(16, 18):
-        assert(error_db.query_semantics(i) == expected_semantic_error_counts[i])
+    assert(error_db.query_semantics(16) == 1)
+    assert(error_db.query_semantics(17) == 1)
 
 @pytest.mark.parametrize("file, error_id", [
     ('no_devices.bna', 17),
     ('no_connections.bna', 16),
-    ('no_monitors.bna', 15),
+    ('no_monitors.bna', 13),
     ('no_begin.bna', 12),
     ('missing_name.bna', 0),
     ('missing_semicolon.bna', 1),
@@ -90,7 +85,7 @@ def test_monitor_semantic_errors(parsed_network):
     ('invalid_device_variable.bna', 7),
     ('missing_equals.bna', 8),
     ('missing_number.bna', 9),
-    ('missing_device.bna', 10),
+    ('missing_device.bna', 18),
     ('missing_colon_semicolon.bna', 11),
     ('missing_name_end.bna', 14),
     ('missing_device_end.bna', 18)
@@ -99,13 +94,19 @@ def test_monitor_semantic_errors(parsed_network):
 def test_single_syntax_error_detection(parsed_network, file, error_id):
     error_db = parsed_network(file)
     assert(error_db.query_syntax(error_id) == 1)
+    """
+    for i in range(19):
+        if (i not in [error_id, 15]):
+            assert(error_db.query_syntax(i) == 0)
+        assert(error_db.query_semantics(i) == 0)
+    """
 
 def test_realistic_error_set_detection(parsed_network):
     error_db = parsed_network('multiple_errors.bna')
-    assert(error_db.query_semantics(13) == 1)
+    assert(error_db.query_semantics(7) == 1)
     assert(error_db.query_semantics(4) == 1)
     assert(error_db.query_syntax(2) == 1)
-    assert(error_db.query_syntax(15) == 1)
+    assert(error_db.query_syntax(13) == 1)
     
     
 

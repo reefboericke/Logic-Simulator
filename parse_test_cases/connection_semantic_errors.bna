@@ -6,12 +6,12 @@ begin devices:
 end devices;
 
 begin connections:
-    D1 -> not.I1
-    D1.Q -> not.I2
-    D1.QBAR -> not.I2
-    D1.Q -> not.I3
+    D1 -> not.I1;
+    D1.Q -> not.I2;
+    D1.QBAR -> not.I2;
+    D1.Q -> not.I3;
 
-    S1.Q -> test.I1
+    S1.Q -> test.I1;
 end connections;
 
 begin monitors:

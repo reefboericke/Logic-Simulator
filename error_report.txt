@@ -1,151 +1,16 @@
 
-Semantic Error on line 2: Invalid number of inputs to gate.
+Syntax Error on line 4: invalid syntax, expected "name":
 
-    NAND G1: inputs = 17;
-                           ^
+	SWITCH: initial = 0;
+            ^
 
-Syntax Error on line 4: invalid syntax, expected "number":
+Semantic Error on line 9: No device with specified name.
 
-    CLOCK C1: period = -1;
-                           ^
+	S1 -> G1.I1;
+       ^
 
-Syntax Error on line 5: invalid syntax, expected ":" or ";" :
+Semantic Error on line 13: All gate inputs must be connected.
 
-    CLOCK C2: period = 3.5;
-                            ^
-
-Semantic Error on line 6: Invalid clock period.
-
-    CLOCK C3: period = 0;
-                           ^
-
-Semantic Error on line 8: Invalid initial switch value.
-
-    SWITCH S1: initial = 3;
-                             ^
-
-Semantic Error on line 10: Incorrect number of arguments supplied for device.
-
-    DTYPE D1: inputs = 3;
-                ^
-
-Semantic Error on line 11: Incorrect number of arguments supplied for device.
-
-    DTYPE D2: initial = 0;
-                ^
-
-Semantic Error on line 12: Incorrect number of arguments supplied for device.
-
-    DTYPE D3: period = 50;
-                ^
-
-Semantic Error on line 13: Incorrect number of arguments supplied for device.
-
-    XOR X1: inputs = 3;
-              ^
-
-Semantic Error on line 14: Incorrect number of arguments supplied for device.
-
-    XOR X2: initial = 0;
-              ^
-
-Semantic Error on line 15: Incorrect number of arguments supplied for device.
-
-    XOR X3: period = 50;
-              ^
-
-Semantic Error on line 17: Incorrect number of arguments supplied for device.
-
-    AND G2;
-              ^
-
-Semantic Error on line 18: Incorrect number of arguments supplied for device.
-
-    NAND G3;
-               ^
-
-Semantic Error on line 19: Incorrect number of arguments supplied for device.
-
-    NOR G4;
-              ^
-
-Semantic Error on line 20: Incorrect number of arguments supplied for device.
-
-    CLOCK C4;
-                ^
-
-Semantic Error on line 21: Incorrect number of arguments supplied for device.
-
-    SWITCH S2;
-                 ^
-
-Semantic Error on line 23: Incorrect argument provided for gate.
-
-    NAND G5: period = 100;
-                      ^
-
-Semantic Error on line 23: Invalid number of inputs to gate.
-
-    NAND G5: period = 100;
-                            ^
-
-Semantic Error on line 24: Incorrect argument provided for gate.
-
-    NAND G6: initial = 0;
-                       ^
-
-Semantic Error on line 24: Invalid number of inputs to gate.
-
-    NAND G6: initial = 0;
-                           ^
-
-Semantic Error on line 25: Incorrect argument provided for clock.
-
-    CLOCK C5: inputs = 5;
-                       ^
-
-Semantic Error on line 26: Incorrect argument provided for clock.
-
-    CLOCK C6: initial = 1;
-                        ^
-
-Semantic Error on line 27: Incorrect argument provided for switch.
-
-    SWITCH S3: inputs = 4;
-                        ^
-
-Semantic Error on line 27: Invalid initial switch value.
-
-    SWITCH S3: inputs = 4;
-                            ^
-
-Semantic Error on line 28: Incorrect argument provided for switch.
-
-    SWITCH S4: period = 50;
-                        ^
-
-Semantic Error on line 28: Invalid initial switch value.
-
-    SWITCH S4: period = 50;
-                             ^
-
-Syntax Error on line 30: invalid syntax, expected "name":
-
-    NAND NAND: inputs = 4;
-                ^
-
-Syntax Error on line 31: invalid syntax, expected "name":
-
-    CLOCK CLOCK: period = 30;
-                  ^
-
-Syntax Error on line 32: invalid syntax, expected "name":
-
-    SWITCH SWITCH: initial = 1;
-                    ^
-
-Semantic Error on line 35: Two devices assigned same name.
-
-    NAND test_gate: inputs = 3;
-                     ^
+end connections;
+    ^
 
