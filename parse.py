@@ -189,7 +189,8 @@ class Parser:
                 self.encounter_error('semantic', 13, recover=False)
             currinputid = self.currsymb.id
             # Check to see if multiple outputs connected to input:
-            if ((self.network.get_connected_output(currdevicenameid2, currinputid)
+            if ((self.network.get_connected_output(currdevicenameid2,
+                                                   currinputid)
                  is not None)):
                 self.encounter_error('semantic', 14, recover=False)
             self.currsymb = self.scanner.get_symbol()
