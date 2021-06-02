@@ -107,7 +107,7 @@ class Error:
         error_text += '\n\n' + str(self.location[1])
         for i in range(self.location[2]):
             error_text += ' '
-        error_text += '  ^'
+        error_text += '^'
         return(error_text)
 
 

@@ -197,9 +197,12 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # correct syntax, if semantically correct, add to network:
             if self.network_construction:
-                self.network.make_connection(self.currdevicenameid1,
+                err = self.network.make_connection(self.currdevicenameid1,
                                              self.curroutputid,
                                              currdevicenameid2, currinputid)
+                if err == 3:
+                    #self.encounter_error('semantic', 14, recover=False)
+                    pass
                 self.curroutputid = None
         else:
             # expected semicolon
@@ -276,15 +279,15 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NAME:
-            if self.currsymb.id in self.device_ids:
-                # name is same as device type
-                self.encounter_error('semantic', 7, recover=False)
             if self.currsymb.id in self.unique_names:
                 # check to see if name is unique
                 self.encounter_error('semantic', 8, recover=False)
             self.unique_names.append(self.currsymb.id)
             currdevicenameid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
+        elif self.currsymb.type == self.scanner.KEYWORD:
+            # name is same as a keyword
+            self.encounter_error('semantic', 7, recover=True)
         else:
             # expected a name
             self.encounter_error('syntax', 0, recover=True)
