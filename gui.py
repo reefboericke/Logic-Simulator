@@ -98,19 +98,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glTranslated(self.pan_x, self.pan_y, 0.0)
         GL.glScaled(self.zoom, self.zoom, self.zoom)
 
-    def render_text(self, text, x_pos, y_pos):
-        """Handle text drawing operations."""
-        GL.glColor3f(0.0, 0.0, 0.0)  # text is black
-        GL.glRasterPos2f(x_pos, y_pos)
-        font = GLUT.GLUT_BITMAP_HELVETICA_12
-
-        for character in text:
-            if character == '\n':
-                y_pos = y_pos - 20
-                GL.glRasterPos2f(x_pos, y_pos)
-            else:
-                GLUT.glutBitmapCharacter(font, ord(character))
-
     def render(self, outputs, length):
         """Handle all drawing operations."""
         self.SetCurrent(self.context)
@@ -128,13 +115,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         y_step = 50 #if the screen is very crowded or empty could adjust this for readability
 
         for j in range(len(outputs)):
+            self.render_text(self.output_labels[j], 10, y_spacing*(2*j + 1) + 20)
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
             GL.glBegin(GL.GL_LINE_STRIP)
-            self.labels.append(wx.StaticText(self, wx.ID_ANY, self.output_labels[j], pos=wx.Point(10, y_spacing*(2*j + 1) + 10)))
+            #self.labels.append(wx.StaticText(self, wx.ID_ANY, self.output_labels[j], pos=wx.Point(10, y_spacing*(2*j + 1) + 10)))
             for i in range(length):
-                print(i)
                 x = (i * x_step) + 50
-                x_next = (i * x_step) + x_step + 10
+                x_next = (i * x_step) + x_step + 50
                 y = y_spacing*(2*j + 1) + y_step*outputs[j][i]
                 GL.glVertex2f(x, y)
                 GL.glVertex2f(x_next, y)
@@ -153,7 +140,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.init_gl()
             self.init = True
 
-        self.render(self.outputs, self.render_length)
+        self.render(self.outputs, len(self.outputs[0]))
 
     def on_size(self, event):
         """Handle the canvas resize event."""
@@ -198,6 +185,19 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.pan_y -= (self.zoom - old_zoom) * oy
             self.init = False
         self.Refresh()  # triggers the paint event
+
+    def render_text(self, text, x_pos, y_pos):
+        """Handle text drawing operations."""
+        GL.glColor3f(0.0, 0.0, 0.0)  # text is black
+        GL.glRasterPos2f(x_pos, y_pos)
+        font = GLUT.GLUT_BITMAP_HELVETICA_12
+
+        for character in text:
+            if character == '\n':
+                y_pos = y_pos - 20
+                GL.glRasterPos2f(x_pos, y_pos)
+            else:
+                GLUT.glutBitmapCharacter(font, ord(character))
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
@@ -418,7 +418,7 @@ class Gui(wx.Frame):
         except:
             print("Couldn't destroy labels")
 
-        self.canvas.render(self.canvas.outputs, self.cycles)
+        self.canvas.render(self.canvas.outputs, len(self.canvas.outputs[0]))
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""

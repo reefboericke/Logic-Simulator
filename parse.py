@@ -188,6 +188,11 @@ class Parser:
                       self.devices.get_device(currdevicenameid2).inputs))):
                 self.encounter_error('semantic', 13, recover=False)
             currinputid = self.currsymb.id
+            # Check to see if multiple outputs connected to input:
+            if ((self.network.get_connected_output(currdevicenameid2,
+                                                   currinputid)
+                 is not None)):
+                self.encounter_error('semantic', 14, recover=False)
             self.currsymb = self.scanner.get_symbol()
         else:
             self.encounter_error('syntax', 5, recover=True)
@@ -197,7 +202,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # correct syntax, if semantically correct, add to network:
             if self.network_construction:
-                err = self.network.make_connection(self.currdevicenameid1,
+                self.network.make_connection(self.currdevicenameid1,
                                              self.curroutputid,
                                              currdevicenameid2, currinputid)
         else:
@@ -388,6 +393,9 @@ class Parser:
         while self.currsymb.type == self.scanner.NAME:
             self.connectiondefinitiongrammar()
             self.error_recovery_mode = False
+
+        if not self.network.check_network():
+            self.encounter_error('semantic', 15, recover=False)
 
         if self.currsymb.id == self.scanner.end_ID:
             self.currsymb = self.scanner.get_symbol()
