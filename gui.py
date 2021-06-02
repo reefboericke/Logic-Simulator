@@ -517,9 +517,11 @@ class Gui(wx.Frame):
             self.zap_monitor_box.Layout()
 
     def open_file_button(self, event):
+        """Handle the user pressing the open file button"""
         self.open_file_dialog()
 
     def open_file_dialog(self):
+        """Function to open a new BNA file"""
         with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", # Code for opening new file from the GUI
                    style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -592,6 +594,7 @@ class Gui(wx.Frame):
                 self.previous_outputs.append([])        
 
     def display_errors(self):
+        """Creates a dialog box with the errors present if there are any"""
         file = open('error_report.txt', 'r')
         lines = file.readlines()
         error_message = ''
