@@ -440,6 +440,10 @@ class Gui(wx.Frame):
                     self.switch_box.Layout()
                     self.side_sizer.Layout()
 
+                self.previous_outputs = []
+                for i in range(len(self.monitored_devices)):
+                    self.previous_outputs.append([])
+
                 
 
 
