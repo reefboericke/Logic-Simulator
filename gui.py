@@ -219,7 +219,18 @@ class Gui(wx.Frame):
     on_run_button(self, event): Event handler for when the user clicks the run
                                 button.
 
-    on_text_box(self, event): Event handler for when the user enters text.
+    on_continue_button(self, event): Event handler for when the user clicks the continue button.
+
+    on_remove_monitor(self, event): Event handler for when the user clicks the zap monitor button.
+
+    on_add_monitor(self, event): Event handler for when the user clicks the add monitor button.
+
+    open_file_button(self, event): Event handler for when the user clicks the open file button.
+
+    open_file_dialog(self): Function which opens a new BNA and resets the gui for the new circuit.
+
+    display_errors(self): Function which displays a dialog box with the syntax errors if there are any present
+
     """
 
     def __init__(self, title="Logic Simulator", path=None, names=None, devices=None, network=None, monitors=None):
