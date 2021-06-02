@@ -19,6 +19,7 @@ from network import Network
 from monitors import Monitors
 from scanner import Scanner
 from parse import Parser
+from errors import Error_Store
 
 
 class MyGLCanvas(wxcanvas.GLCanvas):
@@ -216,15 +217,37 @@ class Gui(wx.Frame):
     on_text_box(self, event): Event handler for when the user enters text.
     """
 
-    def __init__(self, title, path, names, devices, network, monitors):
+    def __init__(self, title="Logic Simulator", path=None, names=None, devices=None, network=None, monitors=None):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
 
-        # Set up network for running
-        self.network = network
-        self.devices = devices
-        self.names = names
-        self.monitors = monitors
+        if(names == None):
+            names1 = Names()
+            devices1 = Devices(names1)
+            network1 = Network(names1, devices1)
+            monitors1 = Monitors(names1, devices1, network1)
+            
+            with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", #If no command line argument provided, force the user to open it from the gui
+                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+                    if fileDialog.ShowModal() == wx.ID_CANCEL:
+                        return
+                    pathname = fileDialog.GetPath()
+
+            scanner = Scanner(pathname, names1)
+            error_db = Error_Store(scanner)
+            parser = Parser(names1, devices1, network1, monitors1, scanner, error_db)
+            parser.parse_network()
+
+            self.network = network1
+            self.devices = devices1
+            self.names = names1
+            self.monitors = monitors1
+        else:
+            # Set up network for running
+            self.network = network
+            self.devices = devices
+            self.names = names
+            self.monitors = monitors
 
         # Store original values of switches
         switches = self.devices.find_devices(self.devices.SWITCH)
@@ -343,11 +366,26 @@ class Gui(wx.Frame):
             wx.MessageBox("Boernashly Logic Simulator\nCreated by Reef Boericke, Joe Nash, and Finn Ashley\n2021",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
         if Id == wx.ID_OPEN:
-            with wx.FileDialog(self, "Open txt file", wildcard="txt files (*.txt)|*.txt",
+            with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna",
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
                 if fileDialog.ShowModal() == wx.ID_CANCEL:
                     return
                 pathname = fileDialog.GetPath()
+
+                names1 = Names()
+                devices1 = Devices(names1)
+                network1 = Network(names1, devices1)
+                monitors1 = Monitors(names1, devices1, network1)
+
+                scanner = Scanner(pathname, names1)
+                error_db = Error_Store(scanner)
+                parser = Parser(names1, devices1, network1, monitors1, scanner, error_db)
+                parser.parse_network()
+
+                self.network = network1
+                self.devices = devices1
+                self.names = names1
+                self.monitors = monitors1
                 
 
     def on_spin(self, event):
