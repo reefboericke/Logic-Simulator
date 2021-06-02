@@ -299,7 +299,9 @@ class Gui(wx.Frame):
         main_sizer.Add(self.side_sizer, 1, wx.ALL, 5)
         self.side_sizer.Add(self.run_box, 1, wx.ALL, 5)
 
-        self.previous_outputs = [[]]
+        self.previous_outputs = []
+        for key in self.monitors.monitors_dictionary:
+            self.previous_outputs.append([])
 
         # If (there are errors):
         #       for error in errors:
