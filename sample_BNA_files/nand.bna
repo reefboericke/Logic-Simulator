@@ -1,11 +1,11 @@
 begin devices:
 	NAND G1: inputs = 2;
-	SWITCH S1: initial = 1;
+	SWITCH SWITCHLONGNAME1: initial = 0;
 	CLOCK C1: period = 2;
 end devices;
 
 begin connections:
-	S1 -> G1.I1;
+	SWITCHLONGNAME1 -> G1.I1;
 	C1 -> G1.I2;
 end connections;
 
