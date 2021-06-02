@@ -370,7 +370,7 @@ class Gui(wx.Frame):
 
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
 
-        self.canvas.output_labels = self.monitored_devices[::-1]
+        self.canvas.output_labels = self.monitored_devices
 
         try:    
             for label in self.canvas.labels:
@@ -383,6 +383,7 @@ class Gui(wx.Frame):
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
         self.previous_outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
+        print(self.previous_outputs)
         self.monitors.reset_monitors()
 
         switch_values = []
@@ -409,8 +410,11 @@ class Gui(wx.Frame):
         self.canvas.render_length = self.cycles
 
         self.canvas.outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
+        print([self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary])
+        print(self.previous_outputs)
+        print(self.canvas.outputs)
 
-        self.canvas.output_labels = self.monitored_devices[::-1]
+        self.canvas.output_labels = self.monitored_devices
 
         try:    
             for label in self.canvas.labels:
@@ -427,6 +431,7 @@ class Gui(wx.Frame):
         device_id = self.names.query(self.monitored_devices[device_index])
         
         if(device_id != wx.NOT_FOUND):
+            self.previous_outputs.pop(device_index)
             if(self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
                 self.monitors.remove_monitor(device_id, None)
             else:
@@ -448,8 +453,9 @@ class Gui(wx.Frame):
         device_id = self.names.query(self.unmonitored_devices[device_index])
 
         if(device_id != wx.NOT_FOUND):
+            self.previous_outputs.append([])
             if (self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
-                self.monitors.make_monitor(device_id, None, self.cycles)
+                self.monitors.make_monitor(device_id, None, len(self.canvas.outputs[0]))
             else:
                 self.monitors.make_monitor(device_id, self.devices.Q_ID, self.cycles)
             self.monitored_devices.append(self.unmonitored_devices[device_index])
