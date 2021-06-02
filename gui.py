@@ -362,7 +362,9 @@ class Gui(wx.Frame):
         self.zap_monitor_box.Add(wx.StaticText(self, wx.ID_ANY, "            "))
         self.zap_monitor_box.Add(self.remove_monitor)
 
-        self.side_sizer.Add(self.open_file)
+        self.open_file_box = wx.StaticBoxSizer(wx.HORIZONTAL, self, label="File")
+        self.open_file_box.Add(self.open_file)
+        self.side_sizer.Add(self.open_file_box)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
