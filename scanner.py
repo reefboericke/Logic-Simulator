@@ -165,6 +165,18 @@ class Scanner:
             number += self.current_character
             self.advance()
         # current_character now contains first non-num char
+        self.check_point = self.file
+        if self.current_character == '.':
+            pos = self.file.tell()
+            self.advance()
+            if (self.current_character.isdigit()):
+                # fractional number found
+                return None
+            else:
+                # dot was an error so backtrack
+                self.file.seek(pos)
+                self.current_char_num -= 1
+            
         return number
 
     def get_symbol(self):
@@ -182,7 +194,12 @@ class Scanner:
 
         elif self.current_character.isdigit():  # number
             symbol.id = self.get_number()
-            symbol.type = self.NUMBER
+            if symbol.id == None:
+                # non-int found
+                symbol.type = self.UNEXPECTED
+                symbol.id = self.current_character
+            else:
+                symbol.type = self.NUMBER
 
         elif self.current_character == "=":  # punctuation
             symbol.type = self.EQUALS
