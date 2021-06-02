@@ -241,7 +241,8 @@ class Gui(wx.Frame):
             scanner = Scanner(pathname, names1)
             error_db = Error_Store(scanner)
             parser = Parser(names1, devices1, network1, monitors1, scanner, error_db)
-            parser.parse_network()
+            if not parser.parse_network():
+                self.display_errors()
 
             self.network = network1
             self.devices = devices1
@@ -530,7 +531,8 @@ class Gui(wx.Frame):
             scanner = Scanner(pathname, names1)
             error_db = Error_Store(scanner)
             parser = Parser(names1, devices1, network1, monitors1, scanner, error_db)
-            parser.parse_network()
+            if not parser.parse_network():
+                self.display_errors()
 
             self.network = network1
             self.devices = devices1
@@ -585,3 +587,12 @@ class Gui(wx.Frame):
             self.previous_outputs = []
             for i in range(len(self.monitored_devices)):
                 self.previous_outputs.append([])        
+
+    def display_errors(self):
+        file = open('error_report.txt', 'r')
+        lines = file.readlines()
+        error_message = ''
+        for line in lines:
+            error_message += line
+        window = wx.MessageDialog(self, error_message, style=wx.OK)
+        window.ShowWindowModal()
