@@ -321,12 +321,15 @@ class Gui(wx.Frame):
         self.side_sizer.Add(self.switch_box, 1, wx.ALL, 5)
 
         switches = self.devices.find_devices(self.devices.SWITCH)
+        self.switch_items = []
         for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
             self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
             self.switch_box.Add(self.single_switch_box)
             switch_name = self.names.get_name_string(switches[i])
-            self.single_switch_box.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
-            self.single_switch_box.Add(wx.StaticText(self, wx.ID_ANY, "                        "))
+            self.switch_items.append(wx.StaticText(self, wx.ID_ANY, switch_name))
+            self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
+            for item in self.switch_items:
+                (self.single_switch_box.Add(item))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
             if(initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
@@ -335,6 +338,7 @@ class Gui(wx.Frame):
             if(not initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
             self.single_switch_box.Add(self.radiobuttons[-1])
+            
 
         # Retrieve initial list of monitored and unmonitored devices
         self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
@@ -368,7 +372,7 @@ class Gui(wx.Frame):
             wx.MessageBox("Boernashly Logic Simulator\nCreated by Reef Boericke, Joe Nash, and Finn Ashley\n2021",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
         if Id == wx.ID_OPEN:
-            with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna",
+            with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", # Code for opening new file from the GUI
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
                 if fileDialog.ShowModal() == wx.ID_CANCEL:
                     return
@@ -388,6 +392,53 @@ class Gui(wx.Frame):
                 self.devices = devices1
                 self.names = names1
                 self.monitors = monitors1
+
+                self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
+
+                self.add_monitor_choice.Destroy()
+                self.add_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.unmonitored_devices)
+                self.add_monitor_box.Insert(0, self.add_monitor_choice)
+                self.remove_monitor_choice.Destroy()
+                self.remove_monitor_choice = wx.Choice(self, wx.ID_ANY, choices=self.monitored_devices)
+                self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
+                self.add_monitor_box.Layout()
+                self.zap_monitor_box.Layout()
+
+                switches = self.devices.find_devices(self.devices.SWITCH)
+                initial_switch_values = [self.devices.get_device(switches[i]).switch_state for i in range(len(switches))]
+                
+                for item in self.switch_items:
+                    self.switch_box.Detach(item)
+
+                for item in self.radiobuttons:
+                    self.switch_box.Detach(item)
+
+                self.switch_items = []
+                self.radiobuttons = []
+
+                for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
+                    self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
+                    self.switch_box.Add(self.single_switch_box)
+                    switch_name = self.names.get_name_string(switches[i])
+                    self.switch_items.append(wx.StaticText(self, wx.ID_ANY, switch_name))
+                    self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
+                    for item in self.switch_items:
+                        (self.single_switch_box.Add(item))
+                    self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+                    if(initial_switch_values[i]):
+                        self.radiobuttons[-1].SetValue(True)
+                    self.single_switch_box.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
+                    self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
+                    if(not initial_switch_values[i]):
+                        self.radiobuttons[-1].SetValue(True)
+                    self.single_switch_box.Add(self.radiobuttons[-1])
+                    self.single_switch_box.Layout()
+                    self.switch_box.Layout()
+                    self.side_sizer.Layout()
+
+                
+
+
                 
 
     def on_spin(self, event):
