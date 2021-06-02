@@ -1,6 +1,11 @@
 
-Semantic Error on line 32: No device with specified name.
+Syntax Error on line 1: Invalid syntax, expected "begin":
 
-    Sum;
+devices:
           ^
+
+Syntax Error on line 3: Invalid syntax, expected "begin":
+
+	SWITCH S1: initial = 0;
+             ^
 
