@@ -270,9 +270,6 @@ class Gui(wx.Frame):
         menuBar.Append(fileMenu, "&File")
         self.SetMenuBar(menuBar)
 
-        # Might need to later define the outputs and lengths etc. here first and then pass them to the canvas when the object is defined.
-        # For now these variables are defined in the canvas init function
-
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors)
 
@@ -306,11 +303,6 @@ class Gui(wx.Frame):
         self.previous_outputs = []
         for key in self.monitors.monitors_dictionary:
             self.previous_outputs.append([])
-
-        # If (there are errors):
-        #       for error in errors:
-        #           main_sizer.add(staticText('error'))
-        # Then somehow stop the rest of the code from running, because the circuit cant be loaded. How to do this TBC
         
         self.spinner_box = wx.BoxSizer(wx.HORIZONTAL)
         self.run_button_box = wx.BoxSizer(wx.HORIZONTAL)
