@@ -295,8 +295,12 @@ class Gui(wx.Frame):
             switch_name = self.names.get_name_string(switches[i])
             self.side_sizer.Add(wx.StaticText(self, wx.ID_ANY, switch_name))
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+            if(initial_switch_values[i]):
+                self.radiobuttons[-1].SetValue(True)
             self.side_sizer.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
             self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
+            if(not initial_switch_values[i]):
+                self.radiobuttons[-1].SetValue(True)
             self.side_sizer.Add(self.radiobuttons[-1])
 
         # Retrieve initial list of monitored and unmonitored devices
