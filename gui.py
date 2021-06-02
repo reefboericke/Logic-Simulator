@@ -595,4 +595,5 @@ class Gui(wx.Frame):
         for line in lines:
             error_message += line
         window = wx.MessageDialog(self, error_message, style=wx.OK)
+        window.Title = "There were errors: logged in error_report.txt"
         window.ShowWindowModal()
