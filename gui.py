@@ -68,12 +68,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Initialise variables for zooming
         self.zoom = 1
 
-        # Previously used dummy variables
-        #self.outputs = [[0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0], [0, 0, 0, 0, 10, 0, 0, 10, 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10], [0, 10, 10, 10, 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 10, 10, 10, 0, 0, 0]] # Fake test signal
-        #self.length = 10
-
         self.length = 10
-        self.render_length = 10
         self.outputs = [[0 for i in range(10)]]
         self.output_labels = ['Label']
 
@@ -391,7 +386,6 @@ class Gui(wx.Frame):
 
         
         self.cycles += self.canvas.length
-        self.canvas.render_length = self.cycles
 
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
 
@@ -426,7 +420,6 @@ class Gui(wx.Frame):
                 self.monitors.record_signals()
 
         self.cycles += self.canvas.length
-        self.canvas.render_length = self.cycles
 
         self.canvas.outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
         self.canvas.output_labels = self.monitored_devices
