@@ -61,7 +61,7 @@ class Parser:
     deviceblockgrammar(self): Parses the whole block of device creation.
 
     BNAcodegrammar(self): Parses each of the blocks of the BNA circuit
-                          defintion file.
+                          defintion file and checks network validity.
 
     parse_network(self): Parses the circuit definition file, and in the case
                          of no errors, instructs the logsim file to continue
@@ -169,6 +169,7 @@ class Parser:
         """Parse the connection between an output and input."""
         if self.currsymb.type == self.scanner.NAME:
             self.currdevicenameid1 = self.currsymb.id
+            devicehasoutput = False
             if self.devices.get_device(self.currdevicenameid1) is None:
                 self.encounter_error('semantic', 16, recover=False)
             self.currsymb = self.scanner.get_symbol()
@@ -179,6 +180,7 @@ class Parser:
 
         if self.currsymb.type == self.scanner.DOT:
             self.assignoutputgrammar()
+            devicehasoutput = True
         elif (self.devices.get_device(self.currdevicenameid1) is not None
               and self.devices.get_device(self.currdevicenameid1).device_kind
               == self.devices.D_TYPE):
@@ -190,7 +192,10 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected an arrow
-            self.encounter_error('syntax', 4, recover=True)
+            if devicehasoutput:
+                self.encounter_error('syntax', 15, recover=True)
+            else:
+                self.encounter_error('syntax', 4, recover=True)
             return
 
         if self.currsymb.type == self.scanner.NAME:
@@ -304,6 +309,7 @@ class Parser:
         """Parse the creation of a device."""
         if self.currsymb.id in self.device_ids:
             self.network_construction = True
+            devicehasvariable = False
             self.currdevicetypeid = self.currsymb.id
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -332,6 +338,7 @@ class Parser:
                                          self.scanner.XOR_ID]:
                 self.encounter_error('semantic', 3, recover=False)
             self.assignvariablegrammar()
+            devicehasvariable = True
         elif self.currdevicetypeid not in [self.scanner.DTYPE_ID,
                                            self.scanner.XOR_ID]:
             self.encounter_error('semantic', 3, recover=False)
@@ -348,7 +355,10 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
         else:
             # expected semicolon
-            self.encounter_error('syntax', 11, recover=True)
+            if devicehasvariable:
+                self.encounter_error('syntax', 1, recover=True)
+            else:
+                self.encounter_error('syntax', 11, recover=True)
             return
 
     def monitorblockgrammar(self):
@@ -426,9 +436,6 @@ class Parser:
             self.connectiondefinitiongrammar()
             self.error_recovery_mode = False
 
-        if not self.network.check_network():
-            self.encounter_error('semantic', 15, recover=False)
-
         if self.currsymb.id == self.scanner.end_ID:
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -499,7 +506,7 @@ class Parser:
             return
 
     def BNAcodegrammar(self):
-        """Parse the whole EBNF."""
+        """Parse the whole EBNF and check validity of network."""
         self.deviceblockgrammar()
         self.error_recovery_mode = False
 
@@ -509,6 +516,9 @@ class Parser:
         if self.currsymb.id == self.scanner.begin_ID:
             self.monitorblockgrammar()
             self.error_recovery_mode = False
+
+        if not self.network.check_network():
+            self.encounter_error('semantic', 15, recover=False)
 
     def parse_network(self):
         """Parse the circuit definition file."""
