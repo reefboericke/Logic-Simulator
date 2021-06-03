@@ -7,7 +7,7 @@ begin devices:
     AND and2: inputs = 2;
     AND and3: inputs = 3;
     OR or1: inputs = 3;
-    CLOCK C1: period = 2;
+    CLOCK C1: period = 1;
     SWITCH rst: initial = 0;
     SWITCH set: initial = 0;
 end devices;

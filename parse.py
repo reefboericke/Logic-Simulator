@@ -169,7 +169,9 @@ class Parser:
         """Parse the connection between an output and input."""
         if self.currsymb.type == self.scanner.NAME:
             self.currdevicenameid1 = self.currsymb.id
+            self.txt = self.names.get_name_string(self.currdevicenameid1)
             devicehasoutput = False
+            self.curroutputid = None
             if self.devices.get_device(self.currdevicenameid1) is None:
                 self.encounter_error('semantic', 16, recover=False)
             self.currsymb = self.scanner.get_symbol()
@@ -239,7 +241,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # correct syntax, if semantically correct, add to network:
             if self.network_construction:
-                self.network.make_connection(self.currdevicenameid1,
+                self.err_return = self.network.make_connection(self.currdevicenameid1,
                                              self.curroutputid,
                                              currdevicenameid2, currinputid)
         else:
