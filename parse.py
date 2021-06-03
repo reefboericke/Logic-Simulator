@@ -170,6 +170,7 @@ class Parser:
         if self.currsymb.type == self.scanner.NAME:
             self.currdevicenameid1 = self.currsymb.id
             devicehasoutput = False
+            self.curroutputid = None
             if self.devices.get_device(self.currdevicenameid1) is None:
                 self.encounter_error('semantic', 16, recover=False)
             self.currsymb = self.scanner.get_symbol()
@@ -522,6 +523,8 @@ class Parser:
             for device_id in self.devices.find_devices():
                 device = self.devices.get_device(device_id)
                 for input_id in device.inputs:
+                    print(self.names.get_name_string(device_id))
+                    print(self.names.get_name_string(input_id))
                     if self.network.get_connected_output(device_id, input_id) is None:
                         devic = self.names.get_name_string(device_id)
                         input = self.names.get_name_string(input_id)
