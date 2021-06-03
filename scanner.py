@@ -233,6 +233,7 @@ class Scanner:
 
         elif self.current_character == "":  # end of file
             symbol.type = self.EOF
+            self.file.close() # close file to avoid corruption
 
         else:  # not a known character, pass processing onto parser
             symbol.type = self.UNEXPECTED
