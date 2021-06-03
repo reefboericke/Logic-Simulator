@@ -110,7 +110,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Draw a sample signal trace
         x_step = (self.GetClientSize().width - 60)/length
         y_spacing = (self.GetClientSize().height)/(2*len(outputs))
-        y_step = 50 #if the screen is very crowded or empty could adjust this for readability
+        y_step = 50  # Determines the vertical size of the signal traces
 
         for j in range(len(outputs)):
             if(len(outputs) > 6):
@@ -186,9 +186,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             # Adjust pan so as to zoom around the mouse position
             self.pan_x -= (self.zoom - old_zoom) * ox
             self.pan_y -= (self.zoom - old_zoom) * oy
-            self.init = False # triggers the paint event
+            self.init = False  # triggers the paint event
         if(not self.blank_file):
             self.Refresh()
+
     def render_text(self, text, x_pos, y_pos):
         """Handle text drawing operations."""
         GL.glColor3f(0.0, 0.0, 0.0)  # text is black
@@ -201,6 +202,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glRasterPos2f(x_pos, y_pos)
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
+
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
@@ -245,17 +247,11 @@ class Gui(wx.Frame):
         blank_file.close()
         pathname = 'startup.bna'
 
-        if(names == None):
+        if(names is None):
             names1 = Names()
             devices1 = Devices(names1)
             network1 = Network(names1, devices1)
             monitors1 = Monitors(names1, devices1, network1)
-            
-            #with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", #If no command line argument provided, force the user to open it from the gui
-            #            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
-            #        if fileDialog.ShowModal() == wx.ID_CANCEL:
-            #            return
-            #        pathname = fileDialog.GetPath()
 
             scanner = Scanner(pathname, names1)
             error_db = Error_Store(scanner)
@@ -322,11 +318,11 @@ class Gui(wx.Frame):
         self.previous_outputs = []
         for key in self.monitors.monitors_dictionary:
             self.previous_outputs.append([])
-        
+
         self.spinner_box = wx.BoxSizer(wx.HORIZONTAL)
         self.run_button_box = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.spinner_box.Add(self.text, 1, wx.TOP, 10) #Add the run/continue controls
+        self.spinner_box.Add(self.text, 1, wx.TOP, 10)  # Add the run/continue controls
         self.spinner_box.Add(self.spin, 1, wx.ALL, 5)
         self.run_button_box.Add(self.run_button, 1, wx.ALL, 5)
         self.run_button_box.Add(self.continue_button, 1, wx.ALL, 5)
@@ -341,7 +337,7 @@ class Gui(wx.Frame):
 
         switches = self.devices.find_devices(self.devices.SWITCH)
         self.switch_items = []
-        for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
+        for i in range(len(switches)):  # Iterate through the switches in the circuit and list them out with on/off
             self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
             self.switch_box.Add(self.single_switch_box)
             switch_name = self.names.get_name_string(switches[i])
@@ -349,15 +345,14 @@ class Gui(wx.Frame):
             self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
             self.single_switch_box.Add(self.switch_items[-2])
             self.single_switch_box.Add(self.switch_items[-1])
-            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label="On", style=wx.RB_GROUP))  # Add the RadioButton objects to a list so we can access their value
             if(initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
-            self.single_switch_box.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
-            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
+            self.single_switch_box.Add(self.radiobuttons[-1])  # Adds the RadioButton created in the previous line
+            self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label="Off"))
             if(not initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
             self.single_switch_box.Add(self.radiobuttons[-1])
-            
 
         # Retrieve initial list of monitored and unmonitored devices
         self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
@@ -386,11 +381,6 @@ class Gui(wx.Frame):
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
 
-        try:
-            os.remove(pathname)
-        except:
-            print("file doesn't exist !?!?")
-
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
         Id = event.GetId()
@@ -417,18 +407,18 @@ class Gui(wx.Frame):
         self.devices.cold_startup()
 
         switch_values = []
-        for i in range(len(self.radiobuttons)): #Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
-            if(i%2 == 0):
+        for i in range(len(self.radiobuttons)):  # Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
+            if(i % 2 == 0):
                 switch_values.append(self.radiobuttons[i].GetValue())
 
-        switch_signals = [] #Convert True/False to 1/0
+        switch_signals = []  # Convert True/False to 1/0
         for value in switch_values:
-            if(value == True):
+            if value:
                 switch_signals.append(1)
             else:
                 switch_signals.append(0)
 
-        switches = self.devices.find_devices(self.devices.SWITCH) #Set all switches to the value specified in GUI
+        switches = self.devices.find_devices(self.devices.SWITCH)  # Set all switches to the value specified in GUI
         for i in range(len(switches)):
             self.devices.set_switch(switches[i], switch_signals[i])
 
@@ -436,7 +426,6 @@ class Gui(wx.Frame):
             if self.network.execute_network():
                 self.monitors.record_signals()
 
-        
         self.cycles += self.canvas.length
 
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
@@ -449,22 +438,22 @@ class Gui(wx.Frame):
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
         self.previous_outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
-        
+
         self.monitors.reset_monitors()
 
         switch_values = []
-        for i in range(len(self.radiobuttons)): #Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
-            if(i%2 == 0):
+        for i in range(len(self.radiobuttons)):  # Assembles the values of the switches set in the GUI. Can be returned to run the logsim with the right settings.
+            if(i % 2 == 0):
                 switch_values.append(self.radiobuttons[i].GetValue())
 
-        switch_signals = [] #Convert True/False to 1/0
+        switch_signals = []  # Convert True/False to 1/0
         for value in switch_values:
-            if(value == True):
+            if value:
                 switch_signals.append(1)
             else:
                 switch_signals.append(0)
 
-        switches = self.devices.find_devices(self.devices.SWITCH) #Set all switches to the value specified in GUI
+        switches = self.devices.find_devices(self.devices.SWITCH)  # Set all switches to the value specified in GUI
         for i in range(len(switches)):
             self.devices.set_switch(switches[i], switch_signals[i])
 
@@ -482,9 +471,9 @@ class Gui(wx.Frame):
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
-        
+
         device_index = self.remove_monitor_choice.GetSelection()
-        
+
         if(device_index != wx.NOT_FOUND):
             device_id = self.names.query(self.monitored_devices[device_index])
             if(len(self.monitored_devices) == 1):
@@ -543,8 +532,8 @@ class Gui(wx.Frame):
         self.canvas.outputs = [[4 for i in range(10)]]
         self.canvas.length = 10
         self.canvas.output_labels = ['No signal']
-        with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", # Code for opening new file from the GUI
-                   style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+        with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna",  # Code for opening new file from the GUI
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
             pathname = fileDialog.GetPath()
@@ -578,19 +567,19 @@ class Gui(wx.Frame):
 
             switches = self.devices.find_devices(self.devices.SWITCH)
             initial_switch_values = [self.devices.get_device(switches[i]).switch_state for i in range(len(switches))]
-                
+
             for item in self.switch_items:
                 try:
                     item.Destroy()
-                except:
+                except(RuntimeError):
                     continue
 
             for item in self.radiobuttons:
                 item.Destroy()
 
             self.radiobuttons = []
-            for i in range(len(switches)): #Iterate through the switches in the circuit and list them out with on/off
-                    
+            for i in range(len(switches)):  # Iterate through the switches in the circuit and list them out with on/off
+
                 self.single_switch_box = wx.BoxSizer(wx.HORIZONTAL)
                 self.switch_box.Add(self.single_switch_box)
                 switch_name = self.names.get_name_string(switches[i])
@@ -598,11 +587,11 @@ class Gui(wx.Frame):
                 self.switch_items.append(wx.StaticText(self, wx.ID_ANY, "                        "))
                 self.single_switch_box.Add(self.switch_items[-2])
                 self.single_switch_box.Add(self.switch_items[-1])
-                self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "On", style = wx.RB_GROUP)) # Add the RadioButton objects to a list so we can access their value
+                self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label="On", style=wx.RB_GROUP))  # Add the RadioButton objects to a list so we can access their value
                 if(initial_switch_values[i]):
                     self.radiobuttons[-1].SetValue(True)
-                self.single_switch_box.Add(self.radiobuttons[-1]) # Adds the RadioButton created in the previous line
-                self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label = "Off"))
+                self.single_switch_box.Add(self.radiobuttons[-1])  # Adds the RadioButton created in the previous line
+                self.radiobuttons.append(wx.RadioButton(self, wx.ID_ANY, label="Off"))
                 if(not initial_switch_values[i]):
                     self.radiobuttons[-1].SetValue(True)
                 self.single_switch_box.Add(self.radiobuttons[-1])
@@ -612,7 +601,7 @@ class Gui(wx.Frame):
 
             self.previous_outputs = []
             for i in range(len(self.monitored_devices)):
-                self.previous_outputs.append([])        
+                self.previous_outputs.append([])
 
     def display_errors(self):
         """Creates a dialog box with the errors present if there are any"""
