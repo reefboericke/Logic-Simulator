@@ -19,7 +19,7 @@ def run():
     network = Network(names, devices)
     monitors = Monitors(names, devices, network)
     
-    scanner = Scanner('/Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/parse_test_cases/multiple_errors.bna', names)
+    scanner = Scanner('/Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/sample_BNA_files/three_bit_counter.bna', names)
     error_db = Error_Store(scanner)
     parser = Parser(names,devices,network,monitors,scanner, error_db)
 

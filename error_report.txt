@@ -1,23 +1,3 @@
 
-Semantic Error on line 4: Incorrect argument provided for gate.
-
-    NAND G3: initial = 1;
-                   ^
-
-Semantic Error on line 6: Invalid device name.
-
-	SWITCH SWITCH: initial = 0;
-                ^
-
-Syntax Error on line 13: Invalid syntax, expected ".":
-
-	G1 -> G2;
-            ^
-
-Syntax Error on line 17: Invalid syntax, expected "monitors":
-
-begin:
-     ^
-
 Semantic Error in file: All gate inputs must be connected.
 
