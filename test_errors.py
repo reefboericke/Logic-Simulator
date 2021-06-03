@@ -54,8 +54,8 @@ def test_error_reporting(new_error_store):
     error_db = new_error_store('empty.bna')
     for error in errors_to_report:
         error_db.add_error(error[0], error[1])
-    error_report = error_db.report_errors()
-
+    error_db.report_errors()
+    error_report = open('error_report.txt').read()
     dirname = os.path.dirname(__file__)
     filename = os.path.join(dirname, 'errors_test_cases/'
                             + 'expected_report.txt')

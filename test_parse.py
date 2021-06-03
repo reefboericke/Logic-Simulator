@@ -105,12 +105,6 @@ def test_single_syntax_error_detection(parsed_network, file, error_id):
     """Test every syntax error and that parser picks it up."""
     error_db = parsed_network(file)
     assert(error_db.query_syntax(error_id) == 1)
-    """
-    for i in range(19):
-        if (i not in [error_id, 15]):
-            assert(error_db.query_syntax(i) == 0)
-        assert(error_db.query_semantics(i) == 0)
-    """
 
 
 def test_realistic_error_set_detection(parsed_network):
