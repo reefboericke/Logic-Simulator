@@ -717,6 +717,6 @@ class Gui(wx.Frame):
 
     def display_errors(self, error_db):
         """Create a dialog box with the errors present if there are any."""
-        window = wx.MessageDialog(self, error_db.report_errors(), style=wx.OK)
+        window = wx.MessageDialog(self, error_db.report_errors(command_line=False,file_output=False), style=wx.OK)
         window.Title = "There were errors: logged in error_report.txt"
         window.ShowWindowModal()
