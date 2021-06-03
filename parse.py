@@ -34,18 +34,38 @@ class Parser:
 
     Public methods
     --------------
-    error_recover(self):
-    encounter_error(self, type, id, recover):
-    monitordefinitiongrammar(self):
-    assignoutputgrammar(self):
-    connectiondefinitiongrammar(self):
-    assignvariablegrammar(self):
-    devicedefinitiongrammar(self):
-    monitorblockgrammar(self):
-    connectionblockgrammar(self):
-    deviceblockgrammar(self):
-    BNAcodegrammar(self):
-    parse_network(self): Parses the circuit definition file.
+    error_recover(self): Moves scanner onwards until a semicolon is found
+
+    encounter_error(self, type, id, recover): Logs the encountered error,
+                                              prevents the formation of further
+                                              connections and if applicable,
+                                              enters error recovery.
+
+    monitordefinitiongrammar(self): Parses the formation of a new monitor.
+
+    assignoutputgrammar(self): Parses the choice of output for multi-output
+                               devices when forming connections.
+
+    connectiondefinitiongrammar(self): Parses the formation of a new
+                                       connection.
+
+    assignvariablegrammar(self): Parses the assignment of variables to devices.
+
+    devicedefinitiongrammar(self): Parses the formation of a new device.
+
+    monitorblockgrammar(self): Parses the whole block of monitor creation.
+
+    connectionblockgrammar(self): Parses the whole block of connection
+                                  creation.
+
+    deviceblockgrammar(self): Parses the whole block of device creation.
+
+    BNAcodegrammar(self): Parses each of the blocks of the BNA circuit
+                          defintion file.
+
+    parse_network(self): Parses the circuit definition file, and in the case
+                         of no errors, instructs the logsim file to continue
+                         with the running of the program.
 
     """
 
