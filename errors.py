@@ -108,10 +108,15 @@ class Error:
                 error_text += ' :'
 
         error_text += '\n\n' + str(self.location[1])
+        error_text_terminal = error_text
+        error_text_txt = error_text
         for i in range(self.location[2]):
-            error_text += ' '
-        error_text += '^'
-        return(error_text)
+            error_text_terminal += ' '
+        error_text_terminal += '^'
+        for i in range(self.location[3]):
+            error_text_txt += ' '
+        error_text_txt += '^'
+        return [error_text_terminal, error_text_txt]
 
 
 class Error_Store():
@@ -182,10 +187,12 @@ class Error_Store():
             return False
         else:
             self.sort_errors()
-            total_error_text = '\n'
+            total_error_text_terminal = '\n'
+            total_error_text_txt = '\n'
             for error in self.errors:
-                total_error_text += error.report() + '\n\n'
-            print(total_error_text)
+                total_error_text_terminal += error.report()[0] + '\n\n'
+                total_error_text_txt += error.report()[1] + '\n\n'
+            print(total_error_text_terminal)
             output_file = open('error_report.txt', 'w')
-            output_file.write(total_error_text)
-            return total_error_text
+            output_file.write(total_error_text_txt)
+            return total_error_text_txt
