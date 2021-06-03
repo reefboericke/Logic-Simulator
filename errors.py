@@ -109,6 +109,7 @@ class Error:
         error_text += '\n\n' + str(self.location[1])
         error_text_terminal = error_text
         error_text_txt = error_text
+        error_text_gui = error_text
         for i in range(self.location[2]):
             error_text_terminal += ' '
         error_text_terminal += '^'
@@ -121,7 +122,7 @@ class Error:
             error_text_txt = msg
             error_text_terminal = msg
 
-        return [error_text_terminal, error_text_txt]
+        return [error_text_terminal, error_text_txt, error_text_gui]
 
 
 class Error_Store():
@@ -196,12 +197,14 @@ class Error_Store():
             self.sort_errors()
             total_error_text_terminal = '\n'
             total_error_text_txt = '\n'
+            total_error_text_gui = '\n'
             for error in self.errors:
                 total_error_text_terminal += error.report()[0] + '\n\n'
                 total_error_text_txt += error.report()[1] + '\n\n'
+                total_error_text_gui += error.report()[2] + '\n\n'
             if command_line:
                 print(total_error_text_terminal)
             if file_output:
                 output_file = open('error_report.txt', 'w')
                 output_file.write(total_error_text_txt)
-            return total_error_text_terminal
+            return total_error_text_gui
