@@ -469,14 +469,13 @@ class Gui(wx.Frame):
         """Handle removing the selected monitor"""
         
         device_index = self.remove_monitor_choice.GetSelection()
-        device_id = self.names.query(self.monitored_devices[device_index])
-
-        if(len(self.monitored_devices) == 1):
-            window = wx.MessageDialog(self, "You must have at least 1 monitor", style=wx.OK)
-            window.ShowWindowModal()
-            return None
         
-        if(device_id != wx.NOT_FOUND):
+        if(device_index != wx.NOT_FOUND):
+            device_id = self.names.query(self.monitored_devices[device_index])
+            if(len(self.monitored_devices) == 1):
+                window = wx.MessageDialog(self, "You must have at least 1 monitor", style=wx.OK)
+                window.ShowWindowModal()
+                return None
             self.previous_outputs.pop(device_index)
             if(self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
                 self.monitors.remove_monitor(device_id, None)
@@ -496,10 +495,13 @@ class Gui(wx.Frame):
     def on_add_monitor(self, event):
         """Handle adding the selected monitor"""
 
-        device_index = self.add_monitor_choice.GetSelection()
-        device_id = self.names.query(self.unmonitored_devices[device_index])
+        if(len(self.unmonitored_devices) == 0):
+            return None
 
-        if(device_id != wx.NOT_FOUND):
+        device_index = self.add_monitor_choice.GetSelection()
+
+        if(device_index != wx.NOT_FOUND):
+            device_id = self.names.query(self.unmonitored_devices[device_index])
             self.previous_outputs.append([])
             if (self.devices.get_device(device_id).device_kind != self.devices.D_TYPE):
                 self.monitors.make_monitor(device_id, None, len(self.canvas.outputs[0]))
