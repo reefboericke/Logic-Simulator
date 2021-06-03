@@ -405,7 +405,7 @@ class Gui(wx.Frame):
         # Add monitor addition/removal controls
         self.add_monitor_choice = wx.Choice(
             self, wx.ID_ANY, size=wx.Size(
-                100, 5), choices=self.unmonitored_devices)
+                100, 20), choices=self.unmonitored_devices)
         self.add_monitor_box.Add(self.add_monitor_choice)
         self.add_monitor_box.Add(
             wx.StaticText(
@@ -420,7 +420,7 @@ class Gui(wx.Frame):
 
         self.remove_monitor_choice = wx.Choice(
             self, wx.ID_ANY, size=wx.Size(
-                100, 5), choices=self.monitored_devices)
+                100, 20), choices=self.monitored_devices)
         self.zap_monitor_box.Add(self.remove_monitor_choice)
         self.zap_monitor_box.Add(
             wx.StaticText(
@@ -573,12 +573,12 @@ class Gui(wx.Frame):
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(
                 self, wx.ID_ANY, size=wx.Size(
-                    100, 5), choices=self.unmonitored_devices)
+                    100, 20), choices=self.unmonitored_devices)
             self.add_monitor_box.Insert(0, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(
                 self, wx.ID_ANY, size=wx.Size(
-                    100, 5), choices=self.monitored_devices)
+                    100, 20), choices=self.monitored_devices)
             self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
             self.add_monitor_box.Layout()
             self.zap_monitor_box.Layout()
@@ -612,12 +612,12 @@ class Gui(wx.Frame):
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(
                 self, wx.ID_ANY, size=wx.Size(
-                    100, 5), choices=self.unmonitored_devices)
+                    100, 20), choices=self.unmonitored_devices)
             self.add_monitor_box.Insert(0, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(
                 self, wx.ID_ANY, size=wx.Size(
-                    100, 5), choices=self.monitored_devices)
+                    100, 20), choices=self.monitored_devices)
             self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
             self.add_monitor_box.Layout()
             self.zap_monitor_box.Layout()
@@ -669,12 +669,12 @@ class Gui(wx.Frame):
             self.add_monitor_choice.Destroy()
             self.add_monitor_choice = wx.Choice(
                 self, wx.ID_ANY, size=wx.Size(
-                    100, 5), choices=self.unmonitored_devices)
+                    100, 20), choices=self.unmonitored_devices)
             self.add_monitor_box.Insert(0, self.add_monitor_choice)
             self.remove_monitor_choice.Destroy()
             self.remove_monitor_choice = wx.Choice(
                 self, wx.ID_ANY, size=wx.Size(
-                    100, 5), choices=self.monitored_devices)
+                    100, 20), choices=self.monitored_devices)
             self.zap_monitor_box.Insert(0, self.remove_monitor_choice)
             self.add_monitor_box.Layout()
             self.zap_monitor_box.Layout()
