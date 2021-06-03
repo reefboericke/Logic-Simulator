@@ -134,9 +134,8 @@ class Scanner:
                 if self.current_character == '\n':
                     self.last_EOL = self.file.tell()
                     self.char_num_last_EOL_txt = self.current_char_num_txt
-                    (self.
-                     char_num_last_EOL_terminal) = (self.
-                                                    current_char_num_terminal)
+                    self.char_num_last_EOL_terminal = \
+                        self.current_char_num_terminal
                     self.no_EOL += 1
                 self.advance()
             elif self.current_character == '#':  # enter / leave comment
