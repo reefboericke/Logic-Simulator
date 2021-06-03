@@ -60,6 +60,7 @@ def test_device_semantic_errors(parsed_network):
 
 
 def test_connection_semantic_errors(parsed_network):
+    """Test parser picks up semantic errors in connection block."""
     error_db = parsed_network('connection_semantic_errors.bna')
     expected_error_types = [11, 12, 13, 15]
     for i in expected_error_types:
@@ -67,12 +68,14 @@ def test_connection_semantic_errors(parsed_network):
 
 
 def test_connection_double_connection_error(parsed_network):
+    """Check specific case of double connections."""
     error_db = parsed_network('double_connection.bna')
     assert(error_db.query_semantics(14) == 1)  # error 14
     assert(error_db.query_semantics(15) == 1)  # error 15
 
 
 def test_monitor_semantic_errors(parsed_network):
+    """Test parser finds semantic errors related to monitor block."""
     error_db = parsed_network('monitor_semantic_errors.bna')
     assert(error_db.query_semantics(16) == 1)
     assert(error_db.query_semantics(17) == 1)
@@ -99,6 +102,7 @@ def test_monitor_semantic_errors(parsed_network):
     ('missing_device_end.bna', 18)
 ])
 def test_single_syntax_error_detection(parsed_network, file, error_id):
+    """Test every syntax error and that parser picks it up."""
     error_db = parsed_network(file)
     assert(error_db.query_syntax(error_id) == 1)
     """
@@ -110,8 +114,15 @@ def test_single_syntax_error_detection(parsed_network, file, error_id):
 
 
 def test_realistic_error_set_detection(parsed_network):
+    """Test parser behaves as expected on a feasible file."""
     error_db = parsed_network('multiple_errors.bna')
-    assert(error_db.query_semantics(7) == 1)
-    assert(error_db.query_semantics(4) == 1)
-    assert(error_db.query_syntax(2) == 1)
-    assert(error_db.query_syntax(13) == 1)
+    for i in range(1, 19):
+        if (i in [4, 7, 15]):
+            assert(error_db.query_semantics(i) == 1)
+            assert(error_db.query_syntax(i) == 0)
+        elif (i in [2, 13]):
+            assert(error_db.query_syntax(i) == 1)
+            assert(error_db.query_semantics(i) == 0)
+        else:
+            assert(error_db.query_syntax(i) == 0)
+            assert(error_db.query_semantics(i) == 0)
