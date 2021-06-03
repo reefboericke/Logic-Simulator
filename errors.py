@@ -186,7 +186,7 @@ class Error_Store():
                     count += 1
         return count
 
-    def report_errors(self):
+    def report_errors(self, command_line=True, file_output=True):
         """Build full error text of entire BNA file."""
         if self.no_errors == 0:
             return False
@@ -197,7 +197,9 @@ class Error_Store():
             for error in self.errors:
                 total_error_text_terminal += error.report()[0] + '\n\n'
                 total_error_text_txt += error.report()[1] + '\n\n'
-            print(total_error_text_terminal)
-            output_file = open('error_report.txt', 'w')
-            output_file.write(total_error_text_txt)
+            if command_line:
+                print(total_error_text_terminal)
+            if file_output: 
+                output_file = open('error_report.txt', 'w')
+                output_file.write(total_error_text_txt)
             return total_error_text_txt
