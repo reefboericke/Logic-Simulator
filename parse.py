@@ -118,8 +118,8 @@ class Parser:
             currdevicenameid = self.currsymb.id
             if self.devices.get_device(currdevicenameid) is None:
                 self.encounter_error('semantic', 16, recover=False)
-            if ((self.names.get_name_string(currdevicenameid)
-                 in self.monitors.get_signal_names()[0])):
+            if(self.names.get_name_string(currdevicenameid)
+               in self.monitors.get_signal_names()[0]):
                 # device already monitored
                 self.encounter_error('semantic', 17, recover=False)
             self.currsymb = self.scanner.get_symbol()
@@ -132,8 +132,8 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # monitor correctly parsed, add it to list
             if self.devices.get_device(currdevicenameid) is not None:
-                if ((self.devices.get_device(currdevicenameid).device_kind
-                     == self.devices.D_TYPE)):
+                if(self.devices.get_device(currdevicenameid).device_kind
+                   == self.devices.D_TYPE):
                     self.monitors.make_monitor(currdevicenameid,
                                                self.scanner.Q_ID)
                 else:
@@ -154,10 +154,10 @@ class Parser:
 
         if self.currsymb.id in self.output_ids:
             self.curroutputid = self.currsymb.id
-            if ((self.devices.get_device(self.currdevicenameid1) is not None
-                 and
-                 self.devices.get_device(self.currdevicenameid1).device_kind
-                 != self.devices.D_TYPE)):
+            if(self.devices.get_device(self.currdevicenameid1) is not None
+               and
+               self.devices.get_device(self.currdevicenameid1).device_kind
+               != self.devices.D_TYPE):
                 self.encounter_error('semantic', 12, recover=False)
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -181,9 +181,9 @@ class Parser:
         if self.currsymb.type == self.scanner.DOT:
             self.assignoutputgrammar()
             devicehasoutput = True
-        elif (self.devices.get_device(self.currdevicenameid1) is not None
-              and self.devices.get_device(self.currdevicenameid1).device_kind
-              == self.devices.D_TYPE):
+        elif(self.devices.get_device(self.currdevicenameid1) is not None
+             and self.devices.get_device(self.currdevicenameid1).device_kind
+             == self.devices.D_TYPE):
             self.encounter_error('semantic', 11, recover=False)
         if self.error_recovery_mode:
             return
@@ -218,17 +218,17 @@ class Parser:
 
         inp = self.names.get_name_string(self.currsymb.id)
         # Check that input name is within those allowed by EBNF:
-        if (((self.currsymb.id in self.input_ids)
-             or ((inp[0] == 'I') and (inp[1:].isdigit())))):
-            if (((self.devices.get_device(currdevicenameid2) is not None)
-                 and (self.currsymb.id not in
-                      self.devices.get_device(currdevicenameid2).inputs))):
+        if((self.currsymb.id in self.input_ids)
+           or ((inp[0] == 'I') and (inp[1:].isdigit()))):
+            if((self.devices.get_device(currdevicenameid2) is not None)
+               and (self.currsymb.id not in
+                    self.devices.get_device(currdevicenameid2).inputs)):
                 self.encounter_error('semantic', 13, recover=False)
             currinputid = self.currsymb.id
             # Check to see if multiple outputs connected to input:
-            if ((self.network.get_connected_output(currdevicenameid2,
-                                                   currinputid)
-                 is not None)):
+            if(self.network.get_connected_output(currdevicenameid2,
+                                                 currinputid)
+               is not None):
                 self.encounter_error('semantic', 14, recover=False)
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -258,16 +258,16 @@ class Parser:
 
         if self.currsymb.id in self.variable_ids:
             # check variable matches device
-            if ((self.currdevicetypeid in self.gates_with_inputs
-                 and self.currsymb.id != self.scanner.inputs_ID)):
+            if(self.currdevicetypeid in self.gates_with_inputs
+               and self.currsymb.id != self.scanner.inputs_ID):
                 self.encounter_error('semantic', 4, recover=True)
                 return
-            elif (self.currdevicetypeid == self.scanner.CLOCK_ID
-                  and self.currsymb.id != self.scanner.period_ID):
+            elif(self.currdevicetypeid == self.scanner.CLOCK_ID
+                 and self.currsymb.id != self.scanner.period_ID):
                 self.encounter_error('semantic', 5, recover=True)
                 return
-            elif (self.currdevicetypeid == self.scanner.SWITCH_ID
-                  and self.currsymb.id != self.scanner.initial_ID):
+            elif(self.currdevicetypeid == self.scanner.SWITCH_ID
+                 and self.currsymb.id != self.scanner.initial_ID):
                 self.encounter_error('semantic', 6, recover=True)
                 return
 
@@ -285,16 +285,16 @@ class Parser:
             return
 
         if self.currsymb.type == self.scanner.NUMBER:
-            if ((self.currdevicetypeid == self.scanner.CLOCK_ID
-                 and int(self.currsymb.id) < 1)):
+            if(self.currdevicetypeid == self.scanner.CLOCK_ID
+               and int(self.currsymb.id) < 1):
                 # clock has non-positive frequency
                 self.encounter_error('semantic', 1, recover=False)
-            elif (self.currdevicetypeid == self.scanner.SWITCH_ID
-                  and int(self.currsymb.id) not in [0, 1]):
+            elif(self.currdevicetypeid == self.scanner.SWITCH_ID
+                 and int(self.currsymb.id) not in [0, 1]):
                 # switch has invalid initial state
                 self.encounter_error('semantic', 2, recover=False)
-            elif (self.currdevicetypeid in self.gates_with_inputs
-                  and int(self.currsymb.id) not in range(1, 17, 1)):
+            elif(self.currdevicetypeid in self.gates_with_inputs
+                 and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
                 self.encounter_error('semantic', 0, recover=False)
             else:
