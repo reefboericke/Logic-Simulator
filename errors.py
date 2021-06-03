@@ -73,13 +73,13 @@ class Error:
             6: ':',
             7: 'device variable',
             8: '=',
-            9: 'number',
+            9: 'non-negative integer',
             10: 'a device',
             11: [':', ';'],  # for devices
             12: 'begin',
             13: 'monitors',
             14: ['a name', 'end'],
-            15: 'monitors',
+            15: '->',
             16: 'connections',
             17: 'devices',
             18: ['a device', 'end']
@@ -116,6 +116,10 @@ class Error:
         for i in range(self.location[3]):
             error_text_txt += ' '
         error_text_txt += '^'
+
+        if self.error_type == 'semantic' and self.error_id == 15:
+            error_text_txt = 'Semantic Error in file: All gate inputs must be connected.'
+            error_text_terminal = error_text_txt
         return [error_text_terminal, error_text_txt]
 
 
