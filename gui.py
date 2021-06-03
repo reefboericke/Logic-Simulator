@@ -543,7 +543,12 @@ class Gui(wx.Frame):
         device_index = self.remove_monitor_choice.GetSelection()
 
         if(device_index != wx.NOT_FOUND):
-            device_id = self.names.query(self.monitored_devices[device_index])
+            device_name = self.monitored_devices[device_index]
+            if('.' in device_name):
+                device_id = self.names.query(device_name.split('.')[0])
+            else:
+                device_id = self.names.query(
+                device_name)
             if(len(self.monitored_devices) == 1):
                 window = wx.MessageDialog(
                     self, "You must have at least 1 monitor", style=wx.OK)
@@ -578,8 +583,12 @@ class Gui(wx.Frame):
         device_index = self.add_monitor_choice.GetSelection()
 
         if(device_index != wx.NOT_FOUND):
-            device_id = self.names.query(
-                self.unmonitored_devices[device_index])
+            device_name = self.unmonitored_devices[device_index]
+            if('.' in device_name):
+                device_id = self.names.query(device_name.split('.')[0])
+            else:
+                device_id = self.names.query(
+                device_name)
             self.previous_outputs.append([])
             if (self.devices.get_device(
                     device_id).device_kind != self.devices.D_TYPE):
@@ -589,6 +598,8 @@ class Gui(wx.Frame):
             else:
                 self.monitors.make_monitor(
                     device_id, self.devices.Q_ID, self.cycles)
+
+            
             self.monitored_devices.append(
                 self.unmonitored_devices[device_index])
             self.unmonitored_devices.pop(device_index)
