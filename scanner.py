@@ -134,7 +134,9 @@ class Scanner:
                 if self.current_character == '\n':
                     self.last_EOL = self.file.tell()
                     self.char_num_last_EOL_txt = self.current_char_num_txt
-                    self.char_num_last_EOL_terminal = self.current_char_num_terminal
+                    (self.
+                     char_num_last_EOL_terminal) = (self.
+                                                    current_char_num_terminal)
                     self.no_EOL += 1
                 self.advance()
             elif self.current_character == '#':  # enter / leave comment
@@ -242,8 +244,10 @@ class Scanner:
 
     def return_location(self):
         """Return details of scanner's location in file for error reporting."""
-        no_spaces_txt = self.current_char_num_txt - self.char_num_last_EOL_txt - 2
-        no_spaces_terminal = self.current_char_num_terminal - self.char_num_last_EOL_terminal - 2
+        no_spaces_txt = (self.current_char_num_txt
+                         - self.char_num_last_EOL_txt - 2)
+        no_spaces_terminal = (self.current_char_num_terminal
+                              - self.char_num_last_EOL_terminal - 2)
         line = linecache.getline(self.path, self.no_EOL)
         location = (self.no_EOL, line, no_spaces_terminal, no_spaces_txt)
         return(location)
