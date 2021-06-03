@@ -61,6 +61,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.init = False
         self.context = wxcanvas.GLContext(self)
 
+        self.blank_file = True
+
         # Initialise variables for panning
         self.pan_x = 0
         self.pan_y = 0
@@ -184,9 +186,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             # Adjust pan so as to zoom around the mouse position
             self.pan_x -= (self.zoom - old_zoom) * ox
             self.pan_y -= (self.zoom - old_zoom) * oy
-            self.init = False
-        self.Refresh()  # triggers the paint event
-
+            self.init = False # triggers the paint event
+        if(not self.blank_file):
+            self.Refresh()
     def render_text(self, text, x_pos, y_pos):
         """Handle text drawing operations."""
         GL.glColor3f(0.0, 0.0, 0.0)  # text is black
@@ -440,8 +442,9 @@ class Gui(wx.Frame):
         self.canvas.outputs = [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary]
 
         self.canvas.output_labels = self.monitored_devices
-        
-        self.canvas.render(self.canvas.outputs, self.canvas.length)
+
+        if self.canvas.outputs != [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4]]:
+            self.canvas.render(self.canvas.outputs, self.canvas.length)
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
@@ -474,7 +477,8 @@ class Gui(wx.Frame):
         self.canvas.outputs = [self.previous_outputs[i] + [self.monitors.monitors_dictionary[device] for device in self.monitors.monitors_dictionary][i] for i in range(len(self.previous_outputs))]
         self.canvas.output_labels = self.monitored_devices
 
-        self.canvas.render(self.canvas.outputs, len(self.canvas.outputs[0]))
+        if self.canvas.outputs != [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4]]:
+            self.canvas.render(self.canvas.outputs, len(self.canvas.outputs[0]))
 
     def on_remove_monitor(self, event):
         """Handle removing the selected monitor"""
@@ -535,6 +539,10 @@ class Gui(wx.Frame):
 
     def open_file_dialog(self):
         """Function to open a new BNA file"""
+        self.canvas.blank_file = False
+        self.canvas.outputs = [[4 for i in range(10)]]
+        self.canvas.length = 10
+        self.canvas.output_labels = ['No signal']
         with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", # Code for opening new file from the GUI
                    style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
