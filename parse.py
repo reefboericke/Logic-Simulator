@@ -105,9 +105,9 @@ class Parser:
         self.currsymb = self.scanner.get_symbol()
         self.error_recovery_mode = True
 
-    def encounter_error(self, type, id, recover):
+    def encounter_error(self, type, id, recover, missedinputs = None):
         """Log and recover from errors and halt network construction."""
-        self.error_db.add_error(type, id)
+        self.error_db.add_error(type, id, missedinputs)
         if recover:
             self.error_recovery()
         self.network_construction = False
@@ -518,7 +518,15 @@ class Parser:
             self.error_recovery_mode = False
 
         if not self.network.check_network():
-            self.encounter_error('semantic', 15, recover=False)
+            missedinputs = []
+            for device_id in self.devices.find_devices():
+                device = self.devices.get_device(device_id)
+                for input_id in device.inputs:
+                    if self.network.get_connected_output(device_id, input_id) is None:
+                        devic = self.names.get_name_string(device_id)
+                        input = self.names.get_name_string(input_id)
+                        missedinputs.append([devic, input])
+            self.encounter_error('semantic', 15, recover=False, missedinputs = missedinputs)
 
     def parse_network(self):
         """Parse the circuit definition file."""

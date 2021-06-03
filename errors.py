@@ -34,12 +34,13 @@ class Error:
                   attributes of the error object.
     """
 
-    def __init__(self, error_number, location, error_type, error_id):
+    def __init__(self, error_number, location, error_type, error_id, missedinputs):
         """Intialise constants and error table."""
         self.error_number = error_number
         self.location = location
         self.error_type = error_type
         self.error_id = error_id
+        self.missedinputs = missedinputs
 
         self.semantic_errors = {
             0: 'Invalid number of inputs to gate.',
@@ -119,6 +120,11 @@ class Error:
 
         if self.error_type == 'semantic' and self.error_id == 15:
             msg = 'Semantic Error in file: All gate inputs must be connected.'
+            msg += ' Currently missing:'
+            for i in self.missedinputs:
+                msg += '\n'
+                msg += 'Gate: ' + i[0]
+                msg += ', Input: ' + i[1]
             error_text_txt = msg
             error_text_terminal = msg
 
@@ -160,11 +166,11 @@ class Error_Store():
         self.errors = []
         self.no_errors = 0
 
-    def add_error(self, error_type, error_id):
+    def add_error(self, error_type, error_id, missedinputs = None):
         """Add new error to error list."""
         loc = self.scanner.return_location()
         self.no_errors += 1
-        new_error = Error(self.no_errors, loc, error_type, error_id)
+        new_error = Error(self.no_errors, loc, error_type, error_id, missedinputs)
         self.errors.append(new_error)
 
     def sort_errors(self):

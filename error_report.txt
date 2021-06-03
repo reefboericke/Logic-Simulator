@@ -1,3 +1,17 @@
 
-Semantic Error in file: All gate inputs must be connected.
+Semantic Error in file: All gate inputs must be connected. Currently missing:
+Gate: Q2, Input: CLK
+Gate: Q2, Input: SET
+Gate: Q2, Input: CLEAR
+Gate: Q2, Input: DATA
+Gate: Q1, Input: CLK
+Gate: Q1, Input: SET
+Gate: Q1, Input: CLEAR
+Gate: Q1, Input: DATA
+Gate: Q0, Input: CLK
+Gate: Q0, Input: SET
+Gate: Q0, Input: CLEAR
+Gate: or1, Input: I1
+Gate: or1, Input: I2
+Gate: or1, Input: I3
 
