@@ -204,4 +204,4 @@ class Error_Store():
             if file_output:
                 output_file = open('error_report.txt', 'w')
                 output_file.write(total_error_text_txt)
-            return total_error_text_txt
+            return total_error_text_terminal
