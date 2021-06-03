@@ -65,24 +65,24 @@ class Error:
 
         self.syntax_errors = {
             0: 'name',
-            1: ';',  # for monitors and connections
-            2: '.',
-            3: ['Q', 'QBAR'],
-            4: ['.', '->'],
+            1: '";"',  # for monitors and connections
+            2: '"."',
+            3: ['"Q"', '"QBAR"'],
+            4: ['"."', '"->"'],
             5: 'a valid input',
-            6: ':',
+            6: '":"',
             7: 'device variable',
-            8: '=',
+            8: '"="',
             9: 'non-negative integer',
             10: 'a device',
-            11: [':', ';'],  # for devices
-            12: 'begin',
-            13: 'monitors',
-            14: ['a name', 'end'],
-            15: '->',
-            16: 'connections',
-            17: 'devices',
-            18: ['a device', 'end']
+            11: ['":"', '";"'],  # for devices
+            12: '"begin"',
+            13: '"monitors"',
+            14: ['a name', '"end"'],
+            15: '"->"',
+            16: '"connections"',
+            17: '"devices"',
+            18: ['a device', '"end"']
         }
 
     def report(self):
@@ -97,14 +97,13 @@ class Error:
             specific_error_text = self.syntax_errors[self.error_id]
             error_text += ' Invalid syntax, expected '
             if type(specific_error_text) == str:
-                error_text += '"' + specific_error_text + '":'
+                error_text += specific_error_text + ':'
             else:  # expect a list now
                 for i in range(len(specific_error_text)):
                     if i == (len(specific_error_text) - 1):
-                        error_text += '"' + specific_error_text[i] + '"'
+                        error_text += specific_error_text[i]
                     else:
-                        error_text += '"' + \
-                            specific_error_text[i] + '"' + ' or '
+                        error_text += specific_error_text[i] + ' or '
                 error_text += ' :'
 
         error_text += '\n\n' + str(self.location[1])
