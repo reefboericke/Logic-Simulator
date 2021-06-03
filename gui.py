@@ -12,6 +12,7 @@ import wx
 from wx.core import Position
 import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLUT
+import os
 
 from names import Names
 from devices import Devices
@@ -70,8 +71,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.zoom = 1
 
         self.length = 10
-        self.outputs = [[0 for i in range(10)]]
-        self.output_labels = ['Label']
+        self.outputs = [[4 for i in range(10)]]
+        self.output_labels = ['No signal']
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -237,17 +238,22 @@ class Gui(wx.Frame):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
 
+        blank_file = open('startup.bna', 'w')
+        blank_file.write('begin devices:\nend devices;\nbegin connections:\nend connections;\nbegin monitors:\nend monitors;')
+        blank_file.close()
+        pathname = 'startup.bna'
+
         if(names == None):
             names1 = Names()
             devices1 = Devices(names1)
             network1 = Network(names1, devices1)
             monitors1 = Monitors(names1, devices1, network1)
             
-            with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", #If no command line argument provided, force the user to open it from the gui
-                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
-                    if fileDialog.ShowModal() == wx.ID_CANCEL:
-                        return
-                    pathname = fileDialog.GetPath()
+            #with wx.FileDialog(self, "Open bna file", wildcard="bna files (*.bna)|*.bna", #If no command line argument provided, force the user to open it from the gui
+            #            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+            #        if fileDialog.ShowModal() == wx.ID_CANCEL:
+            #            return
+            #        pathname = fileDialog.GetPath()
 
             scanner = Scanner(pathname, names1)
             error_db = Error_Store(scanner)
@@ -377,6 +383,11 @@ class Gui(wx.Frame):
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
+
+        try:
+            os.remove(pathname)
+        except:
+            print("file doesn't exist !?!?")
 
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
