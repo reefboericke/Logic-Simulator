@@ -118,8 +118,10 @@ class Error:
         error_text_txt += '^'
 
         if self.error_type == 'semantic' and self.error_id == 15:
-            error_text_txt = 'Semantic Error in file: All gate inputs must be connected.'
-            error_text_terminal = error_text_txt
+            msg = 'Semantic Error in file: All gate inputs must be connected.'
+            error_text_txt = msg
+            error_text_terminal = msg
+
         return [error_text_terminal, error_text_txt]
 
 
