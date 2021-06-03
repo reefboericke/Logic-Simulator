@@ -241,8 +241,8 @@ class Gui(wx.Frame):
     open_file_dialog(self): Function which opens a new BNA and resets the
                             gui for the new circuit.
 
-    display_errors(self): Function which displays a dialog box with the
-                          syntax errors if there are any present
+    display_errors(self, error_db): Function which displays a dialog box with the
+                                    syntax errors if there are any present
 
     """
 
@@ -273,12 +273,13 @@ class Gui(wx.Frame):
                 scanner,
                 error_db)
             if not parser.parse_network():
-                self.display_errors()
+                self.display_errors(error_db)
 
             self.network = network1
             self.devices = devices1
             self.names = names1
             self.monitors = monitors1
+            self.error_store = error_db
         else:
             # Set up network for running
             self.network = network
@@ -430,6 +431,8 @@ class Gui(wx.Frame):
             wx.HORIZONTAL, self, label="File")
         self.open_file_box.Add(self.open_file)
         self.side_sizer.Add(self.open_file_box)
+
+        os.remove(pathname)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
@@ -633,12 +636,13 @@ class Gui(wx.Frame):
                 scanner,
                 error_db)
             if not parser.parse_network():
-                self.display_errors()
+                self.display_errors(error_db)
 
             self.network = network1
             self.devices = devices1
             self.names = names1
             self.monitors = monitors1
+            self.error_store = error_db
 
             self.monitored_devices, self.unmonitored_devices = self.monitors.get_signal_names()
 
@@ -711,13 +715,8 @@ class Gui(wx.Frame):
             for i in range(len(self.monitored_devices)):
                 self.previous_outputs.append([])
 
-    def display_errors(self):
+    def display_errors(self, error_db):
         """Create a dialog box with the errors present if there are any."""
-        file = open('error_report.txt', 'r')
-        lines = file.readlines()
-        error_message = ''
-        for line in lines:
-            error_message += line
-        window = wx.MessageDialog(self, error_message, style=wx.OK)
+        window = wx.MessageDialog(self, error_db.report_errors(), style=wx.OK)
         window.Title = "There were errors: logged in error_report.txt"
         window.ShowWindowModal()
