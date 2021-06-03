@@ -147,8 +147,10 @@ class Error_Store():
     query_syntax(self, desired_type): returns number of syntax
                                       errors of id equal to
                                       desired_type.
-    report_errors(self): returns full text of all errors in program
-                         and their details.
+    report_errors(self, command_line, file_output): returns full text
+                                                    of all errors in
+                                                    program and their
+                                                    details.
     """
 
     def __init__(self, scanner):
@@ -199,7 +201,7 @@ class Error_Store():
                 total_error_text_txt += error.report()[1] + '\n\n'
             if command_line:
                 print(total_error_text_terminal)
-            if file_output: 
+            if file_output:
                 output_file = open('error_report.txt', 'w')
                 output_file.write(total_error_text_txt)
             return total_error_text_txt
