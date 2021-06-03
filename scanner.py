@@ -93,8 +93,10 @@ class Scanner:
         self.current_character = ""
         self.no_EOL = 1
         self.start_of_file = True
-        self.current_char_num = 0
-        self.char_num_last_EOL = 0
+        self.current_char_num_terminal = 0
+        self.current_char_num_txt = 0
+        self.char_num_last_EOL_terminal = 0
+        self.char_num_last_EOL_txt = 0
         # open file
         try:
             self.file = open(path, 'r')
@@ -116,11 +118,13 @@ class Scanner:
         Reassigns current_character variable.
         """
         self.current_character = self.file.read(1)
-        if self.current_character == '	':
-            # is a tab = four chars
-            self.current_char_num += 4
+        if ((len(self.current_character) == 1 and
+             ord(self.current_character) == 9)):
+            self.current_char_num_terminal += 8
+            self.current_char_num_txt += 4
         else:
-            self.current_char_num += 1
+            self.current_char_num_terminal += 1
+            self.current_char_num_txt += 1
 
     def skip_spaces_and_comments(self):
         """Pass file pointer over white-space characters and comments."""
@@ -129,7 +133,8 @@ class Scanner:
             if self.current_character.isspace():
                 if self.current_character == '\n':
                     self.last_EOL = self.file.tell()
-                    self.char_num_last_EOL = self.current_char_num
+                    self.char_num_last_EOL_txt = self.current_char_num_txt
+                    self.char_num_last_EOL_terminal = self.current_char_num_terminal
                     self.no_EOL += 1
                 self.advance()
             elif self.current_character == '#':  # enter / leave comment
@@ -176,7 +181,8 @@ class Scanner:
             else:
                 # dot was an error so backtrack
                 self.file.seek(pos)
-                self.current_char_num -= 1
+                self.current_char_num_txt -= 1
+                self.current_char_num_terminal -= 1
 
         return number
 
@@ -236,7 +242,8 @@ class Scanner:
 
     def return_location(self):
         """Return details of scanner's location in file for error reporting."""
-        no_spaces = self.current_char_num - self.char_num_last_EOL + 2
+        no_spaces_txt = self.current_char_num_txt - self.char_num_last_EOL_txt - 2
+        no_spaces_terminal = self.current_char_num_terminal - self.char_num_last_EOL_terminal - 2
         line = linecache.getline(self.path, self.no_EOL)
-        location = (self.no_EOL, line, no_spaces)
+        location = (self.no_EOL, line, no_spaces_terminal, no_spaces_txt)
         return(location)
