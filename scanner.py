@@ -81,15 +81,16 @@ class Scanner:
                               "monitors", "OR", "NAND", "AND", "NOR",
                               "XOR", "CLOCK", "SWITCH", "DTYPE",
                               "DATA", "CLK", "SET", "CLEAR", "Q",
-                              "QBAR", "inputs", "period", "initial"]
+                              "QBAR", "inputs", "period", "initial",
+                              "SIGGEN", "waveform"]
 
         [self.begin_ID, self.end_ID, self.devices_ID, self.connections_ID,
          self.monitors_ID, self.OR_ID, self.NAND_ID, self.AND_ID,
          self.NOR_ID, self.XOR_ID, self.CLOCK_ID, self.SWITCH_ID,
          self.DTYPE_ID, self.DATA_ID, self.CLK_ID, self.SET_ID,
          self.CLEAR_ID, self.Q_ID, self.QBAR_ID, self.inputs_ID,
-         self.period_ID,
-         self.initial_ID] = self.names.lookup(self.keywords_list)
+         self.period_ID, self.initial_ID, self.SIGGEN_ID,
+         self.waveform_ID] = self.names.lookup(self.keywords_list)
         self.current_character = ""
         self.no_EOL = 1
         self.start_of_file = True
