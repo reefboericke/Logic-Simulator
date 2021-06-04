@@ -122,6 +122,7 @@ class Error:
             msg = 'Semantic Error in file: All gate inputs must be connected.'
             error_text_txt = msg
             error_text_terminal = msg
+            error_text_gui = msg
 
         return [error_text_terminal, error_text_txt, error_text_gui]
 
