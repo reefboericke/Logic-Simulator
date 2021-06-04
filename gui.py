@@ -84,6 +84,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.last_mouse_x = 0  # previous mouse x position
         self.last_mouse_y = 0  # previous mouse y position
 
+        # Initialise the scene rotation matrix
+        self.scene_rotate = np.identity(4, 'f')
+
         # Initialise variables for zooming
         self.zoom = 1
 
@@ -247,7 +250,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Calculate object coordinates of the mouse position
         size = self.GetClientSize()
         ox = (event.GetX() - self.pan_x) / self.zoom
-        oy = (size.height - event.GetY() - self.pan_y) / self.zoom
+        oy = (size.height - event.GetY() - self.pan_y) / self.zoom #TODO replace on_mouse function and replace line drawing with cuboids
         old_zoom = self.zoom
         if event.ButtonDown():
             self.last_mouse_x = event.GetX()
@@ -281,18 +284,20 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         if(not self.blank_file):
             self.Refresh()
 
-    def render_text(self, text, x_pos, y_pos):
+    def render_text(self, text, x_pos, y_pos, z_pos):
         """Handle text drawing operations."""
-        GL.glColor3f(0.0, 0.0, 0.0)  # text is black
-        GL.glRasterPos2f(x_pos, y_pos)
-        font = GLUT.GLUT_BITMAP_HELVETICA_12
+        GL.glDisable(GL.GL_LIGHTING)
+        GL.glRasterPos3f(x_pos, y_pos, z_pos)
+        font = GLUT.GLUT_BITMAP_HELVETICA_10
 
         for character in text:
             if character == '\n':
                 y_pos = y_pos - 20
-                GL.glRasterPos2f(x_pos, y_pos)
+                GL.glRasterPos3f(x_pos, y_pos, z_pos)
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
+
+        GL.glEnable(GL.GL_LIGHTING)
 
 
 class Gui(wx.Frame):
