@@ -60,7 +60,9 @@ class Error:
             15: 'All gate inputs must be connected.',
             16: 'No device with specified name.',
             17: 'Monitor already connected to specified device.',
-            18: 'Specified device doesn\'t exist.'
+            18: 'Specified device doesn\'t exist.',
+            19: 'Incorrect argument provided for signal generator device.',
+            20: 'Invalid waveform for signal generator device.'
         }
 
         self.syntax_errors = {
