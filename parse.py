@@ -276,7 +276,7 @@ class Parser:
                 return
             elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
                  and self.currsymb.id != self.scanner.waveform_ID):
-                self.encounter_error('semantic', 6, recover=True)
+                self.encounter_error('semantic', 19, recover=True)
                 return
 
             self.currsymb = self.scanner.get_symbol()
@@ -309,7 +309,7 @@ class Parser:
                  and set([int(i) for i in self.currsymb.id]) not in
                  [{0}, {1}, {0, 1}]):
                 # switch has invalid initial state
-                self.encounter_error('semantic', 19, recover=False)
+                self.encounter_error('semantic', 20, recover=False)
             elif(self.currdevicetypeid == self.scanner.SIGGEN_ID):
                 self.currvariablevalue = self.currsymb.id
             else:
