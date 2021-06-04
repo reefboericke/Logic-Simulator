@@ -84,9 +84,11 @@ class Parser:
         self.device_ids = [self.scanner.CLOCK_ID, self.scanner.SWITCH_ID,
                            self.scanner.DTYPE_ID, self.scanner.AND_ID,
                            self.scanner.NAND_ID, self.scanner.OR_ID,
-                           self.scanner.NOR_ID, self.scanner.XOR_ID]
+                           self.scanner.NOR_ID, self.scanner.XOR_ID,
+                           self.scanner.SIGGEN_ID]
         self.variable_ids = [self.scanner.inputs_ID, self.scanner.period_ID,
-                             self.scanner.initial_ID]
+                             self.scanner.initial_ID,
+                             self.scanner.waveform_ID]
         self.gates_with_inputs = [self.scanner.AND_ID, self.scanner.NOR_ID,
                                   self.scanner.NAND_ID]
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
@@ -272,6 +274,10 @@ class Parser:
                  and self.currsymb.id != self.scanner.initial_ID):
                 self.encounter_error('semantic', 6, recover=True)
                 return
+            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
+                 and self.currsymb.id != self.scanner.waveform_ID):
+                self.encounter_error('semantic', 6, recover=True)
+                return
 
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -298,6 +304,10 @@ class Parser:
             elif(self.currdevicetypeid in self.gates_with_inputs
                  and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
+                self.encounter_error('semantic', 0, recover=False)
+            elif(self.currdevicetypeid == self.scanner.SWITCH_ID
+                 and int(self.currsymb.id) not in [0, 1]):
+                # switch has invalid initial state
                 self.encounter_error('semantic', 0, recover=False)
             else:
                 self.currvariablevalue = int(self.currsymb.id)
