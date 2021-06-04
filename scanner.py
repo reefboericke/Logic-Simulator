@@ -111,6 +111,7 @@ class Scanner:
             print("Cannot find file - please check provided path.")
             quit()
 
+        
         start_of_file = self.file.tell()
         full_text = self.file.read()
         hashes = 0
@@ -121,7 +122,7 @@ class Scanner:
         if hashes%2 != 0:
             self.unclosed_comment = True
         self.file.seek(start_of_file)
-
+        
         self.advance()
 
     def advance(self):
@@ -140,7 +141,7 @@ class Scanner:
 
     def skip_spaces_and_comments(self):
         """Pass file pointer over white-space characters and comments."""
-        inside_comment = False
+        self.inside_comment = False
         while(True):
             if self.current_character.isspace():
                 if self.current_character == '\n':
@@ -151,12 +152,12 @@ class Scanner:
                     self.no_EOL += 1
                 self.advance()
             elif self.current_character == '#':  # enter / leave comment
-                if inside_comment is False:  # enter comment
-                    inside_comment = True
+                if self.inside_comment is False:  # enter comment
+                    self.inside_comment = True
                 else:  # end of comment
-                    inside_comment = False
+                    self.inside_comment = False
                 self.advance()
-            elif inside_comment is True:
+            elif self.inside_comment is True:
                 self.advance()
             else:
                 break

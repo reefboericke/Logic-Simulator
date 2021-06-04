@@ -536,10 +536,12 @@ class Parser:
         """Parse the circuit definition file."""
         if self.scanner.unclosed_comment:
             self.encounter_error('syntax', 19, recover=False)
+            self.error_db.report_errors()
             return False
-        self.currsymb = self.scanner.get_symbol()
-        self.BNAcodegrammar()
+        else:
+            self.currsymb = self.scanner.get_symbol()
+            self.BNAcodegrammar()
 
-        if not self.error_db.report_errors():
-            return True
-        return False
+            if not self.error_db.report_errors():
+                return True
+            return False
