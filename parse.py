@@ -524,6 +524,9 @@ class Parser:
 
     def parse_network(self):
         """Parse the circuit definition file."""
+        if self.scanner.unclosed_comment:
+            self.encounter_error('syntax', 19, recover=False)
+            return False
         self.currsymb = self.scanner.get_symbol()
         self.BNAcodegrammar()
 

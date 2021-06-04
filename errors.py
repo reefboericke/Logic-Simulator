@@ -82,7 +82,8 @@ class Error:
             15: '"->"',
             16: '"connections"',
             17: '"devices"',
-            18: ['a device', '"end"']
+            18: ['a device', '"end"'],
+            19: '#'
         }
 
     def report(self):

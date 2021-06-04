@@ -110,6 +110,17 @@ class Scanner:
             print("Cannot find file - please check provided path.")
             quit()
 
+        start_of_file = self.file.tell()
+        full_text = self.file.read()
+        hashes = 0
+        for char in full_text:
+            if char == '#':
+                hashes += 1
+        self.unclosed_comment = False
+        if hashes%2 != 0:
+            self.unclosed_comment = True
+        self.file.seek(start_of_file)
+
         self.advance()
 
     def advance(self):
