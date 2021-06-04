@@ -122,6 +122,7 @@ class Error:
             msg = 'Semantic Error in file: All gate inputs must be connected.'
             error_text_txt = msg
             error_text_terminal = msg
+            error_text_gui = msg
 
         if self.error_type == 'syntax' and self.error_id == 19:
             msg = 'Syntax error in file: Comment has not been closed.'
