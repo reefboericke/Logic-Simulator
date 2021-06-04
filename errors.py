@@ -123,6 +123,11 @@ class Error:
             error_text_txt = msg
             error_text_terminal = msg
 
+        if self.error_type == 'syntax' and self.error_id == 19:
+            msg = 'Syntax error in file: Comment has not been closed.'
+            error_text_txt = msg
+            error_text_terminal = msg
+
         return [error_text_terminal, error_text_txt, error_text_gui]
 
 

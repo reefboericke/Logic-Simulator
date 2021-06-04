@@ -24,3 +24,9 @@ def is_punctuation(self):
         if self.current_character in [':', ';', '.']:
             return True
 """
+
+"""
+                elif inside_comment = True and self.current_character == '#':
+                    # comment was never closed
+                    self.unclosed_comment = True
+                """

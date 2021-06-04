@@ -23,18 +23,6 @@ def run():
     error_db = Error_Store(scanner)
     parser = Parser(names,devices,network,monitors,scanner, error_db)
 
-    errors_to_report = [
-        ('semantic', 0),
-        ('semantic', 6),
-        ('semantic', 10),
-        ('semantic', 12),
-        ('syntax', 1),
-        ('syntax', 5),
-        ('syntax', 10)
-    ]
-    for error in errors_to_report:
-        error_db.add_error(error[0], error[1])
-
     parser.parse_network()
 
 if __name__ == "__main__":
