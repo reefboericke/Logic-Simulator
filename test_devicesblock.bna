@@ -1,19 +1,18 @@
 begin devices:
-	# test 
-	NAND G1: inputs = 0;
-	NAND G2: inputs = 2;
-	SWITCH S1: initial = 0;
-	SWITCH S2: initial = 0;
+SIGGEN S1: waveform = 0000011011101100000111111;
+SIGGEN S2: waveform = 0111111011101101111111111;
+SIGGEN S3: waveform = 0000011011101100000111111;
+SIGGEN S4: waveform = 1111011011101111110111111;
+SIGGEN S5: waveform = 0000011000001100000111111;
 end devices;
 
 begin connections:
-	S1 -> G1.I1;
-	S2 -> G2.I2;
-	G1 -> G2.I1;
-	G2 -> G1.I2;
 end connections;
 
 begin monitors:
-	G1; 
-	G2;
+S1;
+S2;
+S3;
+S4;
+S5;
 end monitors;
