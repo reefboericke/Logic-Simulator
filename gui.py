@@ -739,5 +739,5 @@ class Gui(wx.Frame):
         """Create a dialog box with the errors present if there are any."""
         error_report = error_db.report_errors(command_line=False,
                                               file_output=False)
-        window = wx.MessageBox(error_report, 
-                               caption='There were errors: see error_report.txt')
+        window = wx.MessageBox(error_report,
+                               caption='Errors logged in error_report.txt')
