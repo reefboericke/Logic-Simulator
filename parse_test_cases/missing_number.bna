@@ -1,0 +1,18 @@
+begin devices:
+	NAND G1: inputs = 2;
+	NAND G2: inputs = 2;
+	SWITCH S1: initial =;
+	SWITCH S2: initial = 0;
+end devices;
+
+begin connections:
+	S1 -> G1.I1;
+	S2 -> G2.I2;
+	G1 -> G2.I1;
+	G2 -> G1.I2;
+end connections;
+
+begin monitors:
+	G1; 
+	G2;
+end monitors;
