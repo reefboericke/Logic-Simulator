@@ -305,10 +305,13 @@ class Parser:
                  and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
                 self.encounter_error('semantic', 0, recover=False)
-            elif(self.currdevicetypeid == self.scanner.SWITCH_ID
-                 and int(self.currsymb.id) not in [0, 1]):
+            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
+                 and set([int(i) for i in self.currsymb.id]) not in
+                 [{0}, {1}, {0, 1}]):
                 # switch has invalid initial state
-                self.encounter_error('semantic', 0, recover=False)
+                self.encounter_error('semantic', 19, recover=False)
+            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID):
+                self.currvariablevalue = self.currsymb.id
             else:
                 self.currvariablevalue = int(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
