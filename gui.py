@@ -11,7 +11,7 @@ Gui - configures the main window and all the widgets.
 import wx
 from wx.core import Position
 import wx.glcanvas as wxcanvas
-from OpenGL import GL, GLUT
+from OpenGL import GL, GLU, GLUT
 import os
 
 from names import Names
@@ -61,6 +61,21 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.init = False
         self.context = wxcanvas.GLContext(self)
 
+        # Constants for OpenGL materials and lights
+        self.mat_diffuse = [0.0, 0.0, 0.0, 1.0]
+        self.mat_no_specular = [0.0, 0.0, 0.0, 0.0]
+        self.mat_no_shininess = [0.0]
+        self.mat_specular = [0.5, 0.5, 0.5, 1.0]
+        self.mat_shininess = [50.0]
+        self.top_right = [1.0, 1.0, 1.0, 0.0]
+        self.straight_on = [0.0, 0.0, 1.0, 0.0]
+        self.no_ambient = [0.0, 0.0, 0.0, 1.0]
+        self.dim_diffuse = [0.5, 0.5, 0.5, 1.0]
+        self.bright_diffuse = [1.0, 1.0, 1.0, 1.0]
+        self.med_diffuse = [0.75, 0.75, 0.75, 1.0]
+        self.full_specular = [0.5, 0.5, 0.5, 1.0]
+        self.no_specular = [0.0, 0.0, 0.0, 1.0]
+
         self.blank_file = True
 
         # Initialise variables for panning
@@ -85,16 +100,51 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         """Configure and initialise the OpenGL context."""
         size = self.GetClientSize()
         self.SetCurrent(self.context)
-        GL.glDrawBuffer(GL.GL_BACK)
-        GL.glClearColor(1.0, 1.0, 1.0, 0.0)
+
         GL.glViewport(0, 0, size.width, size.height)
+
         GL.glMatrixMode(GL.GL_PROJECTION)
         GL.glLoadIdentity()
-        GL.glOrtho(0, size.width, 0, size.height, -1, 1)
+        GLU.gluPerspective(45, size.width / size.height, 10, 10000)
+
         GL.glMatrixMode(GL.GL_MODELVIEW)
-        GL.glLoadIdentity()
-        GL.glTranslated(self.pan_x, self.pan_y, 0.0)
-        GL.glScaled(self.zoom, self.zoom, self.zoom)
+        GL.glLoadIdentity()  # lights positioned relative to the viewer
+        GL.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, self.no_ambient)
+        GL.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, self.med_diffuse)
+        GL.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, self.no_specular)
+        GL.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, self.top_right)
+        GL.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, self.no_ambient)
+        GL.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, self.dim_diffuse)
+        GL.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, self.no_specular)
+        GL.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, self.straight_on)
+
+        GL.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, self.mat_specular)
+        GL.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, self.mat_shininess)
+        GL.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE,
+                        self.mat_diffuse)
+        GL.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE)
+
+        GL.glClearColor(0.0, 0.0, 0.0, 0.0)
+        GL.glDepthFunc(GL.GL_LEQUAL)
+        GL.glShadeModel(GL.GL_SMOOTH)
+        GL.glDrawBuffer(GL.GL_BACK)
+        GL.glCullFace(GL.GL_BACK)
+        GL.glEnable(GL.GL_COLOR_MATERIAL)
+        GL.glEnable(GL.GL_CULL_FACE)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        GL.glEnable(GL.GL_LIGHTING)
+        GL.glEnable(GL.GL_LIGHT0)
+        GL.glEnable(GL.GL_LIGHT1)
+        GL.glEnable(GL.GL_NORMALIZE)
+
+        # Viewing transformation - set the viewpoint back from the scene
+        GL.glTranslatef(0.0, 0.0, -self.depth_offset)
+
+        # Modelling transformation - pan, zoom and rotate
+        GL.glTranslatef(self.pan_x, self.pan_y, 0.0)
+        GL.glMultMatrixf(self.scene_rotate)
+        GL.glScalef(self.zoom, self.zoom, self.zoom)
+
 
     def render(self, outputs, length):
         """Handle all drawing operations."""
@@ -105,7 +155,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.init = True
 
         # Clear everything
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # Draw a sample signal trace
         x_step = (self.GetClientSize().width - 60) / length
@@ -136,6 +186,45 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # and swap the back buffer to the front
         GL.glFlush()
         self.SwapBuffers()
+
+    def draw_cuboid(self, x_pos, z_pos, half_width, half_depth, height):
+        """Draw a cuboid.
+
+        Draw a cuboid at the specified position, with the specified
+        dimensions.
+        """
+        GL.glBegin(GL.GL_QUADS)
+        GL.glNormal3f(0, -1, 0)
+        GL.glVertex3f(x_pos - half_width, -6, z_pos - half_depth)
+        GL.glVertex3f(x_pos + half_width, -6, z_pos - half_depth)
+        GL.glVertex3f(x_pos + half_width, -6, z_pos + half_depth)
+        GL.glVertex3f(x_pos - half_width, -6, z_pos + half_depth)
+        GL.glNormal3f(0, 1, 0)
+        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos + half_depth)
+        GL.glNormal3f(-1, 0, 0)
+        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos - half_width, -6, z_pos - half_depth)
+        GL.glVertex3f(x_pos - half_width, -6, z_pos + half_depth)
+        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos + half_depth)
+        GL.glNormal3f(1, 0, 0)
+        GL.glVertex3f(x_pos + half_width, -6, z_pos - half_depth)
+        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos + half_width, -6, z_pos + half_depth)
+        GL.glNormal3f(0, 0, -1)
+        GL.glVertex3f(x_pos - half_width, -6, z_pos - half_depth)
+        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos + half_width, -6, z_pos - half_depth)
+        GL.glNormal3f(0, 0, 1)
+        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos - half_width, -6, z_pos + half_depth)
+        GL.glVertex3f(x_pos + half_width, -6, z_pos + half_depth)
+        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos + half_depth)
+        GL.glEnd()
 
     def on_paint(self, event):
         """Handle the paint event."""
