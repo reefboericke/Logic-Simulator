@@ -10,6 +10,7 @@ Gui - configures the main window and all the widgets.
 """
 import wx
 from wx.core import Position
+from wx.core import LANGUAGE_GERMAN
 import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLUT
 import os
@@ -26,29 +27,41 @@ import gettext
 
 #_ = gettext.gettext
 basepath = os.path.abspath(os.path.dirname(sys.argv[0]))
-localedir = os.path.join(basepath, "locales")
-langid = wx.LANGUAGE_GERMAN    # use OS default; or use LANGUAGE_JAPANESE, etc.
-domain = "de"
+localedir = os.path.join(basepath, "locale")
+langid = LANGUAGE_GERMAN    # use OS default; or use LANGUAGE_JAPANESE, etc.
+domain = "gui"
 
+"""
 locale = wx.Locale()
-locale.AddCatalogLookupPathPrefix('./locales')
+locale.AddCatalogLookupPathPrefix('./locale')
 locale.Init(wx.LANGUAGE_GERMAN)
-locale.AddCatalog('de')
+locale.AddCatalog('de.po')
+"""
 
+
+gettext.install('gui', './locale')
 """
-mylocale = wx.Locale(langid)
-mylocale.AddCatalogLookupPathPrefix(localedir)
-mylocale.AddCatalog(domain)
+self.presLan_de = gettext.translation("gui", "./locale", languages=['de'])
+self.presLan_de.install()
+self.locale = wx.Locale(LANGUAGE_GERMAN)
+locale.setlocale(locale.LC_ALL, 'de')
 """
-_ = wx.GetTranslation
-"""
+
+mylocale = wx.Locale()
+mylocale.Init(langid)
+
+
+
+
 mytranslation = gettext.translation(domain, localedir,
 [mylocale.GetCanonicalName()], fallback = True)
 mytranslation.install()
-"""
 
-def ReturnTranslation(self, text=None):
-        text = text or wx.GetTranslation("English Text")
+mylocale.AddCatalogLookupPathPrefix(localedir)
+mylocale.AddCatalog(domain)
+_ = wx.GetTranslation
+wx.Log.AddTraceMask('i18n')
+print(mylocale.IsLoaded('de_DE'))
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
@@ -89,7 +102,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.context = wxcanvas.GLContext(self)
 
         self.blank_file = True
-
+        
         # Initialise variables for panning
         self.pan_x = 0
         self.pan_y = 0
@@ -284,7 +297,6 @@ class Gui(wx.Frame):
             ' connections;\nbegin monitors:\nend monitors;')
         blank_file.close()
         pathname = 'startup.bna'
-
         if(names is None):
             names1 = Names()
             devices1 = Devices(names1)
@@ -337,13 +349,13 @@ class Gui(wx.Frame):
         self.canvas = MyGLCanvas(self, devices, monitors)
 
         # Configure the widgets
-        self.text = wx.StaticText(self, wx.ID_ANY, _("Number of Cycles"))
+        self.text = wx.StaticText(self, wx.ID_ANY, _(" Number of Cycles"))
         self.spin = wx.SpinCtrl(self, wx.ID_ANY, _("10"))
         self.run_button = wx.Button(self, wx.ID_ANY, _("Run"))
         self.continue_button = wx.Button(self, wx.ID_ANY, _("Continue"))
-        self.remove_monitor = wx.Button(self, wx.ID_ANY, _(u"Zap Monitor"))
-        self.add_monitor = wx.Button(self, wx.ID_ANY, _(u"Add Monitor"))
-        self.open_file = wx.Button(self, wx.ID_ANY, _(u"Open file"))
+        self.remove_monitor = wx.Button(self, wx.ID_ANY, _("Zap Monitor"))
+        self.add_monitor = wx.Button(self, wx.ID_ANY, _("Add Monitor"))
+        self.open_file = wx.Button(self, wx.ID_ANY, _("Open file"))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
