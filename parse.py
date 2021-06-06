@@ -306,13 +306,16 @@ class Parser:
                 # incorrect number of inputs to gate
                 self.encounter_error('semantic', 0, recover=False)
             elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
-                 and set([int(i) for i in self.currsymb.id]) not in
-                 [{0}, {1}, {0, 1}]):
-                # switch has invalid initial state
+                 and set([i for i in self.currsymb.id]) not in
+                 [{'0'}, {'1'}, {'0', '1'}]):
+                # siggen has invalid waveform
                 self.encounter_error('semantic', 20, recover=False)
-            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID):
+
+            if(self.currdevicetypeid == self.scanner.SIGGEN_ID):
+                # if device is siggen, keep waveform value in string
                 self.currvariablevalue = self.currsymb.id
             else:
+                # otherwise convert to integer 
                 self.currvariablevalue = int(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
