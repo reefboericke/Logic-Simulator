@@ -106,14 +106,14 @@ def test_numbers_and_names(return_symbols):
     expected_data = ['begin', 'end', 'connections', 'monitors',
                      'OR', 'NAND', 'AND', 'NOR', 'XOR', 'CLOCK',
                      'SWITCH', 'DTYPE', 'DATA', 'CLK', 'SET', 'CLEAR',
-                     'inputs', 'period', 'initial', 'gate1', 'gate2',
-                     '350', '758', '1']
+                     'inputs', 'period', 'initial', 'SIGGEN', 'waveform', 
+                     'gate1', 'gate2', '350', '758', '1']
     for index in range(len(symbols)):
-        if index <= 18:
+        if index <= 20:
             assert symbols[index].type == 4  # should all be keywords
             assert names.get_name_string(
                 symbols[index].id) == expected_data[index]
-        elif index <= 20:
+        elif index <= 22:
             assert symbols[index].type == 6  # should be names
             assert names.get_name_string(
                 symbols[index].id) == expected_data[index]
