@@ -106,7 +106,7 @@ def test_numbers_and_names(return_symbols):
     expected_data = ['begin', 'end', 'connections', 'monitors',
                      'OR', 'NAND', 'AND', 'NOR', 'XOR', 'CLOCK',
                      'SWITCH', 'DTYPE', 'DATA', 'CLK', 'SET', 'CLEAR',
-                     'inputs', 'period', 'initial', 'SIGGEN', 'waveform', 
+                     'inputs', 'period', 'initial', 'SIGGEN', 'waveform',
                      'gate1', 'gate2', '350', '758', '1']
     for index in range(len(symbols)):
         if index <= 20:
