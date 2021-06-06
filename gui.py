@@ -73,7 +73,7 @@ locale.Init(wx.LANGUAGE_GERMAN)
 locale.AddCatalogLookupPathPrefix('./locale')
 
 locale.AddCatalog('gui')
-wx.Log.AddTraceMask('i18n')
+#wx.Log.AddTraceMask('i18n')
 
 print(platform.system())
 
