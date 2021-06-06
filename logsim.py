@@ -77,9 +77,14 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
-            if (os.environ['LANG'] == 'de_DE.utf8'):
-                language = wx.LANGUAGE_GERMAN
+            if 'win' != sys.platform:
+                if os.environ['LANG'] == 'de_DE.utf8':
+                    # if unix and langauge flag set
+                    language = wx.LANGUAGE_GERMAN
+                else:
+                    language = wx.LANGUAGE_DEFAULT
             else:
+                # no flag / windows system
                 language = wx.LANGUAGE_DEFAULT
             builtins._ = wx.GetTranslation
             locale = wx.Locale()
