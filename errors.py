@@ -130,6 +130,7 @@ class Error:
             msg = 'Syntax error in file: Comment has not been closed.'
             error_text_txt = msg
             error_text_terminal = msg
+            error_text_gui = msg
 
         return [error_text_terminal, error_text_txt, error_text_gui]
 
