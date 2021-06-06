@@ -160,7 +160,8 @@ def test_display_signals(capsys, new_monitors):
     devices = new_monitors.devices
     network = new_monitors.network
 
-    [SW1_ID, CLOCK_ID, CL_ID, SG_ID] = names.lookup(["Sw1", "CLOCK", "Clock1", "Sg1"])
+    [SW1_ID, CLOCK_ID, CL_ID, SG_ID] = names.lookup(["Sw1", "CLOCK", "Clock1",
+                                                     "Sg1"])
 
     HIGH = devices.HIGH
 
@@ -200,7 +201,5 @@ def test_display_signals(capsys, new_monitors):
             "Clock1: _--__--__--__--__--_" in traces or
             "Clock1: --__--__--__--__--__" in traces or
             "Clock1: -__--__--__--__--__-" in traces)
-
-
 
     assert "" in traces  # additional empty line at the end
