@@ -27,6 +27,7 @@ from userint import UserInterface
 from gui import Gui
 from errors import Error_Store
 import wx
+import builtins
 _ = wx.GetTranslation
 
 def main(arg_list):
@@ -74,6 +75,15 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
+            builtins._ = wx.GetTranslation
+            locale = wx.Locale()
+
+            locale.Init(wx.LANGUAGE_GERMAN)
+
+            locale.AddCatalogLookupPathPrefix('./locale')
+
+            locale.AddCatalog('gui')
+            print(locale.IsLoaded('gui'))
             gui = Gui(_("Logic Simulator"))
             gui.Show(True)
             app.MainLoop()
@@ -89,6 +99,16 @@ def main(arg_list):
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
                 app = wx.App()
+                builtins._ = wx.GetTranslation
+                locale = wx.Locale()
+
+                locale.Init(wx.LANGUAGE_GERMAN)
+
+                locale.AddCatalogLookupPathPrefix('./locale')
+
+                locale.AddCatalog('gui')
+                print(locale.IsLoaded('gui'))
+
                 gui = Gui("Logic Simulator", path, names, devices, network,
                         monitors)
                 gui.Show(True)

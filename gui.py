@@ -26,12 +26,14 @@ from parse import Parser
 from errors import Error_Store
 import gettext
 import builtins
-
+_ = wx.GetTranslation
 #_ = gettext.gettext
+"""
 basepath = os.path.abspath(os.path.dirname(sys.argv[0]))
 localedir = os.path.join(basepath, "locale")
 langid = LANGUAGE_GERMAN    # use OS default; or use LANGUAGE_JAPANESE, etc.
 domain = "gui"
+"""
 
 
 """
@@ -64,18 +66,10 @@ print(mylocale.IsLoaded('gui'))
 
 #builtins._ = wx.GetTranslation
 
-_ = wx.GetTranslation
 
-locale = wx.Locale()
-
-locale.Init(wx.LANGUAGE_GERMAN)
-
-locale.AddCatalogLookupPathPrefix('./locale')
-
-locale.AddCatalog('gui')
 #wx.Log.AddTraceMask('i18n')
 
-print(platform.system())
+#print(platform.system())
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
