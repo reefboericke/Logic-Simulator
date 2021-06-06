@@ -255,6 +255,22 @@ def test_execute_non_xor_gates(new_network, gate_id, switch_outputs,
     network.execute_network()
     assert network.get_output_signal(gate_id, None) == eval(gate_output)
 
+def test_execute_siggen(new_network):
+
+    network = new_network
+    devices = network.devices
+    names = devices.names
+
+    [LOW, HIGH] = [devices.LOW, devices.HIGH]
+
+    [SG_ID] = names.lookup(["Sg1"])
+    devices.make_device(SG_ID, devices.SIGGEN, '1000010')
+    siggen_output = "network.get_output_signal(SG_ID, None)"
+    siggen_device = devices.get_device(SG_ID)
+
+    for i in range(len(siggen_device.siggen_waveform)):
+        network.execute_network()
+        assert eval(siggen_output) == [LOW, HIGH][int(siggen_device.siggen_waveform[i])]
 
 def test_execute_non_gates(new_network):
     """Test if execute_network returns the correct output for non-gate devices.
