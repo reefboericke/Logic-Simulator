@@ -15,6 +15,7 @@ import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLUT
 import os
 from os import sys
+import platform
 
 from names import Names
 from devices import Devices
@@ -24,6 +25,7 @@ from scanner import Scanner
 from parse import Parser
 from errors import Error_Store
 import gettext
+import builtins
 
 #_ = gettext.gettext
 basepath = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -31,27 +33,23 @@ localedir = os.path.join(basepath, "locale")
 langid = LANGUAGE_GERMAN    # use OS default; or use LANGUAGE_JAPANESE, etc.
 domain = "gui"
 
+
 """
 locale = wx.Locale()
 locale.AddCatalogLookupPathPrefix('./locale')
 locale.Init(wx.LANGUAGE_GERMAN)
 locale.AddCatalog('de.po')
-"""
 
-
-gettext.install('gui', './locale')
-"""
 self.presLan_de = gettext.translation("gui", "./locale", languages=['de'])
 self.presLan_de.install()
 self.locale = wx.Locale(LANGUAGE_GERMAN)
 locale.setlocale(locale.LC_ALL, 'de')
 """
 
+""" MINE THAT WORKS
+gettext.install('gui', './locale')
 mylocale = wx.Locale()
 mylocale.Init(langid)
-
-
-
 
 mytranslation = gettext.translation(domain, localedir,
 [mylocale.GetCanonicalName()], fallback = True)
@@ -61,7 +59,23 @@ mylocale.AddCatalogLookupPathPrefix(localedir)
 mylocale.AddCatalog(domain)
 _ = wx.GetTranslation
 wx.Log.AddTraceMask('i18n')
-print(mylocale.IsLoaded('de_DE'))
+print(mylocale.IsLoaded('gui'))
+"""
+
+#builtins._ = wx.GetTranslation
+
+_ = wx.GetTranslation
+
+locale = wx.Locale()
+
+locale.Init(wx.LANGUAGE_GERMAN)
+
+locale.AddCatalogLookupPathPrefix('./locale')
+
+locale.AddCatalog('gui')
+wx.Log.AddTraceMask('i18n')
+
+print(platform.system())
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
@@ -778,5 +792,6 @@ class Gui(wx.Frame):
         """Create a dialog box with the errors present if there are any."""
         error_report = error_db.report_errors(command_line=False,
                                               file_output=False)
+        translated_report = wx.GetTranslation(error_report)
         window = wx.MessageBox(error_report,
                                caption=_('Errors logged in error_report.txt'))

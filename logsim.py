@@ -26,7 +26,8 @@ from parse import Parser
 from userint import UserInterface
 from gui import Gui
 from errors import Error_Store
-
+import wx
+_ = wx.GetTranslation
 
 def main(arg_list):
     """Parse the command line options and arguments specified in arg_list.
@@ -73,7 +74,7 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
-            gui = Gui("Logic Simulator")
+            gui = Gui(_("Logic Simulator"))
             gui.Show(True)
             app.MainLoop()
         elif len(arguments) > 1:

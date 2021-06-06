@@ -1,3 +1,13 @@
 
-Syntax error in file: Comment has not been closed.
+Syntax Fehler in der Leitung 6: Ungültige Syntax, erwartet Ein Gerät oder “Ende” :
+
+    and1: inputs = 2;
+       ^
+
+Syntax Fehler in der Leitung 7: Ungültige Syntax, erwartet “Start”:
+
+    AND and2: inputs = 2;
+      ^
+
+Semantischer Fehler in Datei: Alle Gate-Eingänge müssen verbunden sein.
 

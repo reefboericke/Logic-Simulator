@@ -4,261 +4,281 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "POT-Creation-Date: 2021-06-05 12:40+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2021-06-06 11:53+0100\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-
+"X-Generator: Poedit 3.0\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:79
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:636
 msgid "No signal"
-msgstr ""
+msgstr "Kein Signal"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:251
 msgid "Logic Simulator"
-msgstr ""
+msgstr "Logiksimulator"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:305
 msgid "&Open"
-msgstr ""
+msgstr "&Öffnen"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:306
 msgid "&About"
-msgstr ""
+msgstr "&Über"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:307
 msgid "&Exit"
-msgstr ""
+msgstr "&Ausgang"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:308
 msgid "&File"
-msgstr ""
+msgstr "&Datei"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:315
 msgid " Number of Cycles"
-msgstr ""
+msgstr " Anzahl der Zyklen"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:316
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:317
 msgid "Run"
-msgstr ""
+msgstr "Lauf"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:318
 msgid "Continue"
-msgstr ""
+msgstr "Fortsetzen"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:319
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:420
 msgid "Zap Monitor"
-msgstr ""
+msgstr "Zap-Monitor"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:320
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:404
 msgid "Add Monitor"
-msgstr ""
+msgstr "Monitor hinzufügen"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:321
 msgid "Open file"
-msgstr ""
+msgstr "Datei öffnen"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:336
 msgid "Run/Continue"
-msgstr ""
+msgstr "Ausführen/Weiter"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:361
 msgid "Switches"
-msgstr ""
+msgstr "Schalter"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:386
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:720
 msgid "On"
-msgstr ""
+msgstr "Auf"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:394
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:728
 msgid "Off"
-msgstr ""
+msgstr "Aus"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:435
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:451
 msgid ""
 "Boernashly Logic Simulator\n"
 "Created by Reef Boericke,"
 msgstr ""
+"Boernashly Logik Simulator\n"
+"Erstellt von Reef Boericke,"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:452
 msgid ""
 " Joe Nash, and Finn Ashley\n"
 "2021"
 msgstr ""
+" Joe Nash und Finn Ashley\n"
+"2021"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:453
 msgid "About Logsim"
-msgstr ""
+msgstr "Über Logsim"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:563
 msgid "You must have at least 1 monitor"
-msgstr ""
+msgstr "Sie müssen mindestens 1 Monitor haben"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:637
 msgid "Open bna file"
-msgstr ""
+msgstr "bna-Datei öffnen"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:745
 msgid "Errors logged in error_report.txt"
-msgstr ""
+msgstr "In error_report.txt protokollierte Fehler"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:46
 msgid "Invalid number of inputs to gate."
-msgstr ""
+msgstr "Ungültige Anzahl von Eingängen zum Gate."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:47
 msgid "Invalid clock period."
-msgstr ""
+msgstr "Ungültige Taktperiode."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:48
 msgid "Invalid initial switch value."
-msgstr ""
+msgstr "Ungültiger anfänglicher Schalterwert."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:49
 msgid "Incorrect number of arguments supplied for device."
-msgstr ""
+msgstr "Falsche Anzahl von Argumenten für das Gerät angegeben."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:50
 msgid "Incorrect argument provided for gate."
-msgstr ""
+msgstr "Falsches Argument für Gate angegeben."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:51
 msgid "Incorrect argument provided for clock."
-msgstr ""
+msgstr "Falsches Argument für Uhr angegeben."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:52
 msgid "Incorrect argument provided for switch."
-msgstr ""
+msgstr "Falsches Argument für Schalter angegeben."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:53
 msgid "Invalid device name."
-msgstr ""
+msgstr "Ungültiger Gerätename."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:54
 msgid "Two devices assigned same name."
-msgstr ""
+msgstr "Zwei Geräte haben denselben Namen."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:55
 msgid "Left side of a connection must be an output."
-msgstr ""
+msgstr "Die linke Seite einer Verbindung muss ein Ausgang sein."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:56
 msgid "Right side of a connection must be an input."
-msgstr ""
+msgstr "Die rechte Seite einer Verbindung muss ein Eingang sein."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:57
 msgid "Output not specified DTYPE device."
-msgstr ""
+msgstr "Ausgabe nicht angegeben DTYPE-Gerät."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:58
 msgid "Unexpected output specified for non-DTYPE device."
-msgstr ""
+msgstr "Unerwartete Ausgabe für Nicht-DTYPE-Gerät angegeben."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:59
 msgid "Invalid input name for device."
-msgstr ""
+msgstr "Ungültiger Eingabename für Gerät."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:60
 msgid "Multiple outputs connected to input."
-msgstr ""
+msgstr "Mehrere Ausgänge mit Eingang verbunden."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:61
 msgid "All gate inputs must be connected."
-msgstr ""
+msgstr "Alle Gate-Eingänge müssen verbunden sein."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:62
 msgid "No device with specified name."
-msgstr ""
+msgstr "Kein Gerät mit dem angegebenen Namen."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:63
 msgid "Monitor already connected to specified device."
-msgstr ""
+msgstr "Monitor bereits mit dem angegebenen Gerät verbunden."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:64
 msgid "Specified device doesn't exist."
-msgstr ""
+msgstr "Das angegebene Gerät ist nicht vorhanden."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:68
 msgid "name"
-msgstr ""
+msgstr "Name"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:73
 msgid "a valid input"
-msgstr ""
+msgstr "eine gültige Eingabe"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:75
 msgid "device variable"
-msgstr ""
+msgstr "Gerätevariable"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:77
 msgid "non-negative integer"
-msgstr ""
+msgstr "nicht negative ganze Zahl"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:78
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:86
 msgid "a device"
-msgstr ""
+msgstr "Ein Gerät"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:80
 msgid "\"begin\""
-msgstr ""
+msgstr "“Start”"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:81
 msgid "\"monitors\""
-msgstr ""
+msgstr "“überwacht”"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:82
 msgid "a name"
-msgstr ""
+msgstr "ein Name"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:82
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:86
 msgid "\"end\""
-msgstr ""
+msgstr "“Ende”"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:84
 msgid "\"connections\""
-msgstr ""
+msgstr "“Verbindungen”"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:85
 msgid "\"devices\""
-msgstr ""
+msgstr "“Geräte”"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:94
 msgid " Error on line "
-msgstr ""
+msgstr " Fehler in der Leitung "
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:100
 msgid " Invalid syntax, expected "
-msgstr ""
+msgstr " Ungültige Syntax, erwartet "
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:108
 msgid " or "
-msgstr ""
+msgstr " oder "
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:123
 msgid "Semantic Error in file: All gate inputs must be connected."
-msgstr ""
+msgstr "Semantischer Fehler in Datei: Alle Gate-Eingänge müssen verbunden sein."
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:129
 msgid "Syntax error in file: Comment has not been closed."
-msgstr ""
+msgstr "Syntaxfehler in Datei: Kommentar wurde nicht geschlossen."
 
+msgid "Semantic"
+msgstr "Semantik"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "Minimize"
+msgstr "Minimieren"
+
+msgid "Zoom"
+msgstr "Zoomen"
+
+msgid "Bring All to Front"
+msgstr "Bringen Sie alle nach vorne"
