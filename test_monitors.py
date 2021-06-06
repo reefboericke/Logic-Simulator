@@ -160,13 +160,17 @@ def test_display_signals(capsys, new_monitors):
     devices = new_monitors.devices
     network = new_monitors.network
 
-    [SW1_ID, CLOCK_ID, CL_ID] = names.lookup(["Sw1", "CLOCK", "Clock1"])
+    [SW1_ID, CLOCK_ID, CL_ID, SG_ID] = names.lookup(["Sw1", "CLOCK", "Clock1", "Sg1"])
 
     HIGH = devices.HIGH
 
     # Make a clock and set a monitor on its output
     devices.make_device(CL_ID, CLOCK_ID, 2)
     new_monitors.make_monitor(CL_ID, None)
+
+    # Make a siggen and set a monitor on its output
+    devices.make_device(SG_ID, devices.SIGGEN, '001101')
+    new_monitors.make_monitor(SG_ID, None)
 
     # Both switches are currently LOW
     for _ in range(10):
@@ -185,15 +189,18 @@ def test_display_signals(capsys, new_monitors):
     out, _ = capsys.readouterr()
 
     traces = out.split("\n")
-    assert len(traces) == 5
+    assert len(traces) == 6
     assert "Sw1   : __________----------" in traces
     assert "Sw2   : ____________________" in traces
     assert "Or1   : __________----------" in traces
+    assert "Sg1   : __--_-__--_-__--_-__" in traces
 
     # Clock could be anywhere in its cycle, but its half period is 2
     assert ("Clock1: __--__--__--__--__--" in traces or
             "Clock1: _--__--__--__--__--_" in traces or
             "Clock1: --__--__--__--__--__" in traces or
             "Clock1: -__--__--__--__--__-" in traces)
+
+
 
     assert "" in traces  # additional empty line at the end
