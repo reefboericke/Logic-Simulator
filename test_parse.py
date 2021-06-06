@@ -53,11 +53,11 @@ def test_device_semantic_errors(parsed_network):
         3,  # type 6
         4,  # type 7
         1,  # type 8
-        0, 0, 0, 0, 0, 0, # types 9-14
-        1, # type 15
-        0, 0, 0, # types 16-18
-        3, # type 19
-        1 # type 20
+        0, 0, 0, 0, 0, 0,  # types 9-14
+        1,  # type 15
+        0, 0, 0,  # types 16-18
+        3,  # type 19
+        1  # type 20
     ]
     for i in range(21):
         assert(error_db.query_semantics(i) ==
