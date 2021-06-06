@@ -12,10 +12,12 @@ Graphical user interface: logsim.py <file path>
 """
 import getopt
 from os import error
+import os
 import sys
 import linecache
 
 import wx
+from wx.core import LANGUAGE_GERMAN
 
 from names import Names
 from devices import Devices
@@ -75,11 +77,14 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
+            if (os.environ['LANG'] == 'de_DE.utf8'):
+                language = wx.LANGUAGE_GERMAN
+            else:
+                language = wx.LANGUAGE_DEFAULT
             builtins._ = wx.GetTranslation
             locale = wx.Locale()
-
-            locale.Init(wx.LANGUAGE_GERMAN)
-
+            locale.Init(language)
+            
             locale.AddCatalogLookupPathPrefix('./locale')
 
             locale.AddCatalog('gui')
@@ -102,7 +107,7 @@ def main(arg_list):
                 builtins._ = wx.GetTranslation
                 locale = wx.Locale()
 
-                locale.Init(wx.LANGUAGE_GERMAN)
+                locale.Init(wx.LANGUAGE_DEFAULT)
 
                 locale.AddCatalogLookupPathPrefix('./locale')
 
