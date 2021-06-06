@@ -243,7 +243,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # correct syntax, if semantically correct, add to network:
             if self.network_construction:
-                self.err_return = self.network.make_connection(self.currdevicenameid1,
+                self.network.make_connection(self.currdevicenameid1,
                                              self.curroutputid,
                                              currdevicenameid2, currinputid)
         else:
@@ -315,7 +315,7 @@ class Parser:
                 # if device is siggen, keep waveform value in string
                 self.currvariablevalue = self.currsymb.id
             else:
-                # otherwise convert to integer 
+                # otherwise convert to integer
                 self.currvariablevalue = int(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
