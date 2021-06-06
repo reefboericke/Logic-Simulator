@@ -359,7 +359,7 @@ class Devices:
             if device_property is None:
                 error_type = self.NO_QUALIFIER
             elif(set([i for i in device_property]) not in
-                 [{'0'}, {'1'}, {'0','1'}]):
+                 [{'0'}, {'1'}, {'0', '1'}]):
                 error_type = self.INVALID_QUALIFIER
             else:
                 self.make_siggen(device_id, device_property)
