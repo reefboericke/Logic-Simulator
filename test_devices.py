@@ -105,9 +105,9 @@ def test_make_device(new_devices):
     ("(D_ID, D_ID, None)", "new_devices.BAD_DEVICE"),
     ("(CL_ID, new_devices.CLOCK, 0)", "new_devices.INVALID_QUALIFIER"),
     ("(CL_ID, new_devices.CLOCK, 10)", "new_devices.NO_ERROR"),
-    ("(SG_ID, new_devices.SIGGEN, '1010101')", "new_devices.NO_ERROR"),
+    ("(SG_ID, new_devices.SIGGEN, '10101')", "new_devices.NO_ERROR"),
     ("(SG_ID, new_devices.SIGGEN, None)", "new_devices.NO_QUALIFIER"),
-    ("(SG_ID, new_devices.SIGGEN, '1020101')", "new_devices.INVALID_QUALIFIER"),
+    ("(SG_ID, new_devices.SIGGEN, '10201')", "new_devices.INVALID_QUALIFIER"),
 
     # Note: XOR device X2_ID will have been made earlier in the function
     ("(X2_ID, new_devices.XOR)", "new_devices.DEVICE_PRESENT"),
