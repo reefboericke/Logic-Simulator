@@ -91,6 +91,8 @@ class Scanner:
          self.CLEAR_ID, self.Q_ID, self.QBAR_ID, self.inputs_ID,
          self.period_ID, self.initial_ID, self.SIGGEN_ID,
          self.waveform_ID] = self.names.lookup(self.keywords_list)
+        
+        # define variables needed to track where in file
         self.current_character = ""
         self.no_EOL = 1
         self.start_of_file = True
@@ -98,6 +100,7 @@ class Scanner:
         self.current_char_num_txt = 0
         self.char_num_last_EOL_terminal = 0
         self.char_num_last_EOL_txt = 0
+
         # open file
         try:
             self.file = open(path, 'r')
@@ -111,6 +114,7 @@ class Scanner:
             print("Cannot find file - please check provided path.")
             quit()
 
+        # perform pass through to check all comments closed
         start_of_file = self.file.tell()
         full_text = self.file.read()
         hashes = 0

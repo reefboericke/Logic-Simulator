@@ -28,7 +28,7 @@ from parse import Parser
 from userint import UserInterface
 from gui import Gui
 from errors import Error_Store
-from internationalisation import set_language
+from internationalization import set_language
 import wx
 import builtins
 #_ = wx.GetTranslation
