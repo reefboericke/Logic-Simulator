@@ -89,7 +89,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Initialise the scene rotation matrix
         self.scene_rotate = np.identity(4, 'f')
-        self.total_rotation = (0, 0, 0, 0)
+        self.total_rotation = []
 
         # Initialise variables for zooming
         self.zoom = 1
@@ -182,7 +182,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     self.output_labels[j], -self.GetClientSize().width/2 + 50, y_spacing*(2*j+1)+y_step*3/2, 5)
             self.render_text('0', -self.GetClientSize().width/2, y_spacing * (2 * j + 1), 5)
             self.render_text('1', -self.GetClientSize().width/2, y_spacing * (2 * j + 1) + y_step, 5)
-            GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
+            GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is blue
             if(self.is_3d):
                 for q in range(length):
                     i = q - length//2
@@ -290,11 +290,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             if event.LeftIsDown():
                 if(self.is_3d):
                     GL.glRotatef(math.sqrt((x * x) + (y * y)), y, x, 0)
-                    self.total_rotation = tuple(np.add(self.total_rotation, (-math.sqrt((x*x)+(y*y)), -y, -x, 0)))
+                    self.total_rotation.append((math.sqrt((x*x) + (y*y)), y, x, 0))
             if event.MiddleIsDown():
                 if(self.is_3d):
                     GL.glRotatef((x + y), 0, 0, 1)
-                    self.total_rotation = tuple(np.add(self.total_rotation, (-x-y, 0, 0, -1)))
+                    self.total_rotation.append(((x+y), 0, 0, 1))
             if event.RightIsDown():
                 self.pan_x += x
                 self.pan_y -= y
@@ -336,8 +336,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glEnable(GL.GL_LIGHTING)
 
     def reset_rotation(self):
-        GL.glRotatef(self.total_rotation[0], self.total_rotation[1], self.total_rotation[2], self.total_rotation[3])
-        self.total_rotation = (0, 0, 0, 0)
+        for i in range(len(self.total_rotation)):
+            step = self.total_rotation[-i]
+            GL.glRotatef(-step[0], step[1], step[2], step[3])
+        self.total_rotation = []
+        self.init = False
+        self.Refresh()
 
 
 class Gui(wx.Frame):
