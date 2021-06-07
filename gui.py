@@ -89,6 +89,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Initialise the scene rotation matrix
         self.scene_rotate = np.identity(4, 'f')
+        self.total_rotation = (0, 0, 0, 0)
 
         # Initialise variables for zooming
         self.zoom = 1
@@ -267,7 +268,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Calculate object coordinates of the mouse position
         size = self.GetClientSize()
         ox = (event.GetX() - self.pan_x) / self.zoom
-        oy = (size.height - event.GetY() - self.pan_y) / self.zoom #TODO replace on_mouse function and replace line drawing with cuboids
+        oy = (size.height - event.GetY() - self.pan_y) / self.zoom
         old_zoom = self.zoom
         if event.ButtonDown():
             self.last_mouse_x = event.GetX()
@@ -285,8 +286,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             y = event.GetY() - self.last_mouse_y
             if event.LeftIsDown():
                 GL.glRotatef(math.sqrt((x * x) + (y * y)), y, x, 0)
+                self.total_rotation = tuple(np.add(self.total_rotation, (-math.sqrt((x*x)+(y*y)), -y, -x, 0)))
             if event.MiddleIsDown():
                 GL.glRotatef((x + y), 0, 0, 1)
+                self.total_rotation = tuple(np.add(self.total_rotation, (-x-y, 0, 0, -1)))
             if event.RightIsDown():
                 self.pan_x += x
                 self.pan_y -= y
@@ -326,6 +329,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GLUT.glutBitmapCharacter(font, ord(character))
 
         GL.glEnable(GL.GL_LIGHTING)
+
+    def reset_rotation(self):
+        GL.glRotatef(self.total_rotation[0], self.total_rotation[1], self.total_rotation[2], self.total_rotation[3])
+        self.total_rotation = (0, 0, 0, 0)
 
 
 class Gui(wx.Frame):
@@ -880,4 +887,7 @@ class Gui(wx.Frame):
 
     def reset_display(self, event):
         self.canvas.zoom = 1
+        self.canvas.pan_x = 0
+        self.canvas.pan_y = 0
+        self.canvas.reset_rotation()
         self.canvas.Refresh()
