@@ -12,10 +12,12 @@ Graphical user interface: logsim.py <file path>
 """
 import getopt
 from os import error
+import os
 import sys
 import linecache
 
 import wx
+from wx.core import LANGUAGE_GERMAN
 
 from names import Names
 from devices import Devices
@@ -26,7 +28,10 @@ from parse import Parser
 from userint import UserInterface
 from gui import Gui
 from errors import Error_Store
-
+from internationalisation import set_language
+import wx
+import builtins
+#_ = wx.GetTranslation
 
 def main(arg_list):
     """Parse the command line options and arguments specified in arg_list.
@@ -71,22 +76,32 @@ def main(arg_list):
 
     if not options:  # no option given, use the graphical user interface
 
-        if len(arguments) != 1:  # wrong number of arguments
-            print("Error: one file path required\n")
-            print(usage_message)
-            sys.exit()
-
-        [path] = arguments
-        scanner = Scanner(path, names)
-        error_db = Error_Store(scanner)
-        parser = Parser(names, devices, network, monitors, scanner, error_db)
-        if parser.parse_network():
-            # Initialise an instance of the gui.Gui() class
+        if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
-            gui = Gui("Logic Simulator", path, names, devices, network,
-                      monitors)
+            
+            locale = set_language(app)
+
+            gui = Gui(_("Logic Simulator"))
             gui.Show(True)
             app.MainLoop()
+        elif len(arguments) > 1:
+            print("Error: two many arguments provided\n")
+            print(usage_message)
+            sys.exit()
+        elif len(arguments) == 1:
+            [path] = arguments
+            scanner = Scanner(path, names)
+            error_db = Error_Store(scanner)
+            parser = Parser(names, devices, network, monitors, scanner, error_db)
+            if parser.parse_network():
+                # Initialise an instance of the gui.Gui() class
+                app = wx.App()
+                locale = set_language(app)
+
+                gui = Gui("Logic Simulator", path, names, devices, network,
+                        monitors)
+                gui.Show(True)
+                app.MainLoop()
 
 
 if __name__ == "__main__":

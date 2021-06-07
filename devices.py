@@ -39,6 +39,7 @@ class Device:
         self.clock_counter = None
         self.switch_state = None
         self.dtype_memory = None
+        self.siggen_waveform = None
 
 
 class Devices:
@@ -89,6 +90,9 @@ class Devices:
 
     make_d_type(self, device_id): Makes a D-type device.
 
+    make_siggen(self, device_id, waveform): Makes a siggen device with the
+                                            specified waveform.
+
     cold_startup(self): Simulates cold start-up of D-types and clocks.
 
     make_device(self, device_id, device_kind, device_property=None): Creates
@@ -102,7 +106,7 @@ class Devices:
         self.devices_list = []
 
         gate_strings = ["AND", "OR", "NAND", "NOR", "XOR"]
-        device_strings = ["CLOCK", "SWITCH", "DTYPE"]
+        device_strings = ["CLOCK", "SWITCH", "DTYPE", "SIGGEN"]
         dtype_inputs = ["CLK", "SET", "CLEAR", "DATA"]
         dtype_outputs = ["Q", "QBAR"]
 
@@ -115,7 +119,8 @@ class Devices:
         self.gate_types = [self.AND, self.OR, self.NAND, self.NOR,
                            self.XOR] = self.names.lookup(gate_strings)
         self.device_types = [self.CLOCK, self.SWITCH,
-                             self.D_TYPE] = self.names.lookup(device_strings)
+                             self.D_TYPE,
+                             self.SIGGEN] = self.names.lookup(device_strings)
         self.dtype_input_ids = [self.CLK_ID, self.SET_ID, self.CLEAR_ID,
                                 self.DATA_ID] = self.names.lookup(dtype_inputs)
         self.dtype_output_ids = [
@@ -257,6 +262,17 @@ class Devices:
             self.add_output(device_id, output_id)
         self.cold_startup()  # D-type initialised to a random state
 
+    def make_siggen(self, device_id, waveform):
+        """Make a signal generator device with the specified waveform.
+
+        waveform is a string comprising of '0's and/or '1's. The nth value
+        is the high/low state of the output on the nth simulation cycle.
+        """
+        self.add_device(device_id, self.SIGGEN)
+        device = self.get_device(device_id)
+        device.siggen_waveform = waveform
+        self.cold_startup()
+
     def cold_startup(self):
         """Simulate cold start-up of D-types and clocks.
 
@@ -274,6 +290,16 @@ class Devices:
                 # Initialise it to a random point in its cycle.
                 device.clock_counter = \
                     random.randrange(device.clock_half_period)
+
+            elif device.device_kind == self.SIGGEN:
+                if device.siggen_waveform[0] == '0':
+                    siggen_signal = self.LOW
+                else:
+                    siggen_signal = self.HIGH
+                self.add_output(device.device_id, output_id=None,
+                                signal=siggen_signal)
+                # Initialise it to a random point in its cycle.
+                device.clock_counter = 0
 
     def make_device(self, device_id, device_kind, device_property=None):
         """Create the specified device.
@@ -326,6 +352,17 @@ class Devices:
                 error_type = self.QUALIFIER_PRESENT
             else:
                 self.make_d_type(device_id)
+                error_type = self.NO_ERROR
+
+        elif device_kind == self.SIGGEN:
+            # Device property is the waveform comprising of '0' and/or '1'
+            if device_property is None:
+                error_type = self.NO_QUALIFIER
+            elif(set([i for i in device_property]) not in
+                 [{'0'}, {'1'}, {'0', '1'}]):
+                error_type = self.INVALID_QUALIFIER
+            else:
+                self.make_siggen(device_id, device_property)
                 error_type = self.NO_ERROR
 
         else:

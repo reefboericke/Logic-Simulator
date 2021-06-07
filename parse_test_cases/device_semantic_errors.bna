@@ -7,29 +7,41 @@ begin devices:
 
     SWITCH S1: initial = 3;
 
+    SIGGEN Z1: waveform = 2;
+
     DTYPE D1: inputs = 3;
     DTYPE D2: initial = 0;
     DTYPE D3: period = 50;
+    DTYPE D4: waveform = 10;
     XOR X1: inputs = 3;
     XOR X2: initial = 0;
     XOR X3: period = 50;
+    XOR X4: waveform = 10;
 
     AND G2;
     NAND G3;
     NOR G4;
     CLOCK C4;
     SWITCH S2;
+    SIGGEN Z2;
 
     NAND G5: period = 100;
     NAND G6: initial = 0;
+    NAND G7: waveform = 10;
     CLOCK C5: inputs = 5;
     CLOCK C6: initial = 1;
+    CLOCK C7: waveform = 10;
     SWITCH S3: inputs = 4;
     SWITCH S4: period = 50;
+    SWITCH S5: waveform = 1;
+    SIGGEN Z3: inputs = 10;
+    SIGGEN Z4: period = 10;
+    SIGGEN Z5: initial = 1;
 
     NAND NAND: inputs = 4;
     CLOCK CLOCK: period = 30;
     SWITCH SWITCH: initial = 1;
+    SIGGEN SIGGEN: waveform = 100101101;
 
     NAND test_gate: inputs = 5;
     NAND test_gate: inputs = 3;

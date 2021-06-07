@@ -2,35 +2,35 @@
 Semantic Error on line 1: Invalid number of inputs to gate.
 
 begin devices:
-   ^
+^
 
 Semantic Error on line 1: Incorrect argument provided for switch.
 
 begin devices:
-   ^
+^
 
 Semantic Error on line 1: Right side of a connection must be an input.
 
 begin devices:
-   ^
+^
 
 Semantic Error on line 1: Unexpected output specified for non-DTYPE device.
 
 begin devices:
-   ^
+^
 
-Syntax Error on line 1: invalid syntax, expected ";":
-
-begin devices:
-   ^
-
-Syntax Error on line 1: invalid syntax, expected "a valid input":
+Syntax Error on line 1: Invalid syntax, expected ";":
 
 begin devices:
-   ^
+^
 
-Syntax Error on line 1: invalid syntax, expected "a device":
+Syntax Error on line 1: Invalid syntax, expected a valid input:
 
 begin devices:
-   ^
+^
+
+Syntax Error on line 1: Invalid syntax, expected a device:
+
+begin devices:
+^
 

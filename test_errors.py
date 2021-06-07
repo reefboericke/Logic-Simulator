@@ -6,6 +6,8 @@ from scanner import Scanner
 from names import Names
 from errors import Error
 from errors import Error_Store
+import wx
+
 
 @pytest.fixture
 def new_scanner():
@@ -19,6 +21,7 @@ def new_scanner():
 
     return _method
 
+
 @pytest.fixture
 def new_error_store(new_scanner):
     """Return opened error store."""
@@ -28,6 +31,7 @@ def new_error_store(new_scanner):
 
     return _method
 
+
 def test_error_counting(new_error_store):
     """Check error id / tracking correct."""
     error_db = new_error_store('empty.bna')
@@ -36,9 +40,10 @@ def test_error_counting(new_error_store):
     assert(error_db.no_errors == 1)
     assert(error_db.errors[0].error_number == 1)
 
+
 def test_error_reporting(new_error_store):
     """Test different errors give expected error string."""
-    errors_to_report =[
+    errors_to_report = [
         ('semantic', 0),
         ('semantic', 6),
         ('semantic', 10),
@@ -50,12 +55,14 @@ def test_error_reporting(new_error_store):
     error_db = new_error_store('empty.bna')
     for error in errors_to_report:
         error_db.add_error(error[0], error[1])
-    error_report = error_db.report_errors()
-
+    error_db.report_errors()
+    error_report = open('error_report.txt').read()
     dirname = os.path.dirname(__file__)
-    filename = os.path.join(dirname, 'errors_test_cases/' + 'expected_report.txt')
+    filename = os.path.join(dirname, 'errors_test_cases/'
+                            + 'expected_report.txt')
     expected_report = open(filename, 'r').read()
-    assert( error_report == expected_report )
+    assert(error_report == expected_report)
+
 
 def test_error_sorting(new_error_store):
     """Test errors get sorted by line number correctly.
@@ -90,6 +97,7 @@ def test_error_sorting(new_error_store):
     assert(error_db.errors[3].location == locations[3])
     assert(error_db.errors[3].error_number == 4)
 
+
 def test_error_querying(new_error_store):
     error_db = new_error_store('empty.bna')
     for i in range(19):
@@ -99,6 +107,5 @@ def test_error_querying(new_error_store):
         assert(error_db.query_semantics(i) == 1)
     error_db.add_error('syntax', 5)
     error_db.add_error('semantic', 8)
-    assert(error_db.query_syntax(5) == 2) 
+    assert(error_db.query_syntax(5) == 2)
     assert(error_db.query_semantics(8) == 2)
-    

@@ -1,0 +1,34 @@
+begin devices:
+    # inputs #
+    SWITCH A: initial = 0;
+    SWITCH B: initial = 0;
+    SWITCH Cin: initial = 0;
+
+    # gates #
+    XOR xor1;
+    XOR sum;
+    AND and1: inputs = 2;
+    AND and2: inputs = 2;
+    OR Cout: inputs = 2;
+end devices;
+
+begin connections:
+    # sum output #
+    A -> xor1.I1;
+    B -> xor1.I2;
+    xor1 -> sum.I1;
+    Cin -> sum.I2;
+
+    # carry output #
+    xor1 -> and1.I1;
+    Cin -> and1.I2;
+    A -> and2.I1;
+    B -> and2.I2;
+    and1 -> Cout.I1;
+    and2 -> Cout.I2;
+end connections;
+
+begin monitors:
+    sum;
+    Cout;
+end monitors;

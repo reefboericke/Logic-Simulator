@@ -10,6 +10,7 @@ from network import Network
 from devices import Devices
 from monitors import Monitors
 import os
+import wx
 
 @pytest.fixture
 def parsed_network():
@@ -25,17 +26,19 @@ def parsed_network():
         network = Network(names, devices)
         monitors = Monitors(names, devices, network)
 
-        parser = Parser(names,devices,network,monitors,scanner, error_db)
+        parser = Parser(names, devices, network, monitors, scanner, error_db)
         parser.parse_network()
         return error_db
 
     return _method
 
+
 def test_parse_correct_file(parsed_network):
     """Test parser raises no errors on a valid file"""
     error_db = parsed_network('valid.bna')
     error_report = error_db.report_errors()
-    assert(error_report  == False)
+    assert(error_report is False)
+
 
 def test_device_semantic_errors(parsed_network):
     """Test parser finds all device definition semantics errs."""
@@ -44,31 +47,44 @@ def test_device_semantic_errors(parsed_network):
         1,  # error type 0
         1,  # type 1
         1,  # type 2
-        11, # type 3
-        2,  # type 4
-        2,  # type 5
-        2,  # type 6
-        3,  # type 7
-        1   # type 8
+        14,  # type 3
+        3,  # type 4
+        3,  # type 5
+        3,  # type 6
+        4,  # type 7
+        1,  # type 8
+        0, 0, 0, 0, 0, 0,  # types 9-14
+        1,  # type 15
+        0, 0, 0,  # types 16-18
+        3,  # type 19
+        1  # type 20
     ]
-    for i in range(9):
-        assert(error_db.query_semantics(i) == expected_semantic_error_counts[i])
+    for i in range(21):
+        assert(error_db.query_semantics(i) ==
+               expected_semantic_error_counts[i])
+
 
 def test_connection_semantic_errors(parsed_network):
+    """Test parser picks up semantic errors in connection block."""
     error_db = parsed_network('connection_semantic_errors.bna')
     expected_error_types = [11, 12, 13, 15]
     for i in expected_error_types:
         assert(error_db.query_semantics(i) == 1)
 
+
 def test_connection_double_connection_error(parsed_network):
+    """Check specific case of double connections."""
     error_db = parsed_network('double_connection.bna')
-    assert(error_db.query_semantics(14) == 1) # error 14
-    assert(error_db.query_semantics(15) == 1) # error 15
+    assert(error_db.query_semantics(14) == 1)  # error 14
+    assert(error_db.query_semantics(15) == 1)  # error 15
+
 
 def test_monitor_semantic_errors(parsed_network):
+    """Test parser finds semantic errors related to monitor block."""
     error_db = parsed_network('monitor_semantic_errors.bna')
     assert(error_db.query_semantics(16) == 1)
     assert(error_db.query_semantics(17) == 1)
+
 
 @pytest.mark.parametrize("file, error_id", [
     ('no_devices.bna', 17),
@@ -90,31 +106,22 @@ def test_monitor_semantic_errors(parsed_network):
     ('missing_name_end.bna', 14),
     ('missing_device_end.bna', 18)
 ])
-
 def test_single_syntax_error_detection(parsed_network, file, error_id):
+    """Test every syntax error and that parser picks it up."""
     error_db = parsed_network(file)
     assert(error_db.query_syntax(error_id) == 1)
-    """
-    for i in range(19):
-        if (i not in [error_id, 15]):
-            assert(error_db.query_syntax(i) == 0)
-        assert(error_db.query_semantics(i) == 0)
-    """
+
 
 def test_realistic_error_set_detection(parsed_network):
+    """Test parser behaves as expected on a feasible file."""
     error_db = parsed_network('multiple_errors.bna')
-    assert(error_db.query_semantics(7) == 1)
-    assert(error_db.query_semantics(4) == 1)
-    assert(error_db.query_syntax(2) == 1)
-    assert(error_db.query_syntax(13) == 1)
-    
-    
-
-
-    
-
-    
-    
-    
-
-    
+    for i in range(1, 19):
+        if (i in [4, 7, 15]):
+            assert(error_db.query_semantics(i) == 1)
+            assert(error_db.query_syntax(i) == 0)
+        elif (i in [2, 13]):
+            assert(error_db.query_syntax(i) == 1)
+            assert(error_db.query_semantics(i) == 0)
+        else:
+            assert(error_db.query_syntax(i) == 0)
+            assert(error_db.query_semantics(i) == 0)

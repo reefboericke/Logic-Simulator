@@ -19,7 +19,7 @@ def run():
     network = Network(names, devices)
     monitors = Monitors(names, devices, network)
     
-    scanner = Scanner('/Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/empty.bn', names)
+    scanner = Scanner('/Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/comment_only.bna', names)
     error_db = Error_Store(scanner)
     parser = Parser(names,devices,network,monitors,scanner, error_db)
 
