@@ -172,18 +172,20 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         y_spacing = (self.GetClientSize().height) / (2 * len(outputs))
         y_step = 50  # Determines the vertical size of the signal traces
 
-        for j in range(len(outputs)):
+        for p in range(len(outputs)):
+            j = p - len(outputs)//2
             if(len(outputs) > 6):
                 self.render_text(
-                    self.output_labels[j], 5, y_spacing*(2*j+1)+y_step/2, 5)
+                    self.output_labels[j], -self.GetClientSize().width/2 + 5, y_spacing*(2*j+1)+y_step/2, 5)
             else:
                 self.render_text(
-                    self.output_labels[j], 50, y_spacing*(2*j+1)+y_step*3/2, 5)
-            self.render_text('0', 25, y_spacing * (2 * j + 1), 5)
-            self.render_text('1', 25, y_spacing * (2 * j + 1) + y_step, 5)
+                    self.output_labels[j], -self.GetClientSize().width/2 + 50, y_spacing*(2*j+1)+y_step*3/2, 5)
+            self.render_text('0', -self.GetClientSize().width/2, y_spacing * (2 * j + 1), 5)
+            self.render_text('1', -self.GetClientSize().width/2, y_spacing * (2 * j + 1) + y_step, 5)
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
             if(self.is_3d):
-                for i in range(length):
+                for q in range(length):
+                    i = q - length//2
                     x = (i * x_step) + 50
                     x_next = (i * x_step) + x_step + 50
                     y = y_spacing * (2 * j + 1)
@@ -194,10 +196,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                                 self.draw_cuboid(x, y, 5, x_step/2, 10, 1)
             else:
                 GL.glBegin(GL.GL_LINE_STRIP)
-                for i in range(length):
+                for q in range(length):
+                    i = q - length//2
                     x = (i * x_step) + 50
                     x_next = (i * x_step) + x_step + 50
-                    y = y_spacing * (2 * j + 1)
+                    y = y_spacing * (2 * j + 1) + y_step * outputs[j][i]
                     if(outputs[j][i] != 4):
                         GL.glVertex2f(x, y)
                         GL.glVertex2f(x_next, y)
@@ -285,11 +288,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             x = event.GetX() - self.last_mouse_x
             y = event.GetY() - self.last_mouse_y
             if event.LeftIsDown():
-                GL.glRotatef(math.sqrt((x * x) + (y * y)), y, x, 0)
-                self.total_rotation = tuple(np.add(self.total_rotation, (-math.sqrt((x*x)+(y*y)), -y, -x, 0)))
+                if(self.is_3d):
+                    GL.glRotatef(math.sqrt((x * x) + (y * y)), y, x, 0)
+                    self.total_rotation = tuple(np.add(self.total_rotation, (-math.sqrt((x*x)+(y*y)), -y, -x, 0)))
             if event.MiddleIsDown():
-                GL.glRotatef((x + y), 0, 0, 1)
-                self.total_rotation = tuple(np.add(self.total_rotation, (-x-y, 0, 0, -1)))
+                if(self.is_3d):
+                    GL.glRotatef((x + y), 0, 0, 1)
+                    self.total_rotation = tuple(np.add(self.total_rotation, (-x-y, 0, 0, -1)))
             if event.RightIsDown():
                 self.pan_x += x
                 self.pan_y -= y
