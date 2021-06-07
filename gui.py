@@ -184,8 +184,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.render_text('1', -self.GetClientSize().width/2, y_spacing * (2 * j + 1) + y_step, 5)
             GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is blue
             if(self.is_3d):
-                for q in range(length):
-                    i = q - length//2
+                for i in range(length):
+                    #i = q - length//2
                     x = (i * x_step) + 50
                     x_next = (i * x_step) + x_step + 50
                     y = y_spacing * (2 * j + 1)
@@ -196,8 +196,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                                 self.draw_cuboid(x, y, 5, x_step/2, 10, 1)
             else:
                 GL.glBegin(GL.GL_LINE_STRIP)
-                for q in range(length):
-                    i = q - length//2
+                for i in range(length):
+                    #i = q - length//2
                     x = (i * x_step) + 50
                     x_next = (i * x_step) + x_step + 50
                     y = y_spacing * (2 * j + 1) + y_step * outputs[j][i]
@@ -689,7 +689,7 @@ class Gui(wx.Frame):
                                 self.monitors.monitors_dictionary][i]
                                for i in range(len(self.previous_outputs))]
         self.canvas.output_labels = self.monitored_devices
-
+        print(self.canvas.outputs)
         if self.canvas.outputs != [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4]]:
             self.canvas.render(self.canvas.outputs,
                                len(self.canvas.outputs[0]))
