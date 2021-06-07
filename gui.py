@@ -13,6 +13,7 @@ from wx.core import Position
 import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLU, GLUT
 import os
+import numpy as np
 
 from names import Names
 from devices import Devices
@@ -89,6 +90,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Initialise variables for zooming
         self.zoom = 1
+                
+        # Offset between viewpoint and origin of the scene
+        self.depth_offset = 1000
 
         self.length = 10
         self.outputs = [[4 for i in range(10)]]
@@ -168,29 +172,33 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         for j in range(len(outputs)):
             if(len(outputs) > 6):
                 self.render_text(
-                    self.output_labels[j], 5, y_spacing*(2*j+1)+y_step/2)
+                    self.output_labels[j], 5, y_spacing*(2*j+1)+y_step/2, 5)
             else:
                 self.render_text(
-                    self.output_labels[j], 50, y_spacing*(2*j+1)+y_step*3/2)
-            self.render_text('0', 25, y_spacing * (2 * j + 1))
-            self.render_text('1', 25, y_spacing * (2 * j + 1) + y_step)
+                    self.output_labels[j], 50, y_spacing*(2*j+1)+y_step*3/2, 5)
+            self.render_text('0', 25, y_spacing * (2 * j + 1), 5)
+            self.render_text('1', 25, y_spacing * (2 * j + 1) + y_step, 5)
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
-            GL.glBegin(GL.GL_LINE_STRIP)
+            #GL.glBegin(GL.GL_LINE_STRIP)
             for i in range(length):
                 x = (i * x_step) + 50
                 x_next = (i * x_step) + x_step + 50
-                y = y_spacing * (2 * j + 1) + y_step * outputs[j][i]
+                y = y_spacing * (2 * j + 1)
                 if(outputs[j][i] != 4):
-                    GL.glVertex2f(x, y)
-                    GL.glVertex2f(x_next, y)
-            GL.glEnd()
+                    #GL.glVertex2f(x, y)
+                    #GL.glVertex2f(x_next, y)
+                    if(outputs[j][i] == 1):
+                        self.draw_cuboid(x, y, 5, x_step/2, 10, y_step)
+                    else:
+                        self.draw_cuboid(x, y, 5, x_step/2, 10, 1)
+            #GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
         # and swap the back buffer to the front
         GL.glFlush()
         self.SwapBuffers()
 
-    def draw_cuboid(self, x_pos, z_pos, half_width, half_depth, height):
+    def draw_cuboid(self, x_pos, y_pos, z_pos, half_width, half_depth, height):
         """Draw a cuboid.
 
         Draw a cuboid at the specified position, with the specified
@@ -198,35 +206,35 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         """
         GL.glBegin(GL.GL_QUADS)
         GL.glNormal3f(0, -1, 0)
-        GL.glVertex3f(x_pos - half_width, -6, z_pos - half_depth)
-        GL.glVertex3f(x_pos + half_width, -6, z_pos - half_depth)
-        GL.glVertex3f(x_pos + half_width, -6, z_pos + half_depth)
-        GL.glVertex3f(x_pos - half_width, -6, z_pos + half_depth)
+        GL.glVertex3f(x_pos, y_pos, z_pos - half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos, z_pos - half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos, z_pos + half_depth)
+        GL.glVertex3f(x_pos, y_pos, z_pos + half_depth)
         GL.glNormal3f(0, 1, 0)
-        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos - half_depth)
-        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos - half_depth)
-        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos + half_depth)
-        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos, y_pos + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos, y_pos + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos + height, z_pos + half_depth)
         GL.glNormal3f(-1, 0, 0)
-        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos - half_depth)
-        GL.glVertex3f(x_pos - half_width, -6, z_pos - half_depth)
-        GL.glVertex3f(x_pos - half_width, -6, z_pos + half_depth)
-        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos, y_pos + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos, y_pos, z_pos - half_depth)
+        GL.glVertex3f(x_pos, y_pos, z_pos + half_depth)
+        GL.glVertex3f(x_pos, y_pos + height, z_pos + half_depth)
         GL.glNormal3f(1, 0, 0)
-        GL.glVertex3f(x_pos + half_width, -6, z_pos - half_depth)
-        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos - half_depth)
-        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos + half_depth)
-        GL.glVertex3f(x_pos + half_width, -6, z_pos + half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos, z_pos - half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos, z_pos + half_depth)
         GL.glNormal3f(0, 0, -1)
-        GL.glVertex3f(x_pos - half_width, -6, z_pos - half_depth)
-        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos - half_depth)
-        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos - half_depth)
-        GL.glVertex3f(x_pos + half_width, -6, z_pos - half_depth)
+        GL.glVertex3f(x_pos, y_pos, z_pos - half_depth)
+        GL.glVertex3f(x_pos, y_pos + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos + height, z_pos - half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos, z_pos - half_depth)
         GL.glNormal3f(0, 0, 1)
-        GL.glVertex3f(x_pos - half_width, -6 + height, z_pos + half_depth)
-        GL.glVertex3f(x_pos - half_width, -6, z_pos + half_depth)
-        GL.glVertex3f(x_pos + half_width, -6, z_pos + half_depth)
-        GL.glVertex3f(x_pos + half_width, -6 + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos, y_pos + height, z_pos + half_depth)
+        GL.glVertex3f(x_pos, y_pos, z_pos + half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos, z_pos + half_depth)
+        GL.glVertex3f(x_pos + 2*half_width, y_pos + height, z_pos + half_depth)
         GL.glEnd()
 
     def on_paint(self, event):
