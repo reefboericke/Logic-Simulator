@@ -191,9 +191,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     y = y_spacing * (2 * j + 1)
                     if(outputs[j][i] != 4):
                             if(outputs[j][i] == 1):
-                                self.draw_cuboid(x, y, 5, x_step/2, 10, y_step)
+                                self.draw_cuboid(x, y, 5, x_step/2, 25, y_step)
                             else:
-                                self.draw_cuboid(x, y, 5, x_step/2, 10, 1)
+                                self.draw_cuboid(x, y, 5, x_step/2, 25, 1)
             else:
                 GL.glBegin(GL.GL_LINE_STRIP)
                 for i in range(length):
