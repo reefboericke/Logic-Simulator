@@ -10,9 +10,12 @@ Gui - configures the main window and all the widgets.
 """
 import wx
 from wx.core import Position
+from wx.core import LANGUAGE_GERMAN
 import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLUT
 import os
+from os import sys
+import platform
 
 from names import Names
 from devices import Devices
@@ -21,7 +24,9 @@ from monitors import Monitors
 from scanner import Scanner
 from parse import Parser
 from errors import Error_Store
-
+import gettext
+import builtins
+_ = wx.GetTranslation
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
@@ -62,7 +67,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.context = wxcanvas.GLContext(self)
 
         self.blank_file = True
-
+        
         # Initialise variables for panning
         self.pan_x = 0
         self.pan_y = 0
@@ -74,7 +79,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         self.length = 10
         self.outputs = [[4 for i in range(10)]]
-        self.output_labels = ['No signal']
+        self.output_labels = [_('No signal')]
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -246,7 +251,7 @@ class Gui(wx.Frame):
 
     """
 
-    def __init__(self, title="Logic Simulator", path=None,
+    def __init__(self, title=_("Logic Simulator"), path=None,
                  names=None, devices=None, network=None, monitors=None):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
@@ -257,7 +262,6 @@ class Gui(wx.Frame):
             ' connections;\nbegin monitors:\nend monitors;')
         blank_file.close()
         pathname = 'startup.bna'
-
         if(names is None):
             names1 = Names()
             devices1 = Devices(names1)
@@ -300,23 +304,23 @@ class Gui(wx.Frame):
         # Configure the file menu
         fileMenu = wx.Menu()
         menuBar = wx.MenuBar()
-        fileMenu.Append(wx.ID_OPEN, "&Open")
-        fileMenu.Append(wx.ID_ABOUT, "&About")
-        fileMenu.Append(wx.ID_EXIT, "&Exit")
-        menuBar.Append(fileMenu, "&File")
+        fileMenu.Append(wx.ID_OPEN, _("&Open"))
+        fileMenu.Append(wx.ID_ABOUT, _("&About"))
+        fileMenu.Append(wx.ID_EXIT, _("&Exit"))
+        menuBar.Append(fileMenu, _("&File"))
         self.SetMenuBar(menuBar)
 
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors)
 
         # Configure the widgets
-        self.text = wx.StaticText(self, wx.ID_ANY, " Number of Cycles")
-        self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
-        self.run_button = wx.Button(self, wx.ID_ANY, "Run")
-        self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
-        self.remove_monitor = wx.Button(self, wx.ID_ANY, "Zap Monitor")
-        self.add_monitor = wx.Button(self, wx.ID_ANY, "Add Monitor")
-        self.open_file = wx.Button(self, wx.ID_ANY, "Open file")
+        self.text = wx.StaticText(self, wx.ID_ANY, _(" Number of Cycles"))
+        self.spin = wx.SpinCtrl(self, wx.ID_ANY, _("10"))
+        self.run_button = wx.Button(self, wx.ID_ANY, _("Run"))
+        self.continue_button = wx.Button(self, wx.ID_ANY, _("Continue"))
+        self.remove_monitor = wx.Button(self, wx.ID_ANY, _("Zap Monitor"))
+        self.add_monitor = wx.Button(self, wx.ID_ANY, _("Add Monitor"))
+        self.open_file = wx.Button(self, wx.ID_ANY, _("Open file"))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -331,7 +335,7 @@ class Gui(wx.Frame):
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.side_sizer = wx.FlexGridSizer(1, 5, 10)
         self.run_box = wx.StaticBoxSizer(
-            wx.VERTICAL, self, label='Run/Continue')
+            wx.VERTICAL, self, label=_('Run/Continue'))
 
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.side_sizer, 1, wx.ALL, 5)
@@ -356,7 +360,7 @@ class Gui(wx.Frame):
         self.radiobuttons = []
 
         self.switch_box = wx.StaticBoxSizer(
-            wx.VERTICAL, self, label='Switches')
+            wx.VERTICAL, self, label=_('Switches'))
         self.side_sizer.Add(self.switch_box, 1, wx.ALL, 5)
 
         switches = self.devices.find_devices(self.devices.SWITCH)
@@ -381,7 +385,7 @@ class Gui(wx.Frame):
                 wx.RadioButton(
                     self,
                     wx.ID_ANY,
-                    label="On",
+                    label=_("On"),
                     style=wx.RB_GROUP))
             if(initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
@@ -389,7 +393,7 @@ class Gui(wx.Frame):
             self.single_switch_box.Add(self.radiobuttons[-1])
             self.radiobuttons.append(
                 wx.RadioButton(
-                    self, wx.ID_ANY, label="Off"))
+                    self, wx.ID_ANY, label=_("Off")))
             if(not initial_switch_values[i]):
                 self.radiobuttons[-1].SetValue(True)
             self.single_switch_box.Add(self.radiobuttons[-1])
@@ -399,7 +403,7 @@ class Gui(wx.Frame):
             self.monitors.get_signal_names()
 
         self.add_monitor_box = wx.StaticBoxSizer(
-            wx.HORIZONTAL, self, label="Add Monitor")
+            wx.HORIZONTAL, self, label=_("Add Monitor"))
         self.side_sizer.Add(self.add_monitor_box)
 
         # Add monitor addition/removal controls
@@ -415,7 +419,7 @@ class Gui(wx.Frame):
         self.add_monitor_box.Add(self.add_monitor)
 
         self.zap_monitor_box = wx.StaticBoxSizer(
-            wx.HORIZONTAL, self, label="Zap Monitor")
+            wx.HORIZONTAL, self, label=_("Zap Monitor"))
         self.side_sizer.Add(self.zap_monitor_box)
 
         self.remove_monitor_choice = wx.Choice(
@@ -430,7 +434,7 @@ class Gui(wx.Frame):
         self.zap_monitor_box.Add(self.remove_monitor)
 
         self.open_file_box = wx.StaticBoxSizer(
-            wx.HORIZONTAL, self, label="File")
+            wx.HORIZONTAL, self, label=_("File"))
         self.open_file_box.Add(self.open_file)
         self.side_sizer.Add(self.open_file_box)
 
@@ -446,9 +450,9 @@ class Gui(wx.Frame):
             self.Close(True)
         if Id == wx.ID_ABOUT:
             wx.MessageBox(
-                "Boernashly Logic Simulator\nCreated by Reef Boericke," +
-                " Joe Nash, and Finn Ashley\n2021",
-                "About Logsim",
+                _("Boernashly Logic Simulator\nCreated by Reef Boericke,") +
+                _(" Joe Nash, and Finn Ashley\n2021"),
+                _("About Logsim"),
                 wx.ICON_INFORMATION | wx.OK)
         if Id == wx.ID_OPEN:
             self.open_file_dialog()
@@ -558,7 +562,7 @@ class Gui(wx.Frame):
                 device_id = self.names.query(device_name)
             if(len(self.monitored_devices) == 1):
                 window = wx.MessageDialog(
-                    self, "You must have at least 1 monitor", style=wx.OK)
+                    self, _("You must have at least 1 monitor"), style=wx.OK)
                 window.ShowWindowModal()
                 return None
             self.previous_outputs.pop(device_index)
@@ -631,8 +635,8 @@ class Gui(wx.Frame):
         self.canvas.blank_file = False
         self.canvas.outputs = [[4 for i in range(10)]]
         self.canvas.length = 10
-        self.canvas.output_labels = ['No signal']
-        with wx.FileDialog(self, "Open bna file",
+        self.canvas.output_labels = [_('No signal')]
+        with wx.FileDialog(self, _("Open bna file"),
                            wildcard="bna files (*.bna)|*.bna",
                            style=wx.FD_OPEN |
                            wx.FD_FILE_MUST_EXIST)as fileDialog:
@@ -715,7 +719,7 @@ class Gui(wx.Frame):
                     wx.RadioButton(
                         self,
                         wx.ID_ANY,
-                        label="On",
+                        label=_("On"),
                         style=wx.RB_GROUP))
                 if(initial_switch_values[i]):
                     self.radiobuttons[-1].SetValue(True)
@@ -723,7 +727,7 @@ class Gui(wx.Frame):
                 self.single_switch_box.Add(self.radiobuttons[-1])
                 self.radiobuttons.append(
                     wx.RadioButton(
-                        self, wx.ID_ANY, label="Off"))
+                        self, wx.ID_ANY, label=_("Off")))
                 if(not initial_switch_values[i]):
                     self.radiobuttons[-1].SetValue(True)
                 self.single_switch_box.Add(self.radiobuttons[-1])
@@ -739,5 +743,6 @@ class Gui(wx.Frame):
         """Create a dialog box with the errors present if there are any."""
         error_report = error_db.report_errors(command_line=False,
                                               file_output=False)
+        translated_report = wx.GetTranslation(error_report)
         window = wx.MessageBox(error_report,
-                               caption='Errors logged in error_report.txt')
+                               caption=_('Errors logged in error_report.txt'))
