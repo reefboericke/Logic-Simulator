@@ -14,6 +14,7 @@ import wx.glcanvas as wxcanvas
 from OpenGL import GL, GLU, GLUT
 import os
 import numpy as np
+import math
 
 from names import Names
 from devices import Devices
@@ -78,6 +79,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.no_specular = [0.0, 0.0, 0.0, 1.0]
 
         self.blank_file = True
+        self.is_3d = False
 
         # Initialise variables for panning
         self.pan_x = 0
@@ -179,19 +181,26 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.render_text('0', 25, y_spacing * (2 * j + 1), 5)
             self.render_text('1', 25, y_spacing * (2 * j + 1) + y_step, 5)
             GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
-            #GL.glBegin(GL.GL_LINE_STRIP)
-            for i in range(length):
-                x = (i * x_step) + 50
-                x_next = (i * x_step) + x_step + 50
-                y = y_spacing * (2 * j + 1)
-                if(outputs[j][i] != 4):
-                    #GL.glVertex2f(x, y)
-                    #GL.glVertex2f(x_next, y)
-                    if(outputs[j][i] == 1):
-                        self.draw_cuboid(x, y, 5, x_step/2, 10, y_step)
-                    else:
-                        self.draw_cuboid(x, y, 5, x_step/2, 10, 1)
-            #GL.glEnd()
+            if(self.is_3d):
+                for i in range(length):
+                    x = (i * x_step) + 50
+                    x_next = (i * x_step) + x_step + 50
+                    y = y_spacing * (2 * j + 1)
+                    if(outputs[j][i] != 4):
+                            if(outputs[j][i] == 1):
+                                self.draw_cuboid(x, y, 5, x_step/2, 10, y_step)
+                            else:
+                                self.draw_cuboid(x, y, 5, x_step/2, 10, 1)
+            else:
+                GL.glBegin(GL.GL_LINE_STRIP)
+                for i in range(length):
+                    x = (i * x_step) + 50
+                    x_next = (i * x_step) + x_step + 50
+                    y = y_spacing * (2 * j + 1)
+                    if(outputs[j][i] != 4):
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x_next, y)
+                GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
         # and swap the back buffer to the front
@@ -270,8 +279,19 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.last_mouse_x = event.GetX()
             self.last_mouse_y = event.GetY()
         if event.Dragging():
-            self.pan_x += event.GetX() - self.last_mouse_x
-            self.pan_y -= event.GetY() - self.last_mouse_y
+            GL.glMatrixMode(GL.GL_MODELVIEW)
+            GL.glLoadIdentity()
+            x = event.GetX() - self.last_mouse_x
+            y = event.GetY() - self.last_mouse_y
+            if event.LeftIsDown():
+                GL.glRotatef(math.sqrt((x * x) + (y * y)), y, x, 0)
+            if event.MiddleIsDown():
+                GL.glRotatef((x + y), 0, 0, 1)
+            if event.RightIsDown():
+                self.pan_x += x
+                self.pan_y -= y
+            GL.glMultMatrixf(self.scene_rotate)
+            GL.glGetFloatv(GL.GL_MODELVIEW_MATRIX, self.scene_rotate)
             self.last_mouse_x = event.GetX()
             self.last_mouse_y = event.GetY()
             self.init = False
@@ -419,6 +439,8 @@ class Gui(wx.Frame):
         self.remove_monitor = wx.Button(self, wx.ID_ANY, "Zap Monitor")
         self.add_monitor = wx.Button(self, wx.ID_ANY, "Add Monitor")
         self.open_file = wx.Button(self, wx.ID_ANY, "Open file")
+        self.display_toggle = wx.Button(self, wx.ID_ANY, "Toggle 3D Display")
+        self.reset_display_button = wx.Button(self, wx.ID_ANY, "Reset Display")
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -428,6 +450,8 @@ class Gui(wx.Frame):
         self.remove_monitor.Bind(wx.EVT_BUTTON, self.on_remove_monitor)
         self.add_monitor.Bind(wx.EVT_BUTTON, self.on_add_monitor)
         self.open_file.Bind(wx.EVT_BUTTON, self.open_file_button)
+        self.display_toggle.Bind(wx.EVT_BUTTON, self.toggle_3d)
+        self.reset_display_button.Bind(wx.EVT_BUTTON, self.reset_display)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -535,6 +559,12 @@ class Gui(wx.Frame):
             wx.HORIZONTAL, self, label="File")
         self.open_file_box.Add(self.open_file)
         self.side_sizer.Add(self.open_file_box)
+
+        self.toggle_display_box = wx.StaticBoxSizer(
+            wx.HORIZONTAL, self, label='Toggle 2d/3d display')
+        self.toggle_display_box.Add(self.display_toggle)
+        self.toggle_display_box.Add(self.reset_display_button)
+        self.side_sizer.Add(self.toggle_display_box)
 
         os.remove(pathname)
 
@@ -843,3 +873,11 @@ class Gui(wx.Frame):
                                               file_output=False)
         window = wx.MessageBox(error_report,
                                caption='Errors logged in error_report.txt')
+
+    def toggle_3d(self, event):
+        self.canvas.is_3d = not self.canvas.is_3d
+        self.canvas.Refresh()
+
+    def reset_display(self, event):
+        self.canvas.zoom = 1
+        self.canvas.Refresh()
