@@ -28,9 +28,10 @@ from parse import Parser
 from userint import UserInterface
 from gui import Gui
 from errors import Error_Store
+from internationalisation import set_language
 import wx
 import builtins
-_ = wx.GetTranslation
+#_ = wx.GetTranslation
 
 def main(arg_list):
     """Parse the command line options and arguments specified in arg_list.
@@ -77,23 +78,9 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
-            if 'win' != sys.platform:
-                if os.environ['LANG'] == 'de_DE.utf8':
-                    # if unix and langauge flag set
-                    language = wx.LANGUAGE_GERMAN
-                else:
-                    language = wx.LANGUAGE_DEFAULT
-            else:
-                # no flag / windows system
-                language = wx.LANGUAGE_DEFAULT
-            builtins._ = wx.GetTranslation
-            locale = wx.Locale()
-            locale.Init(language)
             
-            locale.AddCatalogLookupPathPrefix('./locale')
+            locale = set_language(app)
 
-            locale.AddCatalog('gui')
-            print(locale.IsLoaded('gui'))
             gui = Gui(_("Logic Simulator"))
             gui.Show(True)
             app.MainLoop()
@@ -109,15 +96,7 @@ def main(arg_list):
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
                 app = wx.App()
-                builtins._ = wx.GetTranslation
-                locale = wx.Locale()
-
-                locale.Init(wx.LANGUAGE_DEFAULT)
-
-                locale.AddCatalogLookupPathPrefix('./locale')
-
-                locale.AddCatalog('gui')
-                print(locale.IsLoaded('gui'))
+                locale = set_language(app)
 
                 gui = Gui("Logic Simulator", path, names, devices, network,
                         monitors)
