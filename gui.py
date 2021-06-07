@@ -715,7 +715,13 @@ class Gui(wx.Frame):
                != self.devices.D_TYPE):
                 self.monitors.remove_monitor(device_id, None)
             else:
-                self.monitors.remove_monitor(device_id, self.devices.Q_ID)
+                output = device_name.split('.')[1]
+                if(output == "QBAR"):
+                    self.monitors.remove_monitor(
+                        device_id, self.devices.QBAR_ID)
+                else:
+                    self.monitors.remove_monitor(
+                        device_id, self.devices.Q_ID)
             self.unmonitored_devices.append(
                 self.monitored_devices[device_index])
             self.monitored_devices.pop(device_index)
@@ -752,8 +758,13 @@ class Gui(wx.Frame):
                     device_id, None, len(
                         self.canvas.outputs[0]))
             else:
-                self.monitors.make_monitor(
-                    device_id, self.devices.Q_ID, self.cycles)
+                output = device_name.split('.')[1]
+                if(output == "QBAR"):
+                    self.monitors.make_monitor(
+                        device_id, self.devices.QBAR_ID, self.cycles)
+                else:
+                    self.monitors.make_monitor(
+                        device_id, self.devices.Q_ID, self.cycles)
 
             self.monitored_devices.append(
                 self.unmonitored_devices[device_index])
