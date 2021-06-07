@@ -85,7 +85,8 @@ class Error:
             16: _('"connections"'),
             17: _('"devices"'),
             18: [_('a device'), _('"end"')],
-            19: '#'
+            19: '#',
+            20: _('more than just a comment')
         }
 
     def report(self):

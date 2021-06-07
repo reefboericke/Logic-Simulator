@@ -1,13 +1,6 @@
 
-Syntax Fehler in der Leitung 6: Ungültige Syntax, erwartet Ein Gerät oder “Ende” :
+Syntax Error on line 1: Invalid syntax, expected more than one comment:
 
-    and1: inputs = 2;
-       ^
-
-Syntax Fehler in der Leitung 7: Ungültige Syntax, erwartet “Start”:
-
-    AND and2: inputs = 2;
-      ^
-
-Semantischer Fehler in Datei: Alle Gate-Eingänge müssen verbunden sein.
+##
+ ^
 
