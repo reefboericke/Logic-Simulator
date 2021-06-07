@@ -6,6 +6,7 @@ from scanner import Scanner
 from names import Names
 from errors import Error
 from errors import Error_Store
+import wx
 
 
 @pytest.fixture

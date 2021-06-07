@@ -546,6 +546,9 @@ class Parser:
             return False
         else:
             self.currsymb = self.scanner.get_symbol()
+            if self.currsymb.type == self.scanner.EOF:
+                
+                
             self.BNAcodegrammar()
 
             if not self.error_db.report_errors():
