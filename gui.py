@@ -902,10 +902,12 @@ class Gui(wx.Frame):
                                caption='Errors logged in error_report.txt')
 
     def toggle_3d(self, event):
+        """Toggle whether the signal traces are rendered in 2d or 3d."""
         self.canvas.is_3d = not self.canvas.is_3d
         self.canvas.Refresh()
 
     def reset_display(self, event):
+        """Reset the pan zoom and rotation of the view."""
         self.canvas.zoom = 1
         self.canvas.pan_x = 0
         self.canvas.pan_y = 0
