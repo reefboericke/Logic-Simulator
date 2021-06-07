@@ -181,7 +181,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     self.output_labels[j], -self.GetClientSize().width/2 + 50, y_spacing*(2*j+1)+y_step*3/2, 5)
             self.render_text('0', -self.GetClientSize().width/2, y_spacing * (2 * j + 1), 5)
             self.render_text('1', -self.GetClientSize().width/2, y_spacing * (2 * j + 1) + y_step, 5)
-            GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is blue
+            GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is beige
             if(self.is_3d):
                 for i in range(length):
                     #i = q - length//2
@@ -374,6 +374,12 @@ class Gui(wx.Frame):
 
     display_errors(self, error_db): Function which displays a dialog box with
                                     the syntax errors if there are any present
+
+    toggle_3d(self, event): Event handler for when the user clicks the toggle
+                            3d button.
+
+    reset_display(self, event): Event handler for when the user clicks the 
+                                reset display button.
 
     """
 
