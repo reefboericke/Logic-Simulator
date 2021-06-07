@@ -186,8 +186,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             if(self.is_3d):
                 for i in range(length):
                     #i = q - length//2
-                    x = (i * x_step) + 50
-                    x_next = (i * x_step) + x_step + 50
+                    x = (i * x_step) + 50 - self.GetClientSize().width/2
+                    x_next = (i * x_step) + x_step + 50 - self.GetClientSize().width/2
                     y = y_spacing * (2 * j + 1)
                     if(outputs[j][i] != 4):
                             if(outputs[j][i] == 1):
@@ -198,8 +198,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glBegin(GL.GL_LINE_STRIP)
                 for i in range(length):
                     #i = q - length//2
-                    x = (i * x_step) + 50
-                    x_next = (i * x_step) + x_step + 50
+                    x = (i * x_step) + 50 - self.GetClientSize().width/2
+                    x_next = (i * x_step) + x_step + 50 - self.GetClientSize().width/2
                     y = y_spacing * (2 * j + 1) + y_step * outputs[j][i]
                     if(outputs[j][i] != 4):
                         GL.glVertex2f(x, y)
@@ -579,6 +579,7 @@ class Gui(wx.Frame):
         self.toggle_display_box = wx.StaticBoxSizer(
             wx.HORIZONTAL, self, label='Toggle 2d/3d display')
         self.toggle_display_box.Add(self.display_toggle)
+        self.toggle_display_box.Add(wx.StaticText(self, wx.ID_ANY, "  "))
         self.toggle_display_box.Add(self.reset_display_button)
         self.side_sizer.Add(self.toggle_display_box)
 
@@ -689,7 +690,7 @@ class Gui(wx.Frame):
                                 self.monitors.monitors_dictionary][i]
                                for i in range(len(self.previous_outputs))]
         self.canvas.output_labels = self.monitored_devices
-        print(self.canvas.outputs)
+        
         if self.canvas.outputs != [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4]]:
             self.canvas.render(self.canvas.outputs,
                                len(self.canvas.outputs[0]))
