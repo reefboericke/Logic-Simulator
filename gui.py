@@ -89,7 +89,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Initialise the scene rotation matrix
         self.scene_rotate = np.identity(4, 'f')
-        self.total_rotation = []
 
         # Initialise variables for zooming
         self.zoom = 1
@@ -287,15 +286,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             GL.glLoadIdentity()
             x = event.GetX() - self.last_mouse_x
             y = event.GetY() - self.last_mouse_y
-            if event.LeftIsDown():
+            if event.RightIsDown():
                 if(self.is_3d):
                     GL.glRotatef(math.sqrt((x * x) + (y * y)), y, x, 0)
-                    self.total_rotation.append((math.sqrt((x*x) + (y*y)), y, x, 0))
             if event.MiddleIsDown():
                 if(self.is_3d):
                     GL.glRotatef((x + y), 0, 0, 1)
-                    self.total_rotation.append(((x+y), 0, 0, 1))
-            if event.RightIsDown():
+            if event.LeftIsDown():
                 self.pan_x += x
                 self.pan_y -= y
             GL.glMultMatrixf(self.scene_rotate)
@@ -336,12 +333,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glEnable(GL.GL_LIGHTING)
 
     def reset_rotation(self):
-        for i in range(len(self.total_rotation)):
-            step = self.total_rotation[-i]
-            GL.glRotatef(-step[0], step[1], step[2], step[3])
-        self.total_rotation = []
-        self.init = False
-        self.Refresh()
+        GL.glMatrixMode(GL.GL_MODELVIEW)
+        GL.glLoadIdentity()
 
 
 class Gui(wx.Frame):
@@ -911,4 +904,5 @@ class Gui(wx.Frame):
         self.canvas.pan_x = 0
         self.canvas.pan_y = 0
         self.canvas.reset_rotation()
+        self.canvas.init = False
         self.canvas.Refresh()
