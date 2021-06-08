@@ -594,7 +594,7 @@ class Gui(wx.Frame):
         self.side_sizer.Add(self.toggle_display_box)
 
         os.remove(pathname)
-
+        
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
 
@@ -904,6 +904,8 @@ class Gui(wx.Frame):
             self.previous_outputs = []
             for i in range(len(self.monitored_devices)):
                 self.previous_outputs.append([])
+        
+        self.canvas.reset_camera()
 
     def display_errors(self, error_db):
         """Create a dialog box with the errors present if there are any."""
