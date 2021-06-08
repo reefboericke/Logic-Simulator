@@ -333,6 +333,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glEnable(GL.GL_LIGHTING)
 
     def reset_rotation(self):
+        """Reset the rotation of the camera."""
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
         GL.glGetFloatv(GL.GL_MODELVIEW_MATRIX, self.scene_rotate)
