@@ -171,27 +171,28 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # Draw a sample signal trace
-        x_step = (self.GetClientSize().width - 60) / length
+        x_step = (self.GetClientSize().width * 0.7) / length
         y_spacing = (self.GetClientSize().height) / (2 * len(outputs))
         y_step = 50  # Determines the vertical size of the signal traces
 
         for p in range(len(outputs)):
             j = p - len(outputs)//2
+            GL.glColor3f(0, 0, 0)
             if(len(outputs) > 6):
                 self.render_text(
-                    self.output_labels[j], -self.GetClientSize().width/2 + 5, y_spacing*(2*j+1)+y_step/2, 5)
+                    self.output_labels[j], -self.GetClientSize().width/2.5 + 5, y_spacing*(2*j)+y_step/2, 5)
             else:
                 self.render_text(
-                    self.output_labels[j], -self.GetClientSize().width/2 + 50, y_spacing*(2*j+1)+y_step*3/2, 5)
-            self.render_text('0', -self.GetClientSize().width/2, y_spacing * (2 * j + 1), 5)
-            self.render_text('1', -self.GetClientSize().width/2, y_spacing * (2 * j + 1) + y_step, 5)
+                    self.output_labels[j], -self.GetClientSize().width/2.5 + 50, y_spacing*(2*j)+y_step*3/2, 5)
+            self.render_text('0', -self.GetClientSize().width/2.5, y_spacing * (2 * j), 5)
+            self.render_text('1', -self.GetClientSize().width/2.5, y_spacing * (2 * j) + y_step, 5)
             if(self.is_3d):
                 GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is beige
                 for i in range(length):
                     #i = q - length//2
-                    x = (i * x_step) + 50 - self.GetClientSize().width/2
-                    x_next = (i * x_step) + x_step + 50 - self.GetClientSize().width/2
-                    y = y_spacing * (2 * j + 1)
+                    x = (i * x_step) + 50 - self.GetClientSize().width/2.5
+                    x_next = x + x_step
+                    y = y_spacing * (2 * j)# - self.GetClientSize().height/len(outputs)
                     if(outputs[j][i] != 4):
                             if(outputs[j][i] == 1):
                                 self.draw_cuboid(x, y, 5, x_step/2, 25, y_step)
@@ -202,9 +203,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glBegin(GL.GL_LINE_STRIP)
                 for i in range(length):
                     #i = q - length//2
-                    x = (i * x_step) + 50 - self.GetClientSize().width/2
-                    x_next = (i * x_step) + x_step + 50 - self.GetClientSize().width/2
-                    y = y_spacing * (2 * j + 1) + y_step * outputs[j][i]
+                    x = (i * x_step) + 50 - self.GetClientSize().width/2.5
+                    x_next = x + x_step
+                    y = y_spacing * (2 * j) + y_step * outputs[j][i]# - self.GetClientSize().height/len(outputs)
                     if(outputs[j][i] != 4):
                         GL.glVertex2f(x, y)
                         GL.glVertex2f(x_next, y)
@@ -594,7 +595,7 @@ class Gui(wx.Frame):
         self.side_sizer.Add(self.toggle_display_box)
 
         os.remove(pathname)
-        
+
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
 
