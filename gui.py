@@ -172,8 +172,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Draw a sample signal trace
         x_step = (self.GetClientSize().width * 0.7) / length
-        y_spacing = (self.GetClientSize().height) / (2 * len(outputs))
-        y_step = 50  # Determines the vertical size of the signal traces
+        y_spacing = (self.GetClientSize().height) / (2.5 * len(outputs))
+        if(len(outputs) > 7):
+            y_step = self.GetClientSize().height/20
+        else:
+            y_step = 50  # Determines the vertical size of the signal traces
 
         for p in range(len(outputs)):
             j = p - len(outputs)//2
