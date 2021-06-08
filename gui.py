@@ -51,6 +51,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
     render_text(self, text, x_pos, y_pos): Handles text drawing
                                            operations.
+
+    reset_camera(self): Resets the rotation and position of the
+                        camera.
     """
 
     def __init__(self, parent, devices, monitors):
@@ -164,6 +167,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             self.init = True
 
         # Clear everything
+        GL.glClearColor(1, 1, 1, 0)
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # Draw a sample signal trace
@@ -181,8 +185,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     self.output_labels[j], -self.GetClientSize().width/2 + 50, y_spacing*(2*j+1)+y_step*3/2, 5)
             self.render_text('0', -self.GetClientSize().width/2, y_spacing * (2 * j + 1), 5)
             self.render_text('1', -self.GetClientSize().width/2, y_spacing * (2 * j + 1) + y_step, 5)
-            GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is beige
             if(self.is_3d):
+                GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is beige
                 for i in range(length):
                     #i = q - length//2
                     x = (i * x_step) + 50 - self.GetClientSize().width/2
@@ -194,6 +198,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                             else:
                                 self.draw_cuboid(x, y, 5, x_step/2, 25, 1)
             else:
+                GL.glColor3f(0, 0, 1)
                 GL.glBegin(GL.GL_LINE_STRIP)
                 for i in range(length):
                     #i = q - length//2
@@ -332,12 +337,16 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         GL.glEnable(GL.GL_LIGHTING)
 
-    def reset_rotation(self):
-        """Reset the rotation of the camera."""
+    def reset_camera(self):
+        """Reset the rotation and position of the camera."""
+        self.zoom = 1
+        self.pan_x = 0
+        self.pan_y = 0
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
         GL.glGetFloatv(GL.GL_MODELVIEW_MATRIX, self.scene_rotate)
-
+        self.init = False
+        self.Refresh()
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
@@ -910,9 +919,4 @@ class Gui(wx.Frame):
 
     def reset_display(self, event):
         """Reset the pan zoom and rotation of the view."""
-        self.canvas.zoom = 1
-        self.canvas.pan_x = 0
-        self.canvas.pan_y = 0
-        self.canvas.reset_rotation()
-        self.canvas.init = False
-        self.canvas.Refresh()
+        self.canvas.reset_camera()
