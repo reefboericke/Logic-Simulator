@@ -335,6 +335,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     def reset_rotation(self):
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
+        GL.glGetFloatv(GL.GL_MODELVIEW_MATRIX, self.scene_rotate)
 
 
 class Gui(wx.Frame):
