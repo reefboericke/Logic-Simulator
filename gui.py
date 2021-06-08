@@ -577,9 +577,9 @@ class Gui(wx.Frame):
         self.side_sizer.Add(self.open_file_box)
 
         self.toggle_display_box = wx.StaticBoxSizer(
-            wx.HORIZONTAL, self, label='Toggle 2d/3d display')
+            wx.HORIZONTAL, self, label='Display Options')
         self.toggle_display_box.Add(self.display_toggle)
-        self.toggle_display_box.Add(wx.StaticText(self, wx.ID_ANY, "  "))
+        self.toggle_display_box.Add(wx.StaticText(self, wx.ID_ANY, "    "))
         self.toggle_display_box.Add(self.reset_display_button)
         self.side_sizer.Add(self.toggle_display_box)
 
