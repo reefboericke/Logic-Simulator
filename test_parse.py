@@ -12,6 +12,7 @@ from monitors import Monitors
 import os
 import wx
 
+
 @pytest.fixture
 def parsed_network():
     """Return parser and error objects operating on passed file
