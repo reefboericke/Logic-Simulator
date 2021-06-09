@@ -31,7 +31,8 @@ from errors import Error_Store
 from internationalization import set_language
 import wx
 import builtins
-#_ = wx.GetTranslation
+# _ = wx.GetTranslation
+
 
 def main(arg_list):
     """Parse the command line options and arguments specified in arg_list.
@@ -78,7 +79,7 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
-            
+
             locale = set_language(app)
 
             gui = Gui(_("Logic Simulator"))
@@ -92,14 +93,15 @@ def main(arg_list):
             [path] = arguments
             scanner = Scanner(path, names)
             error_db = Error_Store(scanner)
-            parser = Parser(names, devices, network, monitors, scanner, error_db)
+            parser = Parser(names, devices, network,
+                            monitors, scanner, error_db)
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
                 app = wx.App()
                 locale = set_language(app)
 
                 gui = Gui("Logic Simulator", path, names, devices, network,
-                        monitors)
+                          monitors)
                 gui.Show(True)
                 app.MainLoop()
 
