@@ -45,13 +45,13 @@ class Error:
         self.error_id = error_id
 
         self.semantic_errors = {
-            0: _('Invalid number of inputs to gate.'),
-            1: _('Invalid clock period.'),
-            2: _('Invalid initial switch value.'),
+            0: _('Invalid number of inputs to gate, must be 1-16.'),
+            1: _('Invalid clock period, must be non-zero.'),
+            2: _('Invalid initial switch value, must be 0 or 1.'),
             3: _('Incorrect number of arguments supplied for device.'),
-            4: _('Incorrect argument provided for gate.'),
-            5: _('Incorrect argument provided for clock.'),
-            6: _('Incorrect argument provided for switch.'),
+            4: _('Incorrect argument provided for gate, requires "inputs".'),
+            5: _('Incorrect argument provided for clock, requires "period".'),
+            6: _('Incorrect argument provided for switch, requires "initial".'),
             7: _('Invalid device name.'),
             8: _('Two devices assigned same name.'),
             9: _('Left side of a connection must be an output.'),
@@ -63,7 +63,9 @@ class Error:
             15: _('All gate inputs must be connected.'),
             16: _('No device with specified name.'),
             17: _('Monitor already connected to specified device.'),
-            18: _('Specified device doesn\'t exist.')
+            18: _('Specified device doesn\'t exist.'),
+            19: _('Incorrect argument provided for signal generator device, requires "waveform".'),
+            20: _('Invalid waveform for signal generator device, must consist of 0s and/or 1s.')
         }
 
         self.syntax_errors = {
