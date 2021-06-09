@@ -205,12 +205,16 @@ class Error_Store():
 
     def report_errors(self, command_line=True, file_output=True):
         """Build full error text of entire BNA file."""
+        self.scanner.file.close()
         if self.no_errors == 0:
             return False
         else:
             self.sort_errors()
             error_count_message = '\nLogic circuit failed to load due to presence of errors.'
-            error_count_message += '\nThere were ' + str(self.no_errors) + ' errors detected'
+            if self.no_errors == 1:
+                error_count_message += '\nThere was 1 error detected'
+            else:
+                error_count_message += '\nThere were ' + str(self.no_errors) + ' errors detected'
             total_error_text_terminal = error_count_message + ':\n\n'
             total_error_text_txt = error_count_message + ':\n\n'
             total_error_text_gui = error_count_message + ' (to see in-line location of error, please refer to the terminal or error_report.txt):\n\n'
