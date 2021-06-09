@@ -3,6 +3,7 @@ import os
 import wx
 import builtins
 
+
 def set_language(app):
     language = wx.LANGUAGE_DEFAULT
     if sys.platform.capitalize() in ('Linux', 'Darwin'):
@@ -14,7 +15,7 @@ def set_language(app):
     builtins._ = wx.GetTranslation
     locale = wx.Locale()
     locale.Init(language)
-    
+
     locale.AddCatalogLookupPathPrefix('./locale')
 
     locale.AddCatalog('gui')
