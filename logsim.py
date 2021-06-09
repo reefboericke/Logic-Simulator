@@ -77,7 +77,7 @@ def main(arg_list):
 
     if not options:  # no option given, use the graphical user interface
 
-        if len(arguments) == 0:  # wrong number of arguments
+        if len(arguments) == 0:  # No arguments
             app = wx.App()
 
             locale = set_language(app)
@@ -89,7 +89,7 @@ def main(arg_list):
             print("Error: two many arguments provided\n")
             print(usage_message)
             sys.exit()
-        elif len(arguments) == 1:
+        elif len(arguments) == 1:  # File provided
             [path] = arguments
             scanner = Scanner(path, names)
             error_db = Error_Store(scanner)
