@@ -53,8 +53,14 @@ class Network:
     execute_clock(self, device_id): Simulates a clock and updates its output
                                     signal value.
 
+    execute_siggen(self, device_id): Simulates a signal generator and updates
+                                     its output signal value.
+
     update_clocks(self): If it is time to do so, sets clock signals to RISING
                          or FALLING.
+
+    update_siggens(self): If it is time to do so, sets signal generator
+                          signals to RISING or FALLING.
 
     execute_network(self): Executes all the devices in the network for one
                            simulation cycle.
@@ -382,12 +388,12 @@ class Network:
             if device.clock_counter == len(waveform):
                 device.clock_counter = 0
             output_signal = self.get_output_signal(device_id,
-                                                       output_id=None)
+                                                   output_id=None)
             if(output_signal == self.devices.HIGH and
                waveform[device.clock_counter] == '0'):
                 device.outputs[None] = self.devices.FALLING
             elif(output_signal == self.devices.LOW and
-               waveform[device.clock_counter] == '1'):
+                 waveform[device.clock_counter] == '1'):
                 device.outputs[None] = self.devices.RISING
             device.clock_counter += 1
 
@@ -406,7 +412,7 @@ class Network:
         nor_devices = self.devices.find_devices(self.devices.NOR)
         xor_devices = self.devices.find_devices(self.devices.XOR)
 
-        # This sets clock signals to RISING or FALLING, where necessary
+        # This sets clock and siggen signals to RISING/FALLING, where necessary
         self.update_clocks()
         self.update_siggens()
 
@@ -430,7 +436,7 @@ class Network:
             for device_id in clock_devices:  # complete clock executions
                 if not self.execute_clock(device_id):
                     return False
-            for device_id in siggen_devices:  # complete clock executions
+            for device_id in siggen_devices:  # complete siggen executions
                 if not self.execute_siggen(device_id):
                     return False
             for device_id in and_devices:  # execute AND gate devices

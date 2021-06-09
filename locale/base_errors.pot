@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-06-06 11:29+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:46
+msgid "Invalid number of inputs to gate."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:47
+msgid "Invalid clock period."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:48
+msgid "Invalid initial switch value."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:49
+msgid "Incorrect number of arguments supplied for device."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:50
+msgid "Incorrect argument provided for gate."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:51
+msgid "Incorrect argument provided for clock."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:52
+msgid "Incorrect argument provided for switch."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:53
+msgid "Invalid device name."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:54
+msgid "Two devices assigned same name."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:55
+msgid "Left side of a connection must be an output."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:56
+msgid "Right side of a connection must be an input."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:57
+msgid "Output not specified DTYPE device."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:58
+msgid "Unexpected output specified for non-DTYPE device."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:59
+msgid "Invalid input name for device."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:60
+msgid "Multiple outputs connected to input."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:61
+msgid "All gate inputs must be connected."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:62
+msgid "No device with specified name."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:63
+msgid "Monitor already connected to specified device."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:64
+msgid "Specified device doesn't exist."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:68
+msgid "name"
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:73
+msgid "a valid input"
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:75
+msgid "device variable"
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:77
+msgid "non-negative integer"
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:78
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:86
+msgid "a device"
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:80
+msgid "\"begin\""
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:81
+msgid "\"monitors\""
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:82
+msgid "a name"
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:82
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:86
+msgid "\"end\""
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:84
+msgid "\"connections\""
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:85
+msgid "\"devices\""
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:94
+msgid " Error on line "
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:100
+msgid " Invalid syntax, expected "
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:108
+msgid " or "
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:123
+msgid "Semantic Error in file: All gate inputs must be connected."
+msgstr ""
+
+#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:129
+msgid "Syntax error in file: Comment has not been closed."
+msgstr ""
+
+msgid "Syntax"
+msgstr ""
+
+msgid "Semantic"
+msgstr
+

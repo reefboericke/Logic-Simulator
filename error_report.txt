@@ -1,3 +1,6 @@
 
-Syntax error in file: Comment has not been closed.
+Syntax Error on line 1: Invalid syntax, expected more than one comment:
+
+##
+ ^
 

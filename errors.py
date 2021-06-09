@@ -9,7 +9,9 @@ Error - stores details of an error including its type and location.
 Error_Store - maintains database of errors, providing reporting and
               interfacing.
 """
-
+import gettext
+import wx
+_ = wx.GetTranslation
 
 class Error:
     """Store details of an error including type and location.
@@ -42,63 +44,62 @@ class Error:
         self.error_id = error_id
 
         self.semantic_errors = {
-            0: 'Invalid number of inputs to gate.',
-            1: 'Invalid clock period.',
-            2: 'Invalid initial switch value.',
-            3: 'Incorrect number of arguments supplied for device.',
-            4: 'Incorrect argument provided for gate.',
-            5: 'Incorrect argument provided for clock.',
-            6: 'Incorrect argument provided for switch.',
-            7: 'Invalid device name.',
-            8: 'Two devices assigned same name.',
-            9: 'Left side of a connection must be an output.',
-            10: 'Right side of a connection must be an input.',
-            11: 'Output not specified DTYPE device.',
-            12: 'Unexpected output specified for non-DTYPE device.',
-            13: 'Invalid input name for device.',
-            14: 'Multiple outputs connected to input.',
-            15: 'All gate inputs must be connected.',
-            16: 'No device with specified name.',
-            17: 'Monitor already connected to specified device.',
-            18: 'Specified device doesn\'t exist.',
-            19: 'Incorrect argument provided for signal generator device.',
-            20: 'Invalid waveform for signal generator device.'
+            0: _('Invalid number of inputs to gate.'),
+            1: _('Invalid clock period.'),
+            2: _('Invalid initial switch value.'),
+            3: _('Incorrect number of arguments supplied for device.'),
+            4: _('Incorrect argument provided for gate.'),
+            5: _('Incorrect argument provided for clock.'),
+            6: _('Incorrect argument provided for switch.'),
+            7: _('Invalid device name.'),
+            8: _('Two devices assigned same name.'),
+            9: _('Left side of a connection must be an output.'),
+            10: _('Right side of a connection must be an input.'),
+            11: _('Output not specified DTYPE device.'),
+            12: _('Unexpected output specified for non-DTYPE device.'),
+            13: _('Invalid input name for device.'),
+            14: _('Multiple outputs connected to input.'),
+            15: _('All gate inputs must be connected.'),
+            16: _('No device with specified name.'),
+            17: _('Monitor already connected to specified device.'),
+            18: _('Specified device doesn\'t exist.')
         }
 
         self.syntax_errors = {
-            0: 'name',
+            0: _('name'),
             1: '";"',  # for monitors and connections
             2: '"."',
             3: ['"Q"', '"QBAR"'],
             4: ['"."', '"->"'],
-            5: 'a valid input',
+            5: _('a valid input'),
             6: '":"',
-            7: 'device variable',
+            7: _('device variable'),
             8: '"="',
-            9: 'non-negative integer',
-            10: 'a device',
+            9: _('non-negative integer'),
+            10: _('a device'),
             11: ['":"', '";"'],  # for devices
-            12: '"begin"',
-            13: '"monitors"',
-            14: ['a name', '"end"'],
+            12: _('"begin"'),
+            13: _('"monitors"'),
+            14: [_('a name'), _('"end"')],
             15: '"->"',
-            16: '"connections"',
-            17: '"devices"',
-            18: ['a device', '"end"'],
-            19: '#'
+            16: _('"connections"'),
+            17: _('"devices"'),
+            18: [_('a device'), _('"end"')],
+            19: '#',
+            20: _('more than just a comment')
         }
 
     def report(self):
         """Build error message for reporting via terminal or GUI."""
         error_text = ''
-        error_text += self.error_type.capitalize() + \
-            ' Error on line ' + str(self.location[0]) + ':'
+        error_text += _(self.error_type.capitalize()) + \
+            _(' Error on line ') + str(self.location[0]) + ':'
         if self.error_type == 'semantic':
             specific_error_text = self.semantic_errors[self.error_id]
             error_text += ' ' + specific_error_text
         elif self.error_type == 'syntax':
             specific_error_text = self.syntax_errors[self.error_id]
-            error_text += ' Invalid syntax, expected '
+            error_text += _(' Invalid syntax, expected ')
             if type(specific_error_text) == str:
                 error_text += specific_error_text + ':'
             else:  # expect a list now
@@ -106,7 +107,7 @@ class Error:
                     if i == (len(specific_error_text) - 1):
                         error_text += specific_error_text[i]
                     else:
-                        error_text += specific_error_text[i] + ' or '
+                        error_text += specific_error_text[i] + _(' or ')
                 error_text += ' :'
 
         error_text += '\n\n' + str(self.location[1])
@@ -121,15 +122,16 @@ class Error:
         error_text_txt += '^'
 
         if self.error_type == 'semantic' and self.error_id == 15:
-            msg = 'Semantic Error in file: All gate inputs must be connected.'
+            msg = _('Semantic Error in file: All gate inputs must be connected.')
             error_text_txt = msg
             error_text_terminal = msg
             error_text_gui = msg
 
         if self.error_type == 'syntax' and self.error_id == 19:
-            msg = 'Syntax error in file: Comment has not been closed.'
+            msg = _('Syntax error in file: Comment has not been closed.')
             error_text_txt = msg
             error_text_terminal = msg
+            error_text_gui = msg
 
         return [error_text_terminal, error_text_txt, error_text_gui]
 

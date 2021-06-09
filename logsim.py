@@ -12,10 +12,12 @@ Graphical user interface: logsim.py <file path>
 """
 import getopt
 from os import error
+import os
 import sys
 import linecache
 
 import wx
+from wx.core import LANGUAGE_GERMAN
 
 from names import Names
 from devices import Devices
@@ -26,7 +28,10 @@ from parse import Parser
 from userint import UserInterface
 from gui import Gui
 from errors import Error_Store
-
+from internationalization import set_language
+import wx
+import builtins
+#_ = wx.GetTranslation
 
 def main(arg_list):
     """Parse the command line options and arguments specified in arg_list.
@@ -73,7 +78,10 @@ def main(arg_list):
 
         if len(arguments) == 0:  # wrong number of arguments
             app = wx.App()
-            gui = Gui("Logic Simulator")
+            
+            locale = set_language(app)
+
+            gui = Gui(_("Logic Simulator"))
             gui.Show(True)
             app.MainLoop()
         elif len(arguments) > 1:
@@ -88,6 +96,8 @@ def main(arg_list):
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
                 app = wx.App()
+                locale = set_language(app)
+
                 gui = Gui("Logic Simulator", path, names, devices, network,
                         monitors)
                 gui.Show(True)

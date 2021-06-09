@@ -10,7 +10,7 @@ from network import Network
 from devices import Devices
 from monitors import Monitors
 import os
-
+import wx
 
 @pytest.fixture
 def parsed_network():
@@ -47,14 +47,19 @@ def test_device_semantic_errors(parsed_network):
         1,  # error type 0
         1,  # type 1
         1,  # type 2
-        11,  # type 3
-        2,  # type 4
-        2,  # type 5
-        2,  # type 6
-        3,  # type 7
-        1   # type 8
+        14,  # type 3
+        3,  # type 4
+        3,  # type 5
+        3,  # type 6
+        4,  # type 7
+        1,  # type 8
+        0, 0, 0, 0, 0, 0,  # types 9-14
+        1,  # type 15
+        0, 0, 0,  # types 16-18
+        3,  # type 19
+        1  # type 20
     ]
-    for i in range(9):
+    for i in range(21):
         assert(error_db.query_semantics(i) ==
                expected_semantic_error_counts[i])
 

@@ -243,7 +243,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # correct syntax, if semantically correct, add to network:
             if self.network_construction:
-                self.err_return = self.network.make_connection(self.currdevicenameid1,
+                self.network.make_connection(self.currdevicenameid1,
                                              self.curroutputid,
                                              currdevicenameid2, currinputid)
         else:
@@ -306,13 +306,16 @@ class Parser:
                 # incorrect number of inputs to gate
                 self.encounter_error('semantic', 0, recover=False)
             elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
-                 and set([int(i) for i in self.currsymb.id]) not in
-                 [{0}, {1}, {0, 1}]):
-                # switch has invalid initial state
+                 and set([i for i in self.currsymb.id]) not in
+                 [{'0'}, {'1'}, {'0', '1'}]):
+                # siggen has invalid waveform
                 self.encounter_error('semantic', 20, recover=False)
-            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID):
+
+            if(self.currdevicetypeid == self.scanner.SIGGEN_ID):
+                # if device is siggen, keep waveform value in string
                 self.currvariablevalue = self.currsymb.id
             else:
+                # otherwise convert to integer
                 self.currvariablevalue = int(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -543,6 +546,11 @@ class Parser:
             return False
         else:
             self.currsymb = self.scanner.get_symbol()
+            if self.currsymb.type == self.scanner.EOF:
+                self.encounter_error('syntax', 20, recover=False)
+                self.error_db.report_errors()
+                return False
+
             self.BNAcodegrammar()
 
             if not self.error_db.report_errors():
