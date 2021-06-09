@@ -13,6 +13,7 @@ import gettext
 import wx
 _ = wx.GetTranslation
 
+
 class Error:
     """Store details of an error including type and location.
 
@@ -122,7 +123,7 @@ class Error:
         error_text_txt += '^'
 
         if self.error_type == 'semantic' and self.error_id == 15:
-            msg = _('Semantic Error in file: All gate inputs must be connected.')
+            msg = _('Semantic Error in file: All inputs must be connected.')
             error_text_txt = msg
             error_text_terminal = msg
             error_text_gui = msg
