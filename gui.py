@@ -813,7 +813,6 @@ class Gui(wx.Frame):
 
     def open_file_dialog(self):
         """Open a new BNA file via a GUI."""
-        self.canvas.blank_file = False
         self.canvas.outputs = [[4 for i in range(10)]]
         self.canvas.length = 10
         self.canvas.output_labels = [_('No signal')]
@@ -824,6 +823,11 @@ class Gui(wx.Frame):
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
             pathname = fileDialog.GetPath()
+
+            if(os.path.getsize(pathname) == 0):
+                wx.MessageBox("Please choose a non-empty file",
+                               caption='Empty File')
+                return
 
             names1 = Names()
             devices1 = Devices(names1)
@@ -841,6 +845,8 @@ class Gui(wx.Frame):
                 error_db)
             if not parser.parse_network():
                 self.display_errors(error_db)
+
+            self.canvas.blank_file = False
 
             self.network = network1
             self.devices = devices1
