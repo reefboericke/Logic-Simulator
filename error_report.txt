@@ -1,6 +1,23 @@
 
-Syntax Error on line 1: Invalid syntax, expected more than one comment:
+Syntax Error on line 3: Invalid syntax, expected ";":
 
-##
- ^
+	AND G2: inputs = 2;
+      ^
+
+Syntax Error on line 9: Invalid syntax, expected a device or "end" :
+
+	 S: initial = 0;
+     ^
+
+Syntax Error on line 10: Invalid syntax, expected "begin":
+
+end devices;
+  ^
+
+Syntax Error on line 12: Invalid syntax, expected "monitors":
+
+begin connections:
+                ^
+
+Semantic Error in file: All inputs must be connected.
 

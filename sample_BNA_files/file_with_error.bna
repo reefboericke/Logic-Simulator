@@ -8,14 +8,14 @@ begin devices:
     AND and3: inputs = 3;
     OR or1: inputs = 3;
     CLOCK C1: period = 1;
-    SWITCH rst: initial = 0;
+    SWITCH rst: initial = 0
     SWITCH set: initial = 0;
 end devices;
 
 begin connections:
     # connections required for Q2 = MSB #
     Q2.Q -> and1.I1;
-    Q1.QBAR -> and1.I2;
+    Q.QBAR -> and1.I2;
     Q2.Q -> and2.I1;
     Q0.QBAR -> and2.I2;
     Q2.QBAR -> and3.I1;
