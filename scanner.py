@@ -91,7 +91,7 @@ class Scanner:
          self.CLEAR_ID, self.Q_ID, self.QBAR_ID, self.inputs_ID,
          self.period_ID, self.initial_ID, self.SIGGEN_ID,
          self.waveform_ID] = self.names.lookup(self.keywords_list)
-        
+
         # define variables needed to track where in file
         self.current_character = ""
         self.no_EOL = 1
