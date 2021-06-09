@@ -466,15 +466,15 @@ class Gui(wx.Frame):
         self.canvas = MyGLCanvas(self, devices, monitors)
 
         # Configure the widgets
-        self.text = wx.StaticText(self, wx.ID_ANY, " Number of Cycles")
+        self.text = wx.StaticText(self, wx.ID_ANY, _(" Number of Cycles"))
         self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
-        self.run_button = wx.Button(self, wx.ID_ANY, "Run")
-        self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
-        self.remove_monitor = wx.Button(self, wx.ID_ANY, "Zap Monitor")
-        self.add_monitor = wx.Button(self, wx.ID_ANY, "Add Monitor")
-        self.open_file = wx.Button(self, wx.ID_ANY, "Open file")
-        self.display_toggle = wx.Button(self, wx.ID_ANY, "Toggle 3D Display")
-        self.reset_display_button = wx.Button(self, wx.ID_ANY, "Reset Display")
+        self.run_button = wx.Button(self, wx.ID_ANY, _("Run"))
+        self.continue_button = wx.Button(self, wx.ID_ANY, _("Continue"))
+        self.remove_monitor = wx.Button(self, wx.ID_ANY, _("Zap Monitor"))
+        self.add_monitor = wx.Button(self, wx.ID_ANY, _("Add Monitor"))
+        self.open_file = wx.Button(self, wx.ID_ANY, _("Open file"))
+        self.display_toggle = wx.Button(self, wx.ID_ANY, _("Toggle 3D Display"))
+        self.reset_display_button = wx.Button(self, wx.ID_ANY, _("Reset Display"))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -595,7 +595,7 @@ class Gui(wx.Frame):
         self.side_sizer.Add(self.open_file_box)
 
         self.toggle_display_box = wx.StaticBoxSizer(
-            wx.HORIZONTAL, self, label='Display Options')
+            wx.HORIZONTAL, self, label=_('Display Options'))
         self.toggle_display_box.Add(self.display_toggle)
         self.toggle_display_box.Add(wx.StaticText(self, wx.ID_ANY, "    "))
         self.toggle_display_box.Add(self.reset_display_button)

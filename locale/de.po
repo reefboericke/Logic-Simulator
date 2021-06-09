@@ -282,3 +282,12 @@ msgstr "Zoomen"
 
 msgid "Bring All to Front"
 msgstr "Bringen Sie alle nach vorne"
+
+msgid "Display Options"
+msgstr "Anzeigeoptionen"
+
+msgid "Toggle 3D Display"
+msgstr "3D-Anzeige umschalten"
+
+msgid "Reset Display"
+msgstr "Anzeige zurücksetzen"

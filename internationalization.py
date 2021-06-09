@@ -1,3 +1,4 @@
+"""Called by logsim.py to set up language of GUI as its built."""
 import sys
 import os
 import wx
@@ -5,6 +6,7 @@ import builtins
 
 
 def set_language(app):
+    """Set language of the GUI by checking command line and OS."""
     language = wx.LANGUAGE_DEFAULT
     if sys.platform.capitalize() in ('Linux', 'Darwin'):
         if os.environ['LANG'] == 'de_DE.utf8':
@@ -16,6 +18,7 @@ def set_language(app):
     locale = wx.Locale()
     locale.Init(language)
 
+    # if loading German, check it happens correctly
     if language ==  wx.LANGUAGE_GERMAN:
         locale.AddCatalogLookupPathPrefix('./locale')
         locale.AddCatalog('gui')
