@@ -601,6 +601,9 @@ class Gui(wx.Frame):
         self.toggle_display_box.Add(self.reset_display_button)
         self.side_sizer.Add(self.toggle_display_box)
 
+        if(len(self.monitored_devices)):
+            self.canvas.blank_file = False
+
         os.remove(pathname)
 
         self.SetSizeHints(600, 600)
@@ -626,6 +629,8 @@ class Gui(wx.Frame):
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
+        if(self.canvas.blank_file):
+            return None
         for i in range(len(self.previous_outputs)):
             self.previous_outputs[i] = []
 
@@ -669,6 +674,8 @@ class Gui(wx.Frame):
 
     def on_continue_button(self, event):
         """Handle the event when the user clicks the continue button."""
+        if(self.canvas.blank_file):
+            return None
         self.previous_outputs = [self.previous_outputs[i] +
                                  [self.monitors.monitors_dictionary[device]
                                   for device in
