@@ -9,6 +9,6 @@ scanner = Scanner('test_BNA_file.txt', names)
 
 while (True):
     sym = scanner.get_symbol()
-    #print(sym.type)
-    #print(sym.id)
-    #print(names.get_name_string((sym.id)))
+    # print(sym.type)
+    # print(sym.id)
+    # print(names.get_name_string((sym.id)))
