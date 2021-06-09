@@ -16,9 +16,9 @@ def set_language(app):
     locale = wx.Locale()
     locale.Init(language)
 
-    locale.AddCatalogLookupPathPrefix('./locale')
-
-    locale.AddCatalog('gui')
-    if not locale.IsLoaded('gui'):
-        print("Translation database failed to load.")
+    if language ==  wx.LANGUAGE_GERMAN:
+        locale.AddCatalogLookupPathPrefix('./locale')
+        locale.AddCatalog('gui')
+        if not locale.IsLoaded('gui'):
+            print("Translation database failed to load.")
     return(locale)
