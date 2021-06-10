@@ -1,4 +1,5 @@
-""" for keeping different implementations of functions in case decide to use them again """
+""" for keeping different implementations of
+functions in case decide to use them again """
 
 """
 while( self.current_character.isspace() ):
@@ -8,7 +9,7 @@ while( self.current_character.isspace() ):
     self.advance()
 """
 
-""" 
+"""
 if self.current_character == '#':  # comment found
     self.advance()
     while self.current_character != '#':
@@ -68,9 +69,9 @@ wx.Log.AddTraceMask('i18n')
 print(mylocale.IsLoaded('gui'))
 """
 
-#builtins._ = wx.GetTranslation
+# builtins._ = wx.GetTranslation
 
 
-#wx.Log.AddTraceMask('i18n')
+# wx.Log.AddTraceMask('i18n')
 
-#print(platform.system())
+# print(platform.system())
