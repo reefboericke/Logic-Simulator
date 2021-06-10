@@ -213,18 +213,18 @@ class Error_Store():
             return False
         else:
             self.sort_errors()
-            error_count_message = ('\nLogic circuit failed to ' +
-                                   'load due to presence of errors.')
+            error_count_message = (_('\nLogic circuit failed to ') +
+                                   _('load due to presence of errors.'))
             if self.no_errors == 1:
-                error_count_message += '\nThere was 1 error detected'
+                error_count_message += _('\nThere was 1 error detected')
             else:
-                error_count_message += ('\nThere were ' + str(self.no_errors)
-                                        + ' errors detected')
+                error_count_message += (_('\nThere were ') + str(self.no_errors)
+                                        + _(' errors detected'))
             total_error_text_terminal = error_count_message + ':\n\n'
             total_error_text_txt = error_count_message + ':\n\n'
-            total_error_text_gui = (error_count_message + ' (to see in-line ' +
+            total_error_text_gui = (error_count_message + _(' (to see in-line ' +
                                     'location of error, please refer to the ' +
-                                    'terminal or error_report.txt):\n\n')
+                                    'terminal or error_report.txt):\n\n'))
             for error in self.errors:
                 total_error_text_terminal += error.report()[0] + '\n\n'
                 total_error_text_txt += error.report()[1] + '\n\n'

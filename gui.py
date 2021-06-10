@@ -848,8 +848,8 @@ class Gui(wx.Frame):
             pathname = fileDialog.GetPath()
 
             if(os.path.getsize(pathname) == 0):
-                wx.MessageBox("Please choose a non-empty file",
-                              caption='Empty File')
+                wx.MessageBox(_("Please choose a non-empty file"),
+                              caption=_('Empty File'))
                 return
 
             names1 = Names()
@@ -958,7 +958,7 @@ class Gui(wx.Frame):
                                               file_output=False)
         translated_report = wx.GetTranslation(error_report)
         window = wx.MessageBox(error_report,
-                               caption='Errors logged in error_report.txt')
+                               caption=_('Errors logged in error_report.txt'))
 
     def toggle_3d(self, event):
         """Toggle whether the signal traces are rendered in 2d or 3d."""

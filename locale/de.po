@@ -122,10 +122,6 @@ msgstr "Sie müssen mindestens 1 Monitor haben"
 msgid "Open bna file"
 msgstr "bna-Datei öffnen"
 
-#: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:745
-msgid "Errors logged in error_report.txt"
-msgstr "In error_report.txt protokollierte Fehler"
-
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/errors.py:46
 msgid "Invalid number of inputs to gate."
 msgstr "Ungültige Anzahl von Eingängen zum Gate."
@@ -300,3 +296,30 @@ msgstr "Ungültige Wellenform für Signalgeneratorgerät, "
 
 msgid "must consist of 0s and/or 1s."
 msgstr "muss aus 0 und/oder 1 bestehen."
+
+msgid "\nLogic circuit failed to "
+msgstr "\nLogikschaltung fehlgeschlagen "
+
+msgid "load due to presence of errors."
+msgstr "belastung aufgrund von Fehlern."
+
+msgid "\nThere was 1 error detected"
+msgstr "\nEs wurde 1 Fehler erkannt"
+
+msgid "\nThere were "
+msgstr "\nEs gab "
+
+msgid " errors detected"
+msgstr " Fehler erkannt"
+
+msgid " (to see in-line location of error, please refer to the terminal or error_report.txt):\n\n"
+msgstr " (Um die Inline-Lokation des Fehlers zu sehen, beziehen Sie sich bitte auf das Terminal oder error_report.txt):\n\n"
+
+msgid "Please choose a non-empty file"
+msgstr "Bitte wählen Sie eine nicht leere Datei"
+
+msgid "Errors logged in error_report.txt"
+msgstr "In error_report.txt protokollierte Fehler"
+
+msgid "Empty File"
+msgstr "Leere Akte"

@@ -1,11 +1,16 @@
 
-Logic circuit failed to load due to presence of errors.
-There were 2 errors detected:
+Logikschaltung fehlgeschlagen belastung aufgrund von Fehlern.
+Es gab 3 Fehler erkannt:
 
-Semantic Error on line 9: No device with specified name.
+Syntax Fehler in der Leitung 6: Ungültige Syntax, erwartet Ein Gerät oder “Ende” :
 
-    S2 -> nor2.I2;
-             ^
+    and1: inputs = 2;
+       ^
+
+Syntax Fehler in der Leitung 7: Ungültige Syntax, erwartet “Start”:
+
+    AND and2: inputs = 2;
+      ^
 
 Semantic Error in file: All inputs must be connected.
 
