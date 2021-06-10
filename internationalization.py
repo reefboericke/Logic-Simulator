@@ -1,4 +1,4 @@
-"""Called by logsim.py to set up language of GUI as its built."""
+"""Called by logsim.py to set up language of GUI as it's built."""
 import sys
 import os
 import wx
