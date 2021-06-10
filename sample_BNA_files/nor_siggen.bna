@@ -1,0 +1,14 @@
+begin devices:
+    SIGGEN S1: waveform = 10001010101011110001;
+    SIGGEN S2: waveform = 10111100011110001010;
+    NOR nor1: inputs = 2;
+end devices;
+
+begin connections:
+    S1 -> nor1.I1;
+    S2 -> nor1.I2;
+end connections;
+
+begin monitors:
+    S1; S2; nor1;
+end monitors;
