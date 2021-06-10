@@ -3,7 +3,8 @@ import sys
 import os
 import wx
 import builtins
-
+import locale
+import ctypes
 
 def set_language(app):
     """Set language of the GUI by checking command line and OS."""
@@ -14,13 +15,27 @@ def set_language(app):
             language = wx.LANGUAGE_GERMAN
         else:
             print("Defaulting to English operation.")
-    builtins._ = wx.GetTranslation
-    locale = wx.Locale()
-    locale.Init(language)
+    else:
+        # windows environmnent
+        windll = ctypes.windll.kernel32
+        windll.GetUserDefaultUILanguage()
+        OS_language = locale.windows_locale[ windll.GetUserDefaultUILanguage() ]
+        if OS_language == 'de_DE':
+            # this is capture by default anyway but make it explicit
+            # for logic check below
+            language = wx.LANGUAGE_GERMAN
+        else:
+            print("Defaulting to English operation.")
 
-    # if loading German, check it happens correctly
-    locale.AddCatalogLookupPathPrefix('./locale')
-    locale.AddCatalog('gui')
-    if not locale.IsLoaded('gui'):
-        print("Translation database failed to load.")
-    return(locale)
+    builtins._ = wx.GetTranslation
+    
+    if language == wx.LANGUAGE_GERMAN:
+        wxlocale = wx.Locale()
+        wxlocale.Init(language)
+        # if loading German, check it happens correctly
+        wxlocale.AddCatalogLookupPathPrefix('./locale')
+        wxlocale.AddCatalog('gui')
+        if not wxlocale.IsLoaded('gui'):
+            print("Translation database failed to load.")
+
+    return(wxlocale)
