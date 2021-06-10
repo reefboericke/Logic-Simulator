@@ -1,3 +1,3 @@
 begin end connections monitors OR NAND AND NOR XOR
-CLOCK SWITCH DTYPE DATA CLK SET CLEAR inputs period initial
+CLOCK SWITCH DTYPE DATA CLK SET CLEAR inputs period initial SIGGEN waveform
 gate1 gate2 350 758 1

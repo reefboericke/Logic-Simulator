@@ -84,9 +84,11 @@ class Parser:
         self.device_ids = [self.scanner.CLOCK_ID, self.scanner.SWITCH_ID,
                            self.scanner.DTYPE_ID, self.scanner.AND_ID,
                            self.scanner.NAND_ID, self.scanner.OR_ID,
-                           self.scanner.NOR_ID, self.scanner.XOR_ID]
+                           self.scanner.NOR_ID, self.scanner.XOR_ID,
+                           self.scanner.SIGGEN_ID]
         self.variable_ids = [self.scanner.inputs_ID, self.scanner.period_ID,
-                             self.scanner.initial_ID]
+                             self.scanner.initial_ID,
+                             self.scanner.waveform_ID]
         self.gates_with_inputs = [self.scanner.AND_ID, self.scanner.NOR_ID,
                                   self.scanner.NAND_ID]
         self.output_ids = [self.scanner.Q_ID, self.scanner.QBAR_ID]
@@ -241,7 +243,7 @@ class Parser:
             self.currsymb = self.scanner.get_symbol()
             # correct syntax, if semantically correct, add to network:
             if self.network_construction:
-                self.err_return = self.network.make_connection(self.currdevicenameid1,
+                self.network.make_connection(self.currdevicenameid1,
                                              self.curroutputid,
                                              currdevicenameid2, currinputid)
         else:
@@ -272,6 +274,10 @@ class Parser:
                  and self.currsymb.id != self.scanner.initial_ID):
                 self.encounter_error('semantic', 6, recover=True)
                 return
+            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
+                 and self.currsymb.id != self.scanner.waveform_ID):
+                self.encounter_error('semantic', 19, recover=True)
+                return
 
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -299,7 +305,17 @@ class Parser:
                  and int(self.currsymb.id) not in range(1, 17, 1)):
                 # incorrect number of inputs to gate
                 self.encounter_error('semantic', 0, recover=False)
+            elif(self.currdevicetypeid == self.scanner.SIGGEN_ID
+                 and set([i for i in self.currsymb.id]) not in
+                 [{'0'}, {'1'}, {'0', '1'}]):
+                # siggen has invalid waveform
+                self.encounter_error('semantic', 20, recover=False)
+
+            if(self.currdevicetypeid == self.scanner.SIGGEN_ID):
+                # if device is siggen, keep waveform value in string
+                self.currvariablevalue = self.currsymb.id
             else:
+                # otherwise convert to integer
                 self.currvariablevalue = int(self.currsymb.id)
             self.currsymb = self.scanner.get_symbol()
         else:
@@ -524,9 +540,19 @@ class Parser:
 
     def parse_network(self):
         """Parse the circuit definition file."""
-        self.currsymb = self.scanner.get_symbol()
-        self.BNAcodegrammar()
+        if self.scanner.unclosed_comment:
+            self.encounter_error('syntax', 19, recover=False)
+            self.error_db.report_errors()
+            return False
+        else:
+            self.currsymb = self.scanner.get_symbol()
+            if self.currsymb.type == self.scanner.EOF:
+                self.encounter_error('syntax', 20, recover=False)
+                self.error_db.report_errors()
+                return False
 
-        if not self.error_db.report_errors():
-            return True
-        return False
+            self.BNAcodegrammar()
+
+            if not self.error_db.report_errors():
+                return True
+            return False

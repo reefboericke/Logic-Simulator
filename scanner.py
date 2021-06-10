@@ -81,15 +81,18 @@ class Scanner:
                               "monitors", "OR", "NAND", "AND", "NOR",
                               "XOR", "CLOCK", "SWITCH", "DTYPE",
                               "DATA", "CLK", "SET", "CLEAR", "Q",
-                              "QBAR", "inputs", "period", "initial"]
+                              "QBAR", "inputs", "period", "initial",
+                              "SIGGEN", "waveform"]
 
         [self.begin_ID, self.end_ID, self.devices_ID, self.connections_ID,
          self.monitors_ID, self.OR_ID, self.NAND_ID, self.AND_ID,
          self.NOR_ID, self.XOR_ID, self.CLOCK_ID, self.SWITCH_ID,
          self.DTYPE_ID, self.DATA_ID, self.CLK_ID, self.SET_ID,
          self.CLEAR_ID, self.Q_ID, self.QBAR_ID, self.inputs_ID,
-         self.period_ID,
-         self.initial_ID] = self.names.lookup(self.keywords_list)
+         self.period_ID, self.initial_ID, self.SIGGEN_ID,
+         self.waveform_ID] = self.names.lookup(self.keywords_list)
+
+        # define variables needed to track where in file
         self.current_character = ""
         self.no_EOL = 1
         self.start_of_file = True
@@ -97,6 +100,7 @@ class Scanner:
         self.current_char_num_txt = 0
         self.char_num_last_EOL_terminal = 0
         self.char_num_last_EOL_txt = 0
+
         # open file
         try:
             self.file = open(path, 'r')
@@ -109,6 +113,18 @@ class Scanner:
         except FileNotFoundError:
             print("Cannot find file - please check provided path.")
             quit()
+
+        # perform pass through to check all comments closed
+        start_of_file = self.file.tell()
+        full_text = self.file.read()
+        hashes = 0
+        for char in full_text:
+            if char == '#':
+                hashes += 1
+        self.unclosed_comment = False
+        if hashes % 2 != 0:
+            self.unclosed_comment = True
+        self.file.seek(start_of_file)
 
         self.advance()
 
@@ -128,7 +144,7 @@ class Scanner:
 
     def skip_spaces_and_comments(self):
         """Pass file pointer over white-space characters and comments."""
-        inside_comment = False
+        self.inside_comment = False
         while(True):
             if self.current_character.isspace():
                 if self.current_character == '\n':
@@ -139,12 +155,12 @@ class Scanner:
                     self.no_EOL += 1
                 self.advance()
             elif self.current_character == '#':  # enter / leave comment
-                if inside_comment is False:  # enter comment
-                    inside_comment = True
+                if self.inside_comment is False:  # enter comment
+                    self.inside_comment = True
                 else:  # end of comment
-                    inside_comment = False
+                    self.inside_comment = False
                 self.advance()
-            elif inside_comment is True:
+            elif self.inside_comment is True:
                 self.advance()
             else:
                 break
