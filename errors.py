@@ -218,13 +218,17 @@ class Error_Store():
             if self.no_errors == 1:
                 error_count_message += _('\nThere was 1 error detected')
             else:
-                error_count_message += (_('\nThere were ') + str(self.no_errors)
+                error_count_message += (_('\nThere were ') +
+                                        str(self.no_errors)
                                         + _(' errors detected'))
             total_error_text_terminal = error_count_message + ':\n\n'
             total_error_text_txt = error_count_message + ':\n\n'
-            total_error_text_gui = (error_count_message + _(' (to see in-line ' +
-                                    'location of error, please refer to the ' +
-                                    'terminal or error_report.txt):\n\n'))
+            extraguitext = _(' (to see in-line ' +
+                             'location of error, please refer' +
+                             ' to the ' +
+                             'terminal or error_report.txt):\n\n')
+            total_error_text_gui = (error_count_message +
+                                    extraguitext)
             for error in self.errors:
                 total_error_text_terminal += error.report()[0] + '\n\n'
                 total_error_text_txt += error.report()[1] + '\n\n'
