@@ -87,6 +87,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.full_specular = [0.5, 0.5, 0.5, 1.0]
         self.no_specular = [0.0, 0.0, 0.0, 1.0]
 
+        # Variables for certain rendering conditions
         self.blank_file = True
         self.is_3d = False
 
@@ -105,6 +106,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Offset between viewpoint and origin of the scene
         self.depth_offset = 1000
 
+        # Initialise variables for signal rendering
         self.length = 10
         self.outputs = [[4 for i in range(10)]]
         self.output_labels = [_('No signal')]
@@ -175,7 +177,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glClearColor(1, 1, 1, 0)
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-        # Draw a sample signal trace
         x_step = (self.GetClientSize().width * 0.7) / length
         y_spacing = (self.GetClientSize().height) / (2.5 * len(outputs))
         if(len(outputs) > 7):
@@ -183,6 +184,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         else:
             y_step = 50  # Determines the vertical size of the signal traces
 
+        # Render all the signal traces currently stored in outputs
         for p in range(len(outputs)):
             j = p - len(outputs)//2
             GL.glColor3f(0, 0, 0)
@@ -208,10 +210,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     y = y_spacing * (2 * j)
                     # - self.GetClientSize().height/len(outputs)
                     if(outputs[j][i] != 4):
-                            if(outputs[j][i] == 1):
-                                self.draw_cuboid(x, y, 5, x_step/2, 25, y_step)
-                            else:
-                                self.draw_cuboid(x, y, 5, x_step/2, 25, 1)
+                        if(outputs[j][i] == 1):
+                            self.draw_cuboid(x, y, 5, x_step/2, 25, y_step)
+                        else:
+                            self.draw_cuboid(x, y, 5, x_step/2, 25, 1)
             else:
                 GL.glColor3f(0, 0, 1)
                 GL.glBegin(GL.GL_LINE_STRIP)
@@ -416,12 +418,14 @@ class Gui(wx.Frame):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
 
+        # Create blank file
         blank_file = open('startup.bna', 'w')
         blank_file.write(
             'begin devices:\nend devices;\nbegin connections:\nend' +
             ' connections;\nbegin monitors:\nend monitors;')
         blank_file.close()
         pathname = 'startup.bna'
+        # Parse blank file if no command line argument given
         if(names is None):
             names1 = Names()
             devices1 = Devices(names1)
@@ -475,7 +479,7 @@ class Gui(wx.Frame):
 
         # Configure the widgets
         self.text = wx.StaticText(self, wx.ID_ANY, _(" Number of Cycles"))
-        self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
+        self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10", min=1)
         self.run_button = wx.Button(self, wx.ID_ANY, _("Run"))
         self.continue_button = wx.Button(self, wx.ID_ANY, _("Continue"))
         self.remove_monitor = wx.Button(self, wx.ID_ANY, _("Zap Monitor"))
@@ -529,6 +533,7 @@ class Gui(wx.Frame):
             wx.VERTICAL, self, label=_('Switches'))
         self.side_sizer.Add(self.switch_box, 1, wx.ALL, 5)
 
+        # Initialise switches
         switches = self.devices.find_devices(self.devices.SWITCH)
         self.switch_items = []
         for i in range(len(switches)):
@@ -599,6 +604,7 @@ class Gui(wx.Frame):
                 "            "))
         self.zap_monitor_box.Add(self.remove_monitor)
 
+        # Add file and display controls
         self.open_file_box = wx.StaticBoxSizer(
             wx.HORIZONTAL, self, label=_("File"))
         self.open_file_box.Add(self.open_file)
@@ -614,6 +620,7 @@ class Gui(wx.Frame):
         if(len(self.monitored_devices)):
             self.canvas.blank_file = False
 
+        # Delete the blank file we created at the start
         os.remove(pathname)
 
         self.SetSizeHints(600, 600)
@@ -668,12 +675,15 @@ class Gui(wx.Frame):
         for i in range(len(switches)):
             self.devices.set_switch(switches[i], switch_signals[i])
 
+        self.canvas.length = self.spin.GetValue()
+
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
 
         self.cycles += self.canvas.length
 
+        # Fetches the signal traces from the monitors class
         self.canvas.outputs = [self.monitors.monitors_dictionary[device]
                                for device in self.monitors.monitors_dictionary]
 
@@ -713,12 +723,15 @@ class Gui(wx.Frame):
         for i in range(len(switches)):
             self.devices.set_switch(switches[i], switch_signals[i])
 
+        self.canvas.length = self.spin.GetValue()
+
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
 
         self.cycles += self.canvas.length
 
+        # Fetch outputs from the monitors class
         self.canvas.outputs = [self.previous_outputs[i] +
                                [self.monitors.monitors_dictionary[device]
                                 for device in
@@ -880,6 +893,7 @@ class Gui(wx.Frame):
             self.add_monitor_box.Layout()
             self.zap_monitor_box.Layout()
 
+            # Replace all the switch controls with the new ones
             switches = self.devices.find_devices(self.devices.SWITCH)
             initial_switch_values = [
                 self.devices.get_device(
