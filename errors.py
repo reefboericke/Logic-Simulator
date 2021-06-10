@@ -51,7 +51,8 @@ class Error:
             3: _('Incorrect number of arguments supplied for device.'),
             4: _('Incorrect argument provided for gate, requires "inputs".'),
             5: _('Incorrect argument provided for clock, requires "period".'),
-            6: _('Incorrect argument provided for switch, requires "initial".'),
+            6: _('Incorrect argument provided for switch, '
+                 + 'requires "initial".'),
             7: _('Invalid device name.'),
             8: _('Two devices assigned same name.'),
             9: _('Left side of a connection must be an output.'),
@@ -64,8 +65,10 @@ class Error:
             16: _('No device with specified name.'),
             17: _('Monitor already connected to specified device.'),
             18: _('Specified device doesn\'t exist.'),
-            19: _('Incorrect argument provided for signal generator device, requires "waveform".'),
-            20: _('Invalid waveform for signal generator device, must consist of 0s and/or 1s.')
+            19: _('Incorrect argument provided for signal generator device, '
+                  + 'requires "waveform".'),
+            20: _('Invalid waveform for signal generator device, '
+                  + 'must consist of 0s and/or 1s.')
         }
 
         self.syntax_errors = {
@@ -210,14 +213,18 @@ class Error_Store():
             return False
         else:
             self.sort_errors()
-            error_count_message = '\nLogic circuit failed to load due to presence of errors.'
+            error_count_message = ('\nLogic circuit failed to ' +
+                                   'load due to presence of errors.')
             if self.no_errors == 1:
                 error_count_message += '\nThere was 1 error detected'
             else:
-                error_count_message += '\nThere were ' + str(self.no_errors) + ' errors detected'
+                error_count_message += ('\nThere were ' + str(self.no_errors)
+                                        + ' errors detected')
             total_error_text_terminal = error_count_message + ':\n\n'
             total_error_text_txt = error_count_message + ':\n\n'
-            total_error_text_gui = error_count_message + ' (to see in-line location of error, please refer to the terminal or error_report.txt):\n\n'
+            total_error_text_gui = (error_count_message + ' (to see in-line ' +
+                                    'location of error, please refer to the ' +
+                                    'terminal or error_report.txt):\n\n')
             for error in self.errors:
                 total_error_text_terminal += error.report()[0] + '\n\n'
                 total_error_text_txt += error.report()[1] + '\n\n'
