@@ -10,7 +10,8 @@ def set_language(app):
     """Set language of the GUI by checking command line and OS."""
     language = wx.LANGUAGE_DEFAULT
     if sys.platform.capitalize() in ('Linux', 'Darwin'):
-        if os.environ['LANG'] == 'de_DE.utf8':
+        lang = os.environ['LANG']
+        if lang == 'de_DE.utf8' or lang == 'de_DE.UTF-8':
             # if unix and langauge flag set
             language = wx.LANGUAGE_GERMAN
         else:
@@ -38,4 +39,6 @@ def set_language(app):
         if not wxlocale.IsLoaded('gui'):
             print("Translation database failed to load - using English instead.")
 
-    return(wxlocale)
+        return(wxlocale)
+
+    return(None)
