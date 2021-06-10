@@ -108,7 +108,7 @@ msgid ""
 "2021"
 msgstr ""
 " Joe Nash und Finn Ashley\n"
-"2021"
+"2021 (Random chars: αΔδΘθ)"
 
 #: /Users/finnashley/Onedrive/University/IIA/GF2/Logic-Simulator/gui.py:453
 msgid "About Logsim"
@@ -291,3 +291,12 @@ msgstr "3D-Anzeige umschalten"
 
 msgid "Reset Display"
 msgstr "Anzeige zurücksetzen"
+
+msgid "Incorrect argument provided for signal generator device, "
+msgstr "Falsches Argument für Signalgeneratorgerät angegeben, "
+
+msgid "Invalid waveform for signal generator device, "
+msgstr "Ungültige Wellenform für Signalgeneratorgerät, "
+
+msgid "must consist of 0s and/or 1s."
+msgstr "muss aus 0 und/oder 1 bestehen."

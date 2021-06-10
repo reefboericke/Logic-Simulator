@@ -11,7 +11,7 @@ def set_language(app):
     language = wx.LANGUAGE_DEFAULT
     if sys.platform.capitalize() in ('Linux', 'Darwin'):
         lang = os.environ['LANG']
-        if lang == 'de_DE.utf8' or lang == 'de_DE.UTF-8':
+        if lang in ('de_DE.utf8', 'de_DE.UTF-8'):
             # if unix and langauge flag set
             language = wx.LANGUAGE_GERMAN
         else:
