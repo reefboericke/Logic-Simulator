@@ -24,5 +24,6 @@ jobs:
           python -m pip install pytest
           python -m pip install wxpython
           python -m pip install pyopengl
+          python -m pip install numpy
       - name: Run tests with pytest
         run: pytest 
