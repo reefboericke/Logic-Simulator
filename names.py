@@ -78,7 +78,6 @@ class Names:
         for name_string in name_string_list:
             # Check if name_string is string, raise error if false
             if type(name_string) != str:
-                # TODO: Maybe add option to still print the list of valid IDs?
                 raise TypeError
             else:
                 # Check if name_string has ID, add to names_list if false
