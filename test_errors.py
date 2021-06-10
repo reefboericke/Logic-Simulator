@@ -1,4 +1,4 @@
-"""Test the errors module"""
+"""Test the errors module."""
 
 import pytest
 import os
