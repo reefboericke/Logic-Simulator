@@ -21,14 +21,14 @@ def set_language(app):
         windll.GetUserDefaultUILanguage()
         OS_language = locale.windows_locale[ windll.GetUserDefaultUILanguage() ]
         if OS_language == 'de_DE':
-            # this is capture by default anyway but make it explicit
+            # this is captured by default anyway but make it explicit
             # for logic check below
             language = wx.LANGUAGE_GERMAN
         else:
             print("Defaulting to English operation.")
 
     builtins._ = wx.GetTranslation
-    
+
     if language == wx.LANGUAGE_GERMAN:
         wxlocale = wx.Locale()
         wxlocale.Init(language)
@@ -36,6 +36,6 @@ def set_language(app):
         wxlocale.AddCatalogLookupPathPrefix('./locale')
         wxlocale.AddCatalog('gui')
         if not wxlocale.IsLoaded('gui'):
-            print("Translation database failed to load.")
+            print("Translation database failed to load - using English instead.")
 
     return(wxlocale)
