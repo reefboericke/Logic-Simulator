@@ -30,6 +30,7 @@ import gettext
 import builtins
 _ = wx.GetTranslation
 
+
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
 
@@ -100,7 +101,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Initialise variables for zooming
         self.zoom = 1
-                
+
         # Offset between viewpoint and origin of the scene
         self.depth_offset = 1000
 
@@ -162,7 +163,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glMultMatrixf(self.scene_rotate)
         GL.glScalef(self.zoom, self.zoom, self.zoom)
 
-
     def render(self, outputs, length):
         """Handle all drawing operations."""
         self.SetCurrent(self.context)
@@ -188,19 +188,25 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             GL.glColor3f(0, 0, 0)
             if(len(outputs) > 6):
                 self.render_text(
-                    self.output_labels[j], -self.GetClientSize().width/2.5 + 5, y_spacing*(2*j)+y_step/2, 5)
+                    self.output_labels[j], -self.GetClientSize().width/2.5 + 5,
+                    y_spacing*(2*j)+y_step/2, 5)
             else:
                 self.render_text(
-                    self.output_labels[j], -self.GetClientSize().width/2.5 + 50, y_spacing*(2*j)+y_step*3/2, 5)
-            self.render_text('0', -self.GetClientSize().width/2.5, y_spacing * (2 * j), 5)
-            self.render_text('1', -self.GetClientSize().width/2.5, y_spacing * (2 * j) + y_step, 5)
+                    self.output_labels[j],
+                    -self.GetClientSize().width/2.5 + 50,
+                    y_spacing*(2*j)+y_step*3/2, 5)
+            self.render_text('0', -self.GetClientSize().width/2.5,
+                             y_spacing * (2 * j), 5)
+            self.render_text('1', -self.GetClientSize().width/2.5,
+                             y_spacing * (2 * j) + y_step, 5)
             if(self.is_3d):
                 GL.glColor3f(1.0, 0.7, 0.5)  # signal trace is beige
                 for i in range(length):
-                    #i = q - length//2
+                    # i = q - length//2
                     x = (i * x_step) + 50 - self.GetClientSize().width/2.5
                     x_next = x + x_step
-                    y = y_spacing * (2 * j)# - self.GetClientSize().height/len(outputs)
+                    y = y_spacing * (2 * j)
+                    # - self.GetClientSize().height/len(outputs)
                     if(outputs[j][i] != 4):
                             if(outputs[j][i] == 1):
                                 self.draw_cuboid(x, y, 5, x_step/2, 25, y_step)
@@ -210,10 +216,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glColor3f(0, 0, 1)
                 GL.glBegin(GL.GL_LINE_STRIP)
                 for i in range(length):
-                    #i = q - length//2
+                    # i = q - length//2
                     x = (i * x_step) + 50 - self.GetClientSize().width/2.5
                     x_next = x + x_step
-                    y = y_spacing * (2 * j) + y_step * outputs[j][i]# - self.GetClientSize().height/len(outputs)
+                    y = y_spacing * (2 * j) + y_step * outputs[j][i]
+                    # - self.GetClientSize().height/len(outputs)
                     if(outputs[j][i] != 4):
                         GL.glVertex2f(x, y)
                         GL.glVertex2f(x_next, y)
@@ -357,6 +364,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.init = False
         self.Refresh()
 
+
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
 
@@ -398,7 +406,7 @@ class Gui(wx.Frame):
     toggle_3d(self, event): Event handler for when the user clicks the toggle
                             3d button.
 
-    reset_display(self, event): Event handler for when the user clicks the 
+    reset_display(self, event): Event handler for when the user clicks the
                                 reset display button.
 
     """
@@ -473,8 +481,10 @@ class Gui(wx.Frame):
         self.remove_monitor = wx.Button(self, wx.ID_ANY, _("Zap Monitor"))
         self.add_monitor = wx.Button(self, wx.ID_ANY, _("Add Monitor"))
         self.open_file = wx.Button(self, wx.ID_ANY, _("Open file"))
-        self.display_toggle = wx.Button(self, wx.ID_ANY, _("Toggle 3D Display"))
-        self.reset_display_button = wx.Button(self, wx.ID_ANY, _("Reset Display"))
+        self.display_toggle = wx.Button(self, wx.ID_ANY,
+                                        _("Toggle 3D Display"))
+        self.reset_display_button = wx.Button(self, wx.ID_ANY,
+                                              _("Reset Display"))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -715,7 +725,7 @@ class Gui(wx.Frame):
                                 self.monitors.monitors_dictionary][i]
                                for i in range(len(self.previous_outputs))]
         self.canvas.output_labels = self.monitored_devices
-        
+
         if self.canvas.outputs != [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4]]:
             self.canvas.render(self.canvas.outputs,
                                len(self.canvas.outputs[0]))
@@ -826,7 +836,7 @@ class Gui(wx.Frame):
 
             if(os.path.getsize(pathname) == 0):
                 wx.MessageBox("Please choose a non-empty file",
-                               caption='Empty File')
+                              caption='Empty File')
                 return
 
             names1 = Names()
@@ -925,7 +935,7 @@ class Gui(wx.Frame):
             self.previous_outputs = []
             for i in range(len(self.monitored_devices)):
                 self.previous_outputs.append([])
-        
+
         self.canvas.reset_camera()
 
     def display_errors(self, error_db):
