@@ -298,7 +298,7 @@ class Devices:
                     siggen_signal = self.HIGH
                 self.add_output(device.device_id, output_id=None,
                                 signal=siggen_signal)
-                # Initialise it to a random point in its cycle.
+                # Initialise to the start of its cycle.
                 device.clock_counter = 0
 
     def make_device(self, device_id, device_kind, device_property=None):
