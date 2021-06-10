@@ -475,7 +475,7 @@ class Gui(wx.Frame):
 
         # Configure the widgets
         self.text = wx.StaticText(self, wx.ID_ANY, _(" Number of Cycles"))
-        self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
+        self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10", min=1)
         self.run_button = wx.Button(self, wx.ID_ANY, _("Run"))
         self.continue_button = wx.Button(self, wx.ID_ANY, _("Continue"))
         self.remove_monitor = wx.Button(self, wx.ID_ANY, _("Zap Monitor"))
@@ -668,6 +668,8 @@ class Gui(wx.Frame):
         for i in range(len(switches)):
             self.devices.set_switch(switches[i], switch_signals[i])
 
+        self.canvas.length = self.spin.GetValue()
+
         for i in range(self.canvas.length):
             if self.network.execute_network():
                 self.monitors.record_signals()
@@ -712,6 +714,8 @@ class Gui(wx.Frame):
         switches = self.devices.find_devices(self.devices.SWITCH)
         for i in range(len(switches)):
             self.devices.set_switch(switches[i], switch_signals[i])
+
+        self.canvas.length = self.spin.GetValue()
 
         for i in range(self.canvas.length):
             if self.network.execute_network():
